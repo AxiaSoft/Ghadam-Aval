@@ -4,6 +4,7 @@ import {
   AtmosphereChoice,
   BeginningValueChoice,
   CinematicShot,
+  EndingVariant,
   FinalDecisionChoice,
   GameStage,
   GraphicsProfile,
@@ -22,7 +23,7 @@ import {
   startNewResponseSession,
 } from '../utils/responseLogger';
 
-const STORAGE_KEY = 'the_first_move_save_v4';
+const STORAGE_KEY = 'the_first_move_save_v5';
 
 /**
  * Valid state machine transitions to prevent accidental stage skipping
@@ -74,6 +75,7 @@ interface PersistedSave {
   selectedPath: PathColorChoice | null;
   selectedObject: MissionObjectChoice | null;
   finalDecision: FinalDecisionChoice | null;
+  endingVariant: EndingVariant | null;
   graphicsProfile: GraphicsProfile;
   musicVolume: number;
   sfxVolume: number;
@@ -113,6 +115,7 @@ export interface GameStoreState {
   selectedPath: PathColorChoice | null;
   selectedObject: MissionObjectChoice | null;
   finalDecision: FinalDecisionChoice | null;
+  endingVariant: EndingVariant | null;
   femaleDialogueChoice: string | null;
   activeDialogueNodeId: string | null;
   waitOutcomeSubstate: 'idle' | 'pausing' | 'he_approaches' | 'choice_shown';
@@ -148,6 +151,7 @@ export interface GameStoreState {
     value: HappinessChoice | AfternoonChoice | AtmosphereChoice | BeginningValueChoice
   ) => void;
   advanceQuestionnaire: () => void;
+  regressQuestionnaire: () => void;
   answerRelationship: (answer: RelationshipAnswer) => void;
   choosePath: (color: PathColorChoice) => void;
   chooseObject: (obj: MissionObjectChoice) => void;
@@ -155,6 +159,7 @@ export interface GameStoreState {
   setWaitOutcomeSubstate: (sub: 'idle' | 'pausing' | 'he_approaches' | 'choice_shown') => void;
   setActiveDialogueNode: (nodeId: string | null) => void;
   setFemaleDialogueChoice: (choiceText: string) => void;
+  setEndingVariant: (variant: EndingVariant | null) => void;
   setCinematicShot: (shot: CinematicShot | null) => void;
   setNarrativeCaption: (caption: string | null) => void;
   setObjectiveHint: (hint: string | null) => void;
@@ -165,8 +170,8 @@ export interface GameStoreState {
   setMusicVolume: (v: number) => void;
   setSfxVolume: (v: number) => void;
   toggleMute: () => void;
-    setLoadingState: (progress: number, label: string, done?: boolean) => void;
-    setPostGameMenu: (flag: boolean) => void;
+  setLoadingState: (progress: number, label: string, done?: boolean) => void;
+  setPostGameMenu: (flag: boolean) => void;
   restartGame: () => void;
 }
 
@@ -198,6 +203,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       selectedPath: s.selectedPath,
       selectedObject: s.selectedObject,
       finalDecision: s.finalDecision,
+      endingVariant: s.endingVariant,
       graphicsProfile: s.graphicsProfile,
       musicVolume: s.musicVolume,
       sfxVolume: s.sfxVolume,
@@ -219,6 +225,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     selectedPath: saved?.selectedPath ?? null,
     selectedObject: saved?.selectedObject ?? null,
     finalDecision: saved?.finalDecision ?? null,
+    endingVariant: saved?.endingVariant ?? null,
     femaleDialogueChoice: null,
     activeDialogueNodeId: null,
     waitOutcomeSubstate: 'idle',
@@ -335,6 +342,14 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       }
     },
 
+    regressQuestionnaire: () => {
+      const idx = get().questionnaireIndex;
+      if (idx > 0) {
+        set({ questionnaireIndex: idx - 1 });
+        syncSave();
+      }
+    },
+
     answerRelationship: (answer) => {
       set({ relationshipAnswer: answer });
       syncSave();
@@ -359,7 +374,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     },
 
     chooseFinalDecision: (decision) => {
-      set({ finalDecision: decision });
+      set({ finalDecision: decision, endingVariant: null });
       syncSave();
     },
 
@@ -368,6 +383,11 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     setActiveDialogueNode: (nodeId) => set({ activeDialogueNodeId: nodeId }),
 
     setFemaleDialogueChoice: (choiceText) => set({ femaleDialogueChoice: choiceText }),
+
+    setEndingVariant: (variant) => {
+      set({ endingVariant: variant });
+      syncSave();
+    },
 
     setCinematicShot: (shot) => set({ cinematicShot: shot }),
 
@@ -427,6 +447,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         selectedPath: null,
         selectedObject: null,
         finalDecision: null,
+        endingVariant: null,
         femaleDialogueChoice: null,
         activeDialogueNodeId: null,
         waitOutcomeSubstate: 'idle',

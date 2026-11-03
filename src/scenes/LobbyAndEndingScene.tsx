@@ -20,6 +20,7 @@ import {
   CUTSCENE_MIN_DURATION_MS,
   CUTSCENE_MIN_DURATION_SEC,
   DIALOGUE_NODES,
+  DIALOGUE_START_NODE,
 } from '../dialogue/dialogueData';
 
 // چیدمان منسجم و روشن لابی تا تمام شخصیت‌ها هم در حالت عمودی موبایل و هم افقی کاملاً داخل کادر باشند
@@ -271,7 +272,7 @@ export const LobbyAndEndingScene: React.FC = () => {
     if (stage !== 'FINAL_DECISION') return;
 
     if (!finalDecision) {
-      setObjectiveHint('حرفات با دوستت تموم شد — برای رفتن به سمت درِ خروجی لابی قدم بزن');
+      setObjectiveHint('حرفت تمام شد. اگر میخواهی بروی، سمت در حرکت کن.');
       setMaleSeated(true);
       setMalePose('sit');
       setMaleEmotion('shy');
@@ -318,7 +319,7 @@ export const LobbyAndEndingScene: React.FC = () => {
       // زمان خواندن متن کات‌سین قبل از شروع کارت دیالوگ (۵ ثانیه)
       const tStartDial = window.setTimeout(() => {
         setNarrativeCaption(null);
-        setActiveDialogueNode('leave_male_call');
+        setActiveDialogueNode(DIALOGUE_START_NODE);
         transitionTo('DIALOGUE');
       }, CUTSCENE_MIN_DURATION_MS);
 
@@ -427,8 +428,8 @@ export const LobbyAndEndingScene: React.FC = () => {
     () => [
       {
         id: 'lobby_exit_doors',
-        label: 'خروج از لابی',
-        sublabel: 'حرکت به سمت درِ خروجی دانشگاه',
+        label: 'رفتن سمت در',
+        sublabel: 'همان دستگیرهای که زیر نور عصر سرد است',
         position: [0, 0, 4.45],
         radius: 2.05,
         accentColor: '#f5c76e',
@@ -667,6 +668,38 @@ export const LobbyAndEndingScene: React.FC = () => {
             <meshStandardMaterial color="#faf6f0" roughness={0.35} />
           </mesh>
         )}
+      </group>
+
+      {/* جزئیات کوچک روی میز: دفتر باز، خودکار، لیوان کاغذی */}
+      <group position={[-1.46, 0.44, 0.86]}>
+        <mesh rotation={[0, 0.24, 0]}>
+          <boxGeometry args={[0.34, 0.018, 0.24]} />
+          <meshStandardMaterial color="#f7f1e6" roughness={0.85} />
+        </mesh>
+        <mesh position={[0.1, 0.014, -0.02]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.008, 0.008, 0.22, 8]} />
+          <meshStandardMaterial color="#3f4a55" roughness={0.5} />
+        </mesh>
+        <mesh position={[-0.18, 0.05, 0.06]}>
+          <cylinderGeometry args={[0.045, 0.036, 0.09, 12]} />
+          <meshStandardMaterial color="#efe2cf" roughness={0.55} />
+        </mesh>
+      </group>
+
+      {/* ساعت روی دیوار پشتی؛ عقربهها حدود ده را نشان میدهند */}
+      <group position={[4.9, 2.85, -7.43]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh>
+          <cylinderGeometry args={[0.28, 0.28, 0.05, 24]} />
+          <meshStandardMaterial color="#f6efe3" roughness={0.7} />
+        </mesh>
+        <mesh position={[0, 0, 0.04]}>
+          <boxGeometry args={[0.022, 0.18, 0.012]} />
+          <meshStandardMaterial color="#5c4b3c" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0, 0.04]} rotation={[0, 0, Math.PI / 2]}>
+          <boxGeometry args={[0.022, 0.13, 0.012]} />
+          <meshStandardMaterial color="#5c4b3c" roughness={0.6} />
+        </mesh>
       </group>
 
       {/* صندلی تکی پسر */}

@@ -2,10 +2,13 @@ import React from 'react';
 import { useGameStore } from '../state/gameStore';
 import { audioManager } from '../audio/AudioManager';
 import { SCREEN_TEXTS } from '../dialogue/dialogueData';
+import { getEndingPresentation } from '../narrative/endings';
 import { startNewResponseSession } from '../utils/responseLogger';
 
 export const IntroAndEndingScreens: React.FC = () => {
   const stage = useGameStore((s) => s.stage);
+  const answers = useGameStore((s) => s.answers);
+  const endingVariant = useGameStore((s) => s.endingVariant);
   const savedResumeStage = useGameStore((s) => s.savedResumeStage);
   const postGameMenu = useGameStore((s) => s.postGameMenu);
   const unlockAudio = useGameStore((s) => s.unlockAudio);
@@ -45,11 +48,16 @@ export const IntroAndEndingScreens: React.FC = () => {
     transitionTo('INTRO', { force: true, withFade: true });
   };
 
-  // ۱. صفحه‌ی آغازین — حالت عادی (ابتدای بازی)
+  // ۱. صفحه آغازین
   if (stage === 'INTRO' && !postGameMenu) {
     return (
       <div className="cinematic-screen intro-screen" dir="ltr">
         <div className="intro-content" dir="rtl">
+          <div className="intro-meta">
+            <span className="intro-kicker">{SCREEN_TEXTS.introEyebrow}</span>
+            <span className="intro-time">{SCREEN_TEXTS.introTime}</span>
+          </div>
+
           <h1 className="cinematic-main-title">{SCREEN_TEXTS.mainTitle}</h1>
           <p className="cinematic-subtitle">{SCREEN_TEXTS.introDescription}</p>
 
@@ -63,25 +71,28 @@ export const IntroAndEndingScreens: React.FC = () => {
               </button>
             )}
           </div>
+
+          <div className="intro-bottom-notes">
+            <p className="intro-control-hint">{SCREEN_TEXTS.introControlHint}</p>
+            <p className="intro-footnote">{SCREEN_TEXTS.introFootnote}</p>
+          </div>
         </div>
       </div>
     );
   }
 
-  // ۲. صفحه‌ی آغازین — حالت بعد از پایان بازی (دو نفر کنار هم در فضا زیبا)
+  // ۲. منوی بعد از پایان: همان فضا، بدون نمایش عجیب و غریب
   if (stage === 'INTRO' && postGameMenu) {
     return (
-      <div className="cinematic-screen intro-screen intro-postgame" dir="ltr">
-        <div className="postgame-card" dir="rtl">
-          <div className="postgame-visual">
-            <span className="postgame-eyebrow">{SCREEN_TEXTS.soonMeetText}</span>
-            <div className="postgame-couple">
-              <div className="postgame-char male-char" aria-label="پسر" />
-              <div className="postgame-char female-char" aria-label="دختر" />
-              <div className="postgame-bubble">
-                «خیلی خوشحالم که در این cuarേ Stopped به هم رسیدیم...» 💭
-              </div>
-            </div>
+      <div className="cinematic-screen intro-screen intro-postgame" dir="rtl">
+        <div className="postgame-card">
+          <span className="postgame-eyebrow">{SCREEN_TEXTS.soonMeetText}</span>
+          <p className="postgame-note">{SCREEN_TEXTS.postgameNote}</p>
+
+          <div className="postgame-details" aria-hidden="true">
+            <span>یک دفتر باز</span>
+            <span>یک لیوان نیمهپر</span>
+            <span>یک مکث قبل از در</span>
           </div>
 
           <div className="postgame-actions">
@@ -93,13 +104,16 @@ export const IntroAndEndingScreens: React.FC = () => {
                 {SCREEN_TEXTS.resumeButton}
               </button>
             )}
+            <button type="button" className="text-quiet-btn" onClick={handleRestart}>
+              پاک کردن ذخیره و شروع از اول
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
-  // ۳. پایان محترمانه — در صورت «بله، هستم.»
+  // ۳. پایان محترمانه، وقتی بازیکن گفته رابطه دارد
   if (stage === 'RESPECTFUL_ENDING') {
     return (
       <div className="cinematic-screen ending-screen" dir="rtl">
@@ -116,14 +130,24 @@ export const IntroAndEndingScreens: React.FC = () => {
     );
   }
 
-  // ۴. صفحه‌ی پایانی داستان
+  // ۴. تیتراژ نهایی، متناسب با تصمیم آخر
   if (stage === 'FINAL_ENDING') {
+    const presentation = getEndingPresentation(answers, endingVariant ?? 'slow');
+
     return (
       <div className="cinematic-screen final-screen" dir="rtl">
         <div className="final-card">
-          <span className="cinematic-eyebrow">{SCREEN_TEXTS.finalHeader}</span>
-          <h1 className="final-persian-title">{SCREEN_TEXTS.finalTitle}</h1>
-          <p className="final-persian-quote">{SCREEN_TEXTS.finalQuote}</p>
+          <span className="cinematic-eyebrow">{presentation.eyebrow}</span>
+          <h1 className="final-persian-title">{presentation.title}</h1>
+          <p className="final-persian-quote">{presentation.quote}</p>
+          <p className="ending-summary">{presentation.summary}</p>
+
+          <ul className="ending-detail-list">
+            {presentation.details.map((detail) => (
+              <li key={detail}>{detail}</li>
+            ))}
+          </ul>
+
           <div className="ending-actions">
             <button type="button" className="secondary-ghost-btn warm" onClick={handleReturnToMenu}>
               {SCREEN_TEXTS.playAgainButton}

@@ -6,14 +6,33 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
+    <meta
+      name="description"
+      content="قدم اول — یک داستان تعاملی سهبعدی فارسی در همان فضای دانشگاه: یک جزوه ناقص، یک سوال کوتاه و یک مکث قبل از در لابی."
+    />
     <meta name="theme-color" content="#12151c" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <title>قدم اول</title>
+    <meta name="color-scheme" content="dark" />
+    <title>قدم اول | یک روز معمولی دانشگاه</title>
+    <script>
+      // روی Pages و پیشنمایش استاتیک، بیلد آماده داخل docs/ سرو میشود.
+      // روی سرور لوکال Vite، همان سورس TypeScript از app.html اجرا میشود.
+      (function () {
+        var host = window.location.hostname;
+        var isLocalDev =
+          host === 'localhost' ||
+          host === '127.0.0.1' ||
+          host === '[::1]' ||
+          host === '0.0.0.0';
+        window.location.replace(isLocalDev ? '/app.html' : './docs/index.html');
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <noscript>
+      <a href="./docs/index.html">برای اجرای بازی، جاوااسکریپت را فعال کنید یا اینجا بزنید.</a>
+    </noscript>
+    <a href="./docs/index.html" style="color: #f2c878; font-family: sans-serif">
+      ورود به بازی
+    </a>
   </body>
 </html>

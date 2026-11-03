@@ -25,24 +25,24 @@ const PEDESTALS: {
   {
     id: 'star',
     nodeName: 'GlassStar',
-    label: 'انتخاب ستاره‌ی شیشه‌ای',
-    sublabel: 'درخششِ آرامِ یک امید',
+    label: 'ستاره شیشهای',
+    sublabel: 'نور تویش میشکند',
     pos: [-2.7, 0, -2.4],
     accent: '#7ac7ff',
   },
   {
     id: 'flower',
     nodeName: 'BotanicalFlower',
-    label: 'انتخاب گل',
-    sublabel: 'زندگی، طراوت و حوصله',
+    label: 'گل روی پایه',
+    sublabel: 'یک برگش کمی افتاده',
     pos: [0, 0, -3.4],
     accent: '#f28da8',
   },
   {
     id: 'book',
     nodeName: 'StoryBook',
-    label: 'انتخاب کتاب',
-    sublabel: 'فصل‌های نانوشته‌ی پیشِ رو',
+    label: 'کتاب باز',
+    sublabel: 'صفحهای هنوز خط نخورده',
     pos: [2.7, 0, -2.4],
     accent: '#eab85c',
   },
@@ -68,7 +68,7 @@ export const MissionObjectScene: React.FC = () => {
   useEffect(() => {
     resetPlayerTransform([0, 0, 2.8], Math.PI, 0, 0.24);
     setCinematicShot(null);
-    setObjectiveHint('مرحله دوم — به یکی از پایه‌ها نزدیک شو و شیئی که با دلت حرف می‌زند را انتخاب کن');
+    setObjectiveHint('روی سه تا پایه یک چیز گذاشته شده. یکی را که نگاهت روش ماند، بردار.');
 
     scene.background = new THREE.Color('#d9eeff');
     scene.fog = new THREE.FogExp2('#eef4fa', 0.024);
