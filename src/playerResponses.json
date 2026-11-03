@@ -1,0 +1,529 @@
+{
+  "updatedAt": "2026-11-03T00:32:42.212Z",
+  "totalSessions": 7,
+  "latestSession": {
+    "sessionId": "session_1793665682769_kjr1hk",
+    "startedAt": "2026-11-03T00:28:02.769Z",
+    "updatedAt": "2026-11-03T00:32:42.212Z",
+    "questionnaireResponses": [
+      {
+        "stepKey": "happiness",
+        "chapterLabel": "سوال اول",
+        "question": "معمولاً چه چیزی بیشتر از همه حالت رو خوب می‌کنه؟",
+        "answerId": "unexpected",
+        "answerText": "اتفاق‌های خوب و یهویی",
+        "answeredAt": "2026-11-03T00:28:08.125Z"
+      },
+      {
+        "stepKey": "afternoon",
+        "chapterLabel": "سوال دوم",
+        "question": "یه بعدازظهر آزاد داشته باشی چطوری می‌گذرونیش؟",
+        "answerId": "cafe",
+        "answerText": "رفتن به یه کافه‌ی دنج",
+        "answeredAt": "2026-11-03T00:28:10.822Z"
+      },
+      {
+        "stepKey": "atmosphere",
+        "chapterLabel": "سوال سوم",
+        "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+        "answerId": "flowers_gardens",
+        "answerText": "فضای سبز و پر از گل‌وگیاه",
+        "answeredAt": "2026-11-03T00:28:12.128Z"
+      },
+      {
+        "stepKey": "beginningValue",
+        "chapterLabel": "سوال چهارم",
+        "question": "توی شروعِ یه آشنایی، چی برات از همه مهم‌تره؟",
+        "answerId": "attention_to_detail",
+        "answerText": "توجه به جزئیات کوچیک",
+        "answeredAt": "2026-11-03T00:28:13.622Z"
+      }
+    ],
+    "relationshipQuestion": {
+      "question": "الان با کسی تو رابطه‌ای؟",
+      "answerId": "no",
+      "answerText": "نه، نیستم.",
+      "answeredAt": "2026-11-03T00:29:35.033Z"
+    },
+    "missionChoices": {
+      "selectedPath": {
+        "id": "pink",
+        "label": "مسیر صورتی (صمیمیت و گرما)"
+      },
+      "selectedObject": {
+        "id": "flower",
+        "label": "گل روشن"
+      }
+    },
+    "dialogueResponses": [
+      {
+        "nodeId": "leave_male_call",
+        "speaker": "او",
+        "dialoguePrompt": "ببخشید... سلام! دیدم داری می‌ری، راستش دو به شک بودم صدات کنم یا نه، ولی گفتم اگه الان نگم حتماً بعدش پشیمون می‌شم.",
+        "choiceId": "leave_resp_lobby_contrast",
+        "selectedAnswer": "سلام! اتفاقاً دیدم تو لابی همه دارن با کناریشون حرف می‌زنن جز تو؛ برام سوال شده بود تو چه فکری هستی.",
+        "nextNodeId": "leave_female_lobby_contrast",
+        "answeredAt": "2026-11-03T00:32:24.706Z"
+      },
+      {
+        "nodeId": "male_confession_warm",
+        "speaker": "او",
+        "dialoguePrompt": "پس کاملاً تابلو بودم نه؟ راستش چند وقته تو کلاس می‌بینمت و خیلی دلم می‌خواست باهات هم‌صحبت بشم، فقط نمی‌دونستم چجوری سر صحبت رو باز کنم. از همون چند جلسه‌ی پیش، همین آروم بودن و حال‌وهوات خیلی توجهم رو جلب کرده بود.",
+        "choiceId": "mid_2",
+        "selectedAnswer": "پس کل مدت که اون گوشه ساکت نشسته بودی، داشتی سبک‌سنگین می‌کردی جلو بیای یا نه؟",
+        "nextNodeId": "female_mid_playful",
+        "answeredAt": "2026-11-03T00:32:33.338Z"
+      },
+      {
+        "nodeId": "male_invitation",
+        "speaker": "او",
+        "dialoguePrompt": "خلاصه خیلی خوشحال شدم ایستادی حرف زدیم. اصلاً هم نمی‌خوام عجله‌ای باشه؛ فقط اگه تو هم موافق باشی، خوشحال می‌شم یه روز بعد از کلاس بریم یه کافه‌ی دنج یه قهوه بخوریم و یه کم بیشتر با هم آشنا بشیم. نظرت چیه؟",
+        "choiceId": "final_polite_no",
+        "selectedAnswer": "مرسی از لطفت و اینکه انقدر محترمانه گفتی، ولی ترجیح می‌دم فعلاً همون هم‌کلاسی بمونیم.",
+        "nextNodeId": "ending_female_no",
+        "answeredAt": "2026-11-03T00:32:42.212Z"
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "sessionId": "session_1793661046458_dgoxw6",
+      "startedAt": "2026-11-02T23:10:46.458Z",
+      "updatedAt": "2026-11-02T23:12:03.811Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "happiness",
+          "chapterLabel": "سوال اول",
+          "question": "معمولاً چه چیزی بیشتر از همه خوشحالت می‌کنه؟",
+          "answerId": "simple_things",
+          "answerText": "دلخوشی‌های ساده و کوچک",
+          "answeredAt": "2026-11-02T23:11:02.415Z"
+        },
+        {
+          "stepKey": "afternoon",
+          "chapterLabel": "سوال دوم",
+          "question": "یک بعدازظهر آزاد رو چطور می‌گذرونی؟",
+          "answerId": "walk",
+          "answerText": "قدم زدن در هوای آزاد",
+          "answeredAt": "2026-11-02T23:11:04.690Z"
+        },
+        {
+          "stepKey": "atmosphere",
+          "chapterLabel": "سوال سوم",
+          "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+          "answerId": "starry_sky",
+          "answerText": "آسمان پرستاره‌ی شب",
+          "answeredAt": "2026-11-02T23:11:06.521Z"
+        },
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی یک شروع خوب، چه چیزی از همه مهم‌تره؟",
+          "answerId": "trust",
+          "answerText": "اعتماد و آرامش خاطر",
+          "answeredAt": "2026-11-02T23:11:08.252Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "no",
+        "answerText": "نه، نیستم.",
+        "answeredAt": "2026-11-02T23:11:16.980Z"
+      },
+      "missionChoices": {
+        "selectedPath": {
+          "id": "gold",
+          "label": "مسیر طلایی (امید و روشنایی)"
+        },
+        "selectedObject": {
+          "id": "book",
+          "label": "کتاب گشوده"
+        }
+      },
+      "dialogueResponses": []
+    },
+    {
+      "sessionId": "session_1793661391304_bbml88",
+      "startedAt": "2026-11-02T23:16:31.304Z",
+      "updatedAt": "2026-11-02T23:16:33.801Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی یک شروع خوب، چه چیزی از همه مهم‌تره؟",
+          "answerId": "honesty",
+          "answerText": "صداقت و روراستی",
+          "answeredAt": "2026-11-02T23:16:33.801Z"
+        }
+      ],
+      "relationshipQuestion": null,
+      "missionChoices": {
+        "selectedPath": null,
+        "selectedObject": null
+      },
+      "dialogueResponses": []
+    },
+    {
+      "sessionId": "session_1793661403520_24i7qm",
+      "startedAt": "2026-11-02T23:16:43.520Z",
+      "updatedAt": "2026-11-02T23:24:25.247Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "happiness",
+          "chapterLabel": "سوال اول",
+          "question": "معمولاً چه چیزی بیشتر از همه خوشحالت می‌کنه؟",
+          "answerId": "talking",
+          "answerText": "هم‌صحبتی با آدم‌هایی که دوستشون داری",
+          "answeredAt": "2026-11-02T23:16:45.239Z"
+        },
+        {
+          "stepKey": "afternoon",
+          "chapterLabel": "سوال دوم",
+          "question": "یک بعدازظهر آزاد رو چطور می‌گذرونی؟",
+          "answerId": "cafe",
+          "answerText": "رفتن به یک کافه‌ی دنج",
+          "answeredAt": "2026-11-02T23:16:46.880Z"
+        },
+        {
+          "stepKey": "atmosphere",
+          "chapterLabel": "سوال سوم",
+          "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+          "answerId": "minimalist",
+          "answerText": "فضاهای خلوت و مینیمال",
+          "answeredAt": "2026-11-02T23:16:49.632Z"
+        },
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی یک شروع خوب، چه چیزی از همه مهم‌تره؟",
+          "answerId": "trust",
+          "answerText": "اعتماد و آرامش خاطر",
+          "answeredAt": "2026-11-02T23:16:51.853Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "no",
+        "answerText": "نه، نیستم.",
+        "answeredAt": "2026-11-02T23:16:55.920Z"
+      },
+      "missionChoices": {
+        "selectedPath": {
+          "id": "pink",
+          "label": "مسیر صورتی (صمیمیت و گرما)"
+        },
+        "selectedObject": {
+          "id": "star",
+          "label": "ستاره بلورین"
+        }
+      },
+      "dialogueResponses": [
+        {
+          "nodeId": "leave_male_call",
+          "speaker": "او",
+          "dialoguePrompt": "ببخشید...! سلام. دیدم داری از لابی می‌ری بیرون، یه لحظه با خودم گفتم اگه الان صدات نکنم، شاید تا مدت‌ها بابتِ نگفتنش پشیمون بشم.",
+          "choiceId": "leave_resp_lobby_contrast",
+          "selectedAnswer": "سلام! اتفاقاً دیدم همه دارن با کناریشون حرف می‌زنن جز تو؛ برام سوال شده بود تو چه فکری هستی.",
+          "nextNodeId": "leave_female_lobby_contrast",
+          "answeredAt": "2026-11-02T23:23:38.859Z"
+        },
+        {
+          "nodeId": "male_confession_warm",
+          "speaker": "او",
+          "dialoguePrompt": "پس کاملاً مشخص بود! راستش یه مدته آرامش و وقارت برام خیلی دلنشینه. دنبال بهونه‌ی عجیب‌وغریب نگشتم؛ برام مهم بود هر شروعی کاملاً آروم و با حسِ امنیت و احترام باشه.",
+          "choiceId": "mid_1",
+          "selectedAnswer": "به نظرم همین سادگی و صداقت از هزار تا جمله‌ی از پیش تمرین‌شده قشنگ‌تره.",
+          "nextNodeId": "female_mid_sincere",
+          "answeredAt": "2026-11-02T23:24:02.532Z"
+        },
+        {
+          "nodeId": "male_invitation",
+          "speaker": "او",
+          "dialoguePrompt": "راستش از هم‌صحبتی باهات واقعاً خوشحال شدم. اصلاً نمی‌خوام عجله‌ای باشه؛ فقط اگه تو هم مایل باشی، دوست دارم یه روز سرِ فرصت — مثلاً با یه قهوه توی یه کافه‌ی دنج و آروم — بیشتر با هم آشنا بشیم. نظرِ تو چیه؟",
+          "choiceId": "final_polite_no",
+          "selectedAnswer": "ممنونم از حس قشنگ و احترامت، ولی ترجیح می‌دم فعلاً در حد همین سلامِ دوستانه بمونیم.",
+          "nextNodeId": "ending_female_no",
+          "answeredAt": "2026-11-02T23:24:25.247Z"
+        }
+      ]
+    },
+    {
+      "sessionId": "session_1793661929875_o9g4p0",
+      "startedAt": "2026-11-02T23:25:29.875Z",
+      "updatedAt": "2026-11-02T23:25:53.847Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "happiness",
+          "chapterLabel": "سوال اول",
+          "question": "معمولاً چه چیزی بیشتر از همه خوشحالت می‌کنه؟",
+          "answerId": "music",
+          "answerText": "گوش دادن به موسیقی",
+          "answeredAt": "2026-11-02T23:25:46.876Z"
+        },
+        {
+          "stepKey": "afternoon",
+          "chapterLabel": "سوال دوم",
+          "question": "یک بعدازظهر آزاد رو چطور می‌گذرونی؟",
+          "answerId": "walk",
+          "answerText": "قدم زدن در هوای آزاد",
+          "answeredAt": "2026-11-02T23:25:48.391Z"
+        },
+        {
+          "stepKey": "atmosphere",
+          "chapterLabel": "سوال سوم",
+          "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+          "answerId": "city_night",
+          "answerText": "نورهای شهر در دل شب",
+          "answeredAt": "2026-11-02T23:25:49.667Z"
+        },
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی یک شروع خوب، چه چیزی از همه مهم‌تره؟",
+          "answerId": "time",
+          "answerText": "زمان دادن و عجله نکردن",
+          "answeredAt": "2026-11-02T23:25:51.392Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "yes",
+        "answerText": "بله، هستم.",
+        "answeredAt": "2026-11-02T23:25:53.847Z"
+      },
+      "missionChoices": {
+        "selectedPath": null,
+        "selectedObject": null
+      },
+      "dialogueResponses": []
+    },
+    {
+      "sessionId": "session_1793663496167_442aq7",
+      "startedAt": "2026-11-02T23:51:36.167Z",
+      "updatedAt": "2026-11-02T23:55:04.481Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی شروعِ یه آشنایی، چی برات از همه مهم‌تره؟",
+          "answerId": "honesty",
+          "answerText": "صداقت و روراست بودن",
+          "answeredAt": "2026-11-02T23:51:39.183Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "no",
+        "answerText": "نه، نیستم.",
+        "answeredAt": "2026-11-02T23:51:46.706Z"
+      },
+      "missionChoices": {
+        "selectedPath": {
+          "id": "pink",
+          "label": "مسیر صورتی (صمیمیت و گرما)"
+        },
+        "selectedObject": {
+          "id": "flower",
+          "label": "گل روشن"
+        }
+      },
+      "dialogueResponses": [
+        {
+          "nodeId": "leave_male_call",
+          "speaker": "او",
+          "dialoguePrompt": "ببخشید... سلام! دیدم داری می‌ری، راستش دو به شک بودم صدات کنم یا نه، ولی گفتم اگه الان نگم حتماً بعدش پشیمون می‌شم.",
+          "choiceId": "leave_resp_lobby_contrast",
+          "selectedAnswer": "سلام! اتفاقاً دیدم تو لابی همه دارن با کناریشون حرف می‌زنن جز تو؛ برام سوال شده بود تو چه فکری هستی.",
+          "nextNodeId": "leave_female_lobby_contrast",
+          "answeredAt": "2026-11-02T23:54:38.776Z"
+        },
+        {
+          "nodeId": "male_confession_warm",
+          "speaker": "او",
+          "dialoguePrompt": "پس کاملاً تابلو بودم نه؟ راستش چند وقته تو کلاس می‌بینمت و خیلی دلم می‌خواست باهات هم‌صحبت بشم، فقط نمی‌دونستم چجوری سر صحبت رو باز کنم. گفتم بدون مقدمه و حاشیه، خیلی روراست خودِ حرفم رو بزنم.",
+          "choiceId": "mid_3",
+          "selectedAnswer": "اصلاً انتظارش رو نداشتم، ولی مرسی که انقدر محترمانه اومدی جلو.",
+          "nextNodeId": "female_mid_gentle",
+          "answeredAt": "2026-11-02T23:54:53.312Z"
+        },
+        {
+          "nodeId": "male_invitation",
+          "speaker": "او",
+          "dialoguePrompt": "خلاصه خیلی خوشحال شدم ایستادی حرف زدیم. اصلاً هم نمی‌خوام عجله‌ای باشه؛ فقط اگه تو هم موافق باشی، خوشحال می‌شم یه وقت آزاد پیدا کنیم و راجع به فیلم و چیزایی که دوست داریم گپ بزنیم و یه کم بیشتر با هم آشنا بشیم. نظرت چیه؟",
+          "choiceId": "final_yes_warm",
+          "selectedAnswer": "آره چرا که نه، منم خوشحال می‌شم بیشتر با هم آشنا بشیم.",
+          "nextNodeId": "ending_female_yes",
+          "answeredAt": "2026-11-02T23:55:04.481Z"
+        }
+      ]
+    },
+    {
+      "sessionId": "session_1793664334575_m2pent",
+      "startedAt": "2026-11-03T00:05:34.575Z",
+      "updatedAt": "2026-11-03T00:09:18.255Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "happiness",
+          "chapterLabel": "سوال اول",
+          "question": "معمولاً چه چیزی بیشتر از همه حالت رو خوب می‌کنه؟",
+          "answerId": "music",
+          "answerText": "گوش دادن به موزیک",
+          "answeredAt": "2026-11-03T00:05:41.104Z"
+        },
+        {
+          "stepKey": "afternoon",
+          "chapterLabel": "سوال دوم",
+          "question": "یه بعدازظهر آزاد داشته باشی چطوری می‌گذرونیش؟",
+          "answerId": "walk",
+          "answerText": "قدم زدن تو هوای آزاد",
+          "answeredAt": "2026-11-03T00:05:42.850Z"
+        },
+        {
+          "stepKey": "atmosphere",
+          "chapterLabel": "سوال سوم",
+          "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+          "answerId": "city_night",
+          "answerText": "نورهای شهر توی شب",
+          "answeredAt": "2026-11-03T00:05:44.011Z"
+        },
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی شروعِ یه آشنایی، چی برات از همه مهم‌تره؟",
+          "answerId": "trust",
+          "answerText": "حسِ اعتماد و راحتی",
+          "answeredAt": "2026-11-03T00:05:45.387Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "no",
+        "answerText": "نه، نیستم.",
+        "answeredAt": "2026-11-03T00:05:48.244Z"
+      },
+      "missionChoices": {
+        "selectedPath": {
+          "id": "pink",
+          "label": "مسیر صورتی (صمیمیت و گرما)"
+        },
+        "selectedObject": {
+          "id": "book",
+          "label": "کتاب گشوده"
+        }
+      },
+      "dialogueResponses": [
+        {
+          "nodeId": "leave_male_call",
+          "speaker": "او",
+          "dialoguePrompt": "ببخشید... سلام! دیدم داری می‌ری، راستش دو به شک بودم صدات کنم یا نه، ولی گفتم اگه الان نگم حتماً بعدش پشیمون می‌شم.",
+          "choiceId": "leave_resp_lobby_contrast",
+          "selectedAnswer": "سلام! اتفاقاً دیدم تو لابی همه دارن با کناریشون حرف می‌زنن جز تو؛ برام سوال شده بود تو چه فکری هستی.",
+          "nextNodeId": "leave_female_lobby_contrast",
+          "answeredAt": "2026-11-03T00:08:22.093Z"
+        },
+        {
+          "nodeId": "male_confession_warm",
+          "speaker": "او",
+          "dialoguePrompt": "پس کاملاً تابلو بودم نه؟ راستش چند وقته تو کلاس می‌بینمت و خیلی دلم می‌خواست باهات هم‌صحبت بشم، فقط نمی‌دونستم چجوری سر صحبت رو باز کنم. فقط دلم می‌خواست خیلی محترمانه جلو بیام که یه وقت معذب نشی.",
+          "choiceId": "mid_2",
+          "selectedAnswer": "پس کل مدت که اون گوشه ساکت نشسته بودی، داشتی سبک‌سنگین می‌کردی جلو بیای یا نه؟",
+          "nextNodeId": "female_mid_playful",
+          "answeredAt": "2026-11-03T00:08:53.620Z"
+        },
+        {
+          "nodeId": "male_invitation",
+          "speaker": "او",
+          "dialoguePrompt": "خلاصه خیلی خوشحال شدم ایستادی حرف زدیم. اصلاً هم نمی‌خوام عجله‌ای باشه؛ فقط اگه تو هم موافق باشی، خوشحال می‌شم یه روز بعد از کلاس یه کم تو محوطه یا بیرون قدم بزنیم و یه کم بیشتر با هم آشنا بشیم. نظرت چیه؟",
+          "choiceId": "final_yes_warm",
+          "selectedAnswer": "آره چرا که نه، منم خوشحال می‌شم بیشتر با هم آشنا بشیم.",
+          "nextNodeId": "ending_female_yes",
+          "answeredAt": "2026-11-03T00:09:18.255Z"
+        }
+      ]
+    },
+    {
+      "sessionId": "session_1793665682769_kjr1hk",
+      "startedAt": "2026-11-03T00:28:02.769Z",
+      "updatedAt": "2026-11-03T00:32:42.212Z",
+      "questionnaireResponses": [
+        {
+          "stepKey": "happiness",
+          "chapterLabel": "سوال اول",
+          "question": "معمولاً چه چیزی بیشتر از همه حالت رو خوب می‌کنه؟",
+          "answerId": "unexpected",
+          "answerText": "اتفاق‌های خوب و یهویی",
+          "answeredAt": "2026-11-03T00:28:08.125Z"
+        },
+        {
+          "stepKey": "afternoon",
+          "chapterLabel": "سوال دوم",
+          "question": "یه بعدازظهر آزاد داشته باشی چطوری می‌گذرونیش؟",
+          "answerId": "cafe",
+          "answerText": "رفتن به یه کافه‌ی دنج",
+          "answeredAt": "2026-11-03T00:28:10.822Z"
+        },
+        {
+          "stepKey": "atmosphere",
+          "chapterLabel": "سوال سوم",
+          "question": "کدوم فضا و حال‌وهوا رو بیشتر دوست داری؟",
+          "answerId": "flowers_gardens",
+          "answerText": "فضای سبز و پر از گل‌وگیاه",
+          "answeredAt": "2026-11-03T00:28:12.128Z"
+        },
+        {
+          "stepKey": "beginningValue",
+          "chapterLabel": "سوال چهارم",
+          "question": "توی شروعِ یه آشنایی، چی برات از همه مهم‌تره؟",
+          "answerId": "attention_to_detail",
+          "answerText": "توجه به جزئیات کوچیک",
+          "answeredAt": "2026-11-03T00:28:13.622Z"
+        }
+      ],
+      "relationshipQuestion": {
+        "question": "الان با کسی تو رابطه‌ای؟",
+        "answerId": "no",
+        "answerText": "نه، نیستم.",
+        "answeredAt": "2026-11-03T00:29:35.033Z"
+      },
+      "missionChoices": {
+        "selectedPath": {
+          "id": "pink",
+          "label": "مسیر صورتی (صمیمیت و گرما)"
+        },
+        "selectedObject": {
+          "id": "flower",
+          "label": "گل روشن"
+        }
+      },
+      "dialogueResponses": [
+        {
+          "nodeId": "leave_male_call",
+          "speaker": "او",
+          "dialoguePrompt": "ببخشید... سلام! دیدم داری می‌ری، راستش دو به شک بودم صدات کنم یا نه، ولی گفتم اگه الان نگم حتماً بعدش پشیمون می‌شم.",
+          "choiceId": "leave_resp_lobby_contrast",
+          "selectedAnswer": "سلام! اتفاقاً دیدم تو لابی همه دارن با کناریشون حرف می‌زنن جز تو؛ برام سوال شده بود تو چه فکری هستی.",
+          "nextNodeId": "leave_female_lobby_contrast",
+          "answeredAt": "2026-11-03T00:32:24.706Z"
+        },
+        {
+          "nodeId": "male_confession_warm",
+          "speaker": "او",
+          "dialoguePrompt": "پس کاملاً تابلو بودم نه؟ راستش چند وقته تو کلاس می‌بینمت و خیلی دلم می‌خواست باهات هم‌صحبت بشم، فقط نمی‌دونستم چجوری سر صحبت رو باز کنم. از همون چند جلسه‌ی پیش، همین آروم بودن و حال‌وهوات خیلی توجهم رو جلب کرده بود.",
+          "choiceId": "mid_2",
+          "selectedAnswer": "پس کل مدت که اون گوشه ساکت نشسته بودی، داشتی سبک‌سنگین می‌کردی جلو بیای یا نه؟",
+          "nextNodeId": "female_mid_playful",
+          "answeredAt": "2026-11-03T00:32:33.338Z"
+        },
+        {
+          "nodeId": "male_invitation",
+          "speaker": "او",
+          "dialoguePrompt": "خلاصه خیلی خوشحال شدم ایستادی حرف زدیم. اصلاً هم نمی‌خوام عجله‌ای باشه؛ فقط اگه تو هم موافق باشی، خوشحال می‌شم یه روز بعد از کلاس بریم یه کافه‌ی دنج یه قهوه بخوریم و یه کم بیشتر با هم آشنا بشیم. نظرت چیه؟",
+          "choiceId": "final_polite_no",
+          "selectedAnswer": "مرسی از لطفت و اینکه انقدر محترمانه گفتی، ولی ترجیح می‌دم فعلاً همون هم‌کلاسی بمونیم.",
+          "nextNodeId": "ending_female_no",
+          "answeredAt": "2026-11-03T00:32:42.212Z"
+        }
+      ]
+    }
+  ]
+}
