@@ -8,7 +8,7 @@ import { useGameStore } from '../state/gameStore';
 import { resetPlayerTransform } from '../state/inputStore';
 import { InteractionTarget, PathColorChoice } from '../types/game';
 import { audioManager } from '../audio/AudioManager';
-import { CUTSCENE_MIN_DURATION_MS } from '../dialogue/dialogueData';
+import { CUTSCENE_MIN_DURATION_MS, getPathChoiceMessage } from '../dialogue/dialogueData';
 
 const PATH_CONFIGS: {
   id: PathColorChoice;
@@ -22,8 +22,8 @@ const PATH_CONFIGS: {
 }[] = [
   {
     id: 'blue',
-    label: 'انتخاب مسیر آبی',
-    sublabel: 'آرامش، شفافیت و عمقِ خیال',
+    label: 'رد آبی، کنار دیوار قدیمی',
+    sublabel: 'ساکتتر است و آفتاب کمتری دارد',
     nameFa: 'آبی',
     color: '#4c94e6',
     emissive: '#1e5ba8',
@@ -32,8 +32,8 @@ const PATH_CONFIGS: {
   },
   {
     id: 'pink',
-    label: 'انتخاب مسیر صورتی',
-    sublabel: 'صمیمیت، مهربانی و لطافت',
+    label: 'رد صورتی، از وسط محوطه',
+    sublabel: 'راه مستقیمی است تا جلوی سرِدر',
     nameFa: 'صورتی',
     color: '#ea7fa2',
     emissive: '#a63a5e',
@@ -42,8 +42,8 @@ const PATH_CONFIGS: {
   },
   {
     id: 'gold',
-    label: 'انتخاب مسیر طلایی',
-    sublabel: 'روشنایی، امید و شروعی تازه',
+    label: 'رد طلایی، سمت آفتاب',
+    sublabel: 'نور عصر روی آن افتاده',
     nameFa: 'طلایی',
     color: '#ebb64b',
     emissive: '#9e6b14',
@@ -68,7 +68,7 @@ export const MissionPathScene: React.FC = () => {
   useEffect(() => {
     resetPlayerTransform([0, 0, 3.0], Math.PI, 0, 0.24);
     setCinematicShot(null);
-    setObjectiveHint('مرحله اول — به جلو قدم بزن و یکی از سه مسیر رنگی را انتخاب کن');
+    setObjectiveHint('جلوتر سه تا راه هست. نزدیک هر کدام که رفتی، لمس کن.');
 
     scene.background = new THREE.Color(
       answers.atmosphere === 'starry_sky' ? '#b7cff2' : '#d4ecff'
@@ -89,7 +89,7 @@ export const MissionPathScene: React.FC = () => {
       audioManager.playSfx('object_interact');
       choosePath(cfg.id);
       setObjectiveHint(null);
-      setNarrativeCaption(`در مسیرِ ${cfg.nameFa} قدم گذاشتی — ${cfg.sublabel}.`);
+      setNarrativeCaption(getPathChoiceMessage(cfg.nameFa, cfg.sublabel));
 
       setCinematicShot({
         position: [cfg.endPos[0] * 0.65, 2.2, cfg.endPos[2] + 3.4],

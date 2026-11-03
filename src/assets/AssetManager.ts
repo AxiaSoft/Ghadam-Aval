@@ -8,11 +8,18 @@ export type AssetKey =
   | 'student_npc'
   | 'mission_props';
 
+/**
+ * مسیرها نسبت به BASE_URL هستند تا هم در لوکال و هم در GitHub Pages
+ * (زیرمسیر /Ghadam-Aval/) درست پیدا شوند.
+ */
+const assetUrl = (file: string): string =>
+  `${import.meta.env.BASE_URL}models/${file}?v=4`;
+
 const ASSET_URLS: Record<AssetKey, string> = {
-  female_character: './models/female_character.glb?v=3',
-  male_character: './models/male_character.glb?v=3',
-  student_npc: './models/student_npc.glb?v=3',
-  mission_props: './models/mission_props.glb?v=3',
+  female_character: assetUrl('female_character.glb'),
+  male_character: assetUrl('male_character.glb'),
+  student_npc: assetUrl('student_npc.glb'),
+  mission_props: assetUrl('mission_props.glb'),
 };
 
 class AssetManagerImpl {
@@ -75,28 +82,22 @@ class AssetManagerImpl {
     return promise;
   }
 
-  /**
-   * Progressive Phase 1: Loads essential character rigs before showing Intro
-   */
   public async preloadEssentials(
     onStatus: (progress: number, label: string) => void
   ): Promise<void> {
-    onStatus(10, 'در حال بارگذاری مدل شخصیت اصلی و جزئیات چهره...');
+    onStatus(10, 'چراغهای راهرو روشن میشوند...');
     await this.loadAsset('female_character', (f) => {
-      onStatus(10 + Math.round(f * 45), 'در حال بارگذاری مدل شخصیت اصلی و جزئیات چهره...');
+      onStatus(10 + Math.round(f * 45), 'شخصیت تو آماده میشود...');
     });
 
-    onStatus(58, 'در حال آماده‌سازی کاراکترها و انیمیشن‌های سه‌بعدی...');
+    onStatus(58, 'پسر و جزئیات کلاس آماده میشوند...');
     await this.loadAsset('male_character', (f) => {
-      onStatus(58 + Math.round(f * 35), 'در حال آماده‌سازی کاراکترها و انیمیشن‌های سه‌بعدی...');
+      onStatus(58 + Math.round(f * 35), 'پسر و جزئیات کلاس آماده میشوند...');
     });
 
-    onStatus(100, 'آماده‌ی شروع');
+    onStatus(100, 'آماده شروع');
   }
 
-  /**
-   * Progressive Phase 2: Lazily preloads secondary scene assets when needed
-   */
   public preloadSecondaryAssets(): void {
     this.loadAsset('mission_props').catch(() => {});
     this.loadAsset('student_npc').catch(() => {});
@@ -105,9 +106,6 @@ class AssetManagerImpl {
 
 export const assetManager = new AssetManagerImpl();
 
-/**
- * Safely disposes transient scene geometries & materials to keep mobile GPU memory lean
- */
 export function disposeSceneResources(root: THREE.Object3D | null): void {
   if (!root) return;
   root.traverse((obj) => {

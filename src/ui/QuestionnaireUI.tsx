@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { QUESTIONNAIRE_STEPS, RELATIONSHIP_PROMPT } from '../dialogue/dialogueData';
 import { useGameStore } from '../state/gameStore';
 import { audioManager } from '../audio/AudioManager';
@@ -15,11 +15,20 @@ export const QuestionnaireUI: React.FC = () => {
   const qIndex = useGameStore((s) => s.questionnaireIndex);
   const setQuestionnaireAnswer = useGameStore((s) => s.setQuestionnaireAnswer);
   const advanceQuestionnaire = useGameStore((s) => s.advanceQuestionnaire);
+  const regressQuestionnaire = useGameStore((s) => s.regressQuestionnaire);
   const answerRelationship = useGameStore((s) => s.answerRelationship);
 
   const [animatingOut, setAnimatingOut] = useState(false);
+  const stepTimerRef = useRef<number | null>(null);
 
-  // پرسش‌نامه‌ی شخصیت (۴ گام)
+  useEffect(() => {
+    return () => {
+      if (stepTimerRef.current !== null) {
+        window.clearTimeout(stepTimerRef.current);
+      }
+    };
+  }, []);
+
   if (stage === 'QUESTIONNAIRE') {
     const step = QUESTIONNAIRE_STEPS[qIndex];
     if (!step) return null;
@@ -31,11 +40,19 @@ export const QuestionnaireUI: React.FC = () => {
       audioManager.playSfx('ui_tap');
       setQuestionnaireAnswer(step.key, val);
       setAnimatingOut(true);
-      window.setTimeout(() => {
+      stepTimerRef.current = window.setTimeout(() => {
         advanceQuestionnaire();
         setAnimatingOut(false);
-      }, 310);
+      }, 260);
     };
+
+    const handleBack = () => {
+      if (animatingOut || qIndex === 0) return;
+      audioManager.playSfx('ui_tap');
+      regressQuestionnaire();
+    };
+
+    const progress = ((qIndex + 1) / QUESTIONNAIRE_STEPS.length) * 100;
 
     return (
       <div className="story-prompt-layer" dir="ltr">
@@ -45,36 +62,47 @@ export const QuestionnaireUI: React.FC = () => {
         >
           <div className="question-progress-row">
             <span className="question-chapter">{step.chapterLabel}</span>
-            <div className="question-dots" aria-hidden="true" dir="ltr">
-              {QUESTIONNAIRE_STEPS.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`q-dot ${idx === qIndex ? 'active' : idx < qIndex ? 'done' : ''}`}
-                />
-              ))}
-            </div>
+            <span className="question-step-count">
+              {`${(qIndex + 1).toLocaleString('fa-IR')} / ${QUESTIONNAIRE_STEPS.length.toLocaleString('fa-IR')}`}
+            </span>
+          </div>
+
+          <div className="question-progress-track" dir="ltr">
+            <div className="question-progress-fill" style={{ width: `${progress}%` }} />
           </div>
 
           <h2 className="story-question-title">{step.question}</h2>
+          {step.note && <p className="question-note">{step.note}</p>}
 
           <div className="story-options-grid">
-            {step.options.map((opt) => (
+            {step.options.map((opt, idx) => (
               <button
                 key={opt.id}
                 type="button"
                 className="story-option-btn"
                 onClick={() => handlePick(opt.id)}
               >
+                <span className="option-letter">
+                  {(idx + 1).toLocaleString('fa-IR')}.
+                </span>{' '}
                 {opt.label}
               </button>
             ))}
+          </div>
+
+          <div className="question-panel-footer">
+            {step.hint && <p className="question-hint">{step.hint}</p>}
+            {qIndex > 0 && (
+              <button type="button" className="text-quiet-btn" onClick={handleBack}>
+                سوال قبلی
+              </button>
+            )}
           </div>
         </div>
       </div>
     );
   }
 
-  // سوال آخر (وضعیت رابطه — فقط دو گزینه‌ی «بله، هستم.» و «نه، نیستم.»)
   if (stage === 'RELATIONSHIP_QUESTION') {
     const handleRel = (ans: RelationshipAnswer) => {
       audioManager.playSfx('ui_tap');
@@ -89,13 +117,10 @@ export const QuestionnaireUI: React.FC = () => {
           </div>
 
           <h2 className="story-question-title">{RELATIONSHIP_PROMPT.question}</h2>
+          <p className="question-note relationship-note">{RELATIONSHIP_PROMPT.note}</p>
 
           <div className="story-options-stack">
-            <button
-              type="button"
-              className="story-option-btn"
-              onClick={() => handleRel('yes')}
-            >
+            <button type="button" className="story-option-btn" onClick={() => handleRel('yes')}>
               <span className="option-letter">۱.</span> {RELATIONSHIP_PROMPT.options.yes}
             </button>
             <button

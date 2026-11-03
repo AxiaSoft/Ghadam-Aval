@@ -44,6 +44,8 @@ class CanvasErrorBoundary extends Component<
 export const App: React.FC = () => {
   const stage = useGameStore((s) => s.stage);
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
+  const worldWarmth = useGameStore((s) => s.worldWarmth);
+  const reducedMotion = useGameStore((s) => s.reducedMotion);
   const musicVolume = useGameStore((s) => s.musicVolume);
   const sfxVolume = useGameStore((s) => s.sfxVolume);
   const isMuted = useGameStore((s) => s.isMuted);
@@ -51,7 +53,6 @@ export const App: React.FC = () => {
   const setLoadingState = useGameStore((s) => s.setLoadingState);
   const unlockAudio = useGameStore((s) => s.unlockAudio);
 
-  // Unlock background music on the very first touch/click anywhere in the window
   useEffect(() => {
     const handleFirstGesture = () => {
       audioManager.unlock();
@@ -67,7 +68,6 @@ export const App: React.FC = () => {
     };
   }, [unlockAudio]);
 
-  // Progressive Phase 1: Preload essential rigged GLB character models first
   useEffect(() => {
     let mounted = true;
     assetManager
@@ -76,18 +76,17 @@ export const App: React.FC = () => {
       })
       .then(() => {
         assetManager.preloadSecondaryAssets();
-        if (mounted) setLoadingState(100, 'آماده‌ی شروع', true);
+        if (mounted) setLoadingState(100, 'آماده شروع', true);
       })
       .catch(() => {
         assetManager.preloadSecondaryAssets();
-        if (mounted) setLoadingState(100, 'آماده‌ی شروع', true);
+        if (mounted) setLoadingState(100, 'آماده شروع', true);
       });
     return () => {
       mounted = false;
     };
   }, [setLoadingState]);
 
-  // Synchronize Centralized Audio System with current stage & volume settings
   useEffect(() => {
     audioManager.setVolumes(musicVolume, sfxVolume, isMuted);
   }, [musicVolume, sfxVolume, isMuted]);
@@ -96,7 +95,6 @@ export const App: React.FC = () => {
     audioManager.syncStageMusic(stage);
   }, [stage]);
 
-  // Dynamic rendering resolution based on LOW / MEDIUM / HIGH mobile profile (Section 18)
   const dprRange: [number, number] =
     graphicsProfile === 'LOW'
       ? [0.85, 1.0]
@@ -105,11 +103,11 @@ export const App: React.FC = () => {
         : [1.25, 2.0];
 
   return (
-    <main className="game-shell">
+    <main className="game-shell" data-reduced-motion={reducedMotion ? 'true' : 'false'}>
       <LoadingScreen />
       <OrientationGuard />
 
-      <div className="webgl-stage">
+      <div className="webgl-stage" data-stage={stage}>
         <CanvasErrorBoundary>
           {essentialAssetsLoaded && (
             <Canvas
@@ -128,6 +126,19 @@ export const App: React.FC = () => {
           )}
         </CanvasErrorBoundary>
       </div>
+
+      <div
+        className="world-grade world-grade-cold"
+        aria-hidden="true"
+        style={{ opacity: 0.5 - worldWarmth * 0.28 }}
+      />
+      <div
+        className="world-grade world-grade-warm"
+        aria-hidden="true"
+        style={{ opacity: 0.1 + worldWarmth * 0.26 }}
+      />
+      <div className="film-grain" aria-hidden="true" />
+      <div className="scene-vignette" aria-hidden="true" />
 
       <HUDAndPauseMenu />
       <IntroAndEndingScreens />

@@ -45,18 +45,18 @@ export interface PlayerSessionLog {
   dialogueResponses: LoggedDialogueAnswer[];
 }
 
-const SESSION_STORAGE_KEY = 'the_first_move_response_session_v1';
+const SESSION_STORAGE_KEY = 'the_first_move_response_session_v2';
 
 const PATH_LABELS: Record<PathColorChoice, string> = {
-  blue: 'مسیر آبی (آرامش و عمق)',
-  pink: 'مسیر صورتی (صمیمیت و گرما)',
-  gold: 'مسیر طلایی (امید و روشنایی)',
+  blue: 'رد آبی، کنار دیوار قدیمی',
+  pink: 'رد صورتی، از وسط محوطه',
+  gold: 'رد طلایی، سمت آفتاب',
 };
 
 const OBJECT_LABELS: Record<MissionObjectChoice, string> = {
-  star: 'ستاره بلورین',
-  flower: 'گل روشن',
-  book: 'کتاب گشوده',
+  star: 'ستاره شیشهای',
+  flower: 'گل روی پایه',
+  book: 'کتاب باز',
 };
 
 function createFreshSession(): PlayerSessionLog {
@@ -110,6 +110,8 @@ let syncChain: Promise<void> = Promise.resolve();
 
 function enqueueServerSync(snapshot: PlayerSessionLog): void {
   if (typeof window === 'undefined') return;
+  // روی GitHub Pages سروری برای ذخیره فایل وجود ندارد؛ همان localStorage کافی است.
+  if (!import.meta.env.DEV) return;
   const payload = JSON.stringify(snapshot);
   syncChain = syncChain
     .then(async () => {
@@ -120,7 +122,7 @@ function enqueueServerSync(snapshot: PlayerSessionLog): void {
           body: payload,
         });
       } catch (err) {
-        console.warn('[ResponseLogger] Could not sync responses to src/playerResponses.json:', err);
+        console.warn('[ResponseLogger] Could not sync the local response log:', err);
       }
     })
     .catch(() => {

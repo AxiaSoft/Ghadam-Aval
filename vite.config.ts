@@ -16,7 +16,7 @@ interface StoredResponsesFile {
   sessions: StoredSession[];
 }
 
-const RESPONSES_FILE_PATH = path.resolve(process.cwd(), 'src/playerResponses.json');
+const RESPONSES_FILE_PATH = path.resolve(process.cwd(), '.local/playerResponses.json');
 
 function playerResponsesJsonPlugin(): Plugin {
   let writeQueue: Promise<void> = Promise.resolve();
@@ -111,7 +111,7 @@ function playerResponsesJsonPlugin(): Plugin {
 
               res.statusCode = 200;
               res.setHeader('Content-Type', 'application/json; charset=utf-8');
-              res.end(JSON.stringify({ ok: true, file: 'src/playerResponses.json' }));
+                res.end(JSON.stringify({ ok: true, file: '.local/playerResponses.json' }));
             })
             .catch((err) => {
               if (!res.writableEnded) {
@@ -142,24 +142,29 @@ function playerResponsesJsonPlugin(): Plugin {
 export default defineConfig({
   plugins: [react(), playerResponsesJsonPlugin()],
   base: './',
+  appType: 'mpa',
   server: {
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: true,
     cors: true,
     watch: {
-      ignored: ['**/src/playerResponses.json'],
+      ignored: ['**/.local/**', '**/dist/**', '**/docs/**', '**/node_modules/**'],
     },
   },
   preview: {
     host: '0.0.0.0',
     port: 4173,
     allowedHosts: true,
+    open: false,
   },
   build: {
     target: 'es2020',
     chunkSizeWarningLimit: 1200,
+    outDir: 'docs',
+    emptyOutDir: true,
     rollupOptions: {
+      input: 'app.html',
       output: {
         manualChunks: {
           three: ['three'],

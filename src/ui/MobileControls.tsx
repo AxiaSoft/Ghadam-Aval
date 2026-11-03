@@ -214,7 +214,7 @@ export const MobileControls: React.FC = () => {
         aria-label="چرخش دوربین با لمس"
       >
         <span className="camera-zone-hint" dir="rtl">
-          <Compass size={13} /> چرخش دوربین با کشیدن دست
+          <Compass size={13} /> برای چرخش دوربین، این سمت را بکش
         </span>
       </div>
 
@@ -237,7 +237,7 @@ export const MobileControls: React.FC = () => {
             }}
           />
         </div>
-        <span className="joystick-caption" dir="rtl">حرکت</span>
+        <span className="joystick-caption" dir="rtl">راه رفتن</span>
       </div>
 
       {/* RIGHT SIDE: Dedicated Interaction Button + Context-Sensitive Action Prompt */}
@@ -269,7 +269,7 @@ export const MobileControls: React.FC = () => {
           aria-label={activeInteraction ? activeInteraction.label : 'تعامل'}
         >
           <Sparkles size={22} />
-          <span>تعامل</span>
+          <span>لمس کن</span>
         </button>
       </div>
     </div>

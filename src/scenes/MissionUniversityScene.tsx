@@ -33,7 +33,7 @@ export const MissionUniversityScene: React.FC = () => {
   useEffect(() => {
     resetPlayerTransform([0, 0, 4.8], Math.PI, 0, 0.22);
     setCinematicShot(null);
-    setObjectiveHint('مرحله سوم — در محوطه‌ی دانشگاه به سمت سرِدرِ اصلی حرکت کن');
+    setObjectiveHint('سرِدر جلو است. برو سمت در نیمهباز.');
 
     scene.background = new THREE.Color('#cce6ff');
     scene.fog = new THREE.FogExp2('#eaf2f8', 0.018);
@@ -79,8 +79,8 @@ export const MissionUniversityScene: React.FC = () => {
     () => [
       {
         id: 'univ_main_entrance',
-        label: 'ورود به دانشگاه',
-        sublabel: 'حرکت به سمت کلاسِ درس',
+        label: 'رفتن تو دانشکده',
+        sublabel: 'همان دری که کمی عقبتر مانده',
         position: [0, 0, -4.1],
         radius: 2.25,
         accentColor: '#f5c76e',

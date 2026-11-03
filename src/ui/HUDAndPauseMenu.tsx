@@ -1,13 +1,29 @@
-import React, { useState } from 'react';
-import { Pause, Play, Volume2, VolumeX, RotateCcw, Sliders } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  BookOpen,
+  Clock3,
+  MapPin,
+  Pause,
+  Play,
+  RotateCcw,
+  Sliders,
+  Volume2,
+  VolumeX,
+  X,
+} from 'lucide-react';
 import { useGameStore } from '../state/gameStore';
 import { GraphicsProfile } from '../types/game';
 import { audioManager } from '../audio/AudioManager';
+import {
+  getAmbientDetail,
+  getChapter,
+  getDiscoveredDetails,
+} from '../narrative/world';
 
 const PROFILE_LABELS: Record<GraphicsProfile, string> = {
-  LOW: 'سبک',
-  MEDIUM: 'متعادل',
-  HIGH: 'بالا',
+  LOW: 'کم',
+  MEDIUM: 'معمولی',
+  HIGH: 'کامل',
 };
 
 export const HUDAndPauseMenu: React.FC = () => {
@@ -29,6 +45,15 @@ export const HUDAndPauseMenu: React.FC = () => {
   const unlockAudio = useGameStore((s) => s.unlockAudio);
 
   const [confirmRestart, setConfirmRestart] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+
+  const chapter = getChapter(stage);
+  const ambient = getAmbientDetail(stage);
+  const discovered = getDiscoveredDetails(stage);
+
+  useEffect(() => {
+    setNotesOpen(false);
+  }, [stage]);
 
   const handleToggleMute = () => {
     audioManager.unlock();
@@ -42,6 +67,7 @@ export const HUDAndPauseMenu: React.FC = () => {
     unlockAudio();
     audioManager.playSfx('ui_tap');
     setConfirmRestart(false);
+    setNotesOpen(false);
     setPaused(!isPaused);
   };
 
@@ -57,17 +83,54 @@ export const HUDAndPauseMenu: React.FC = () => {
         }}
       />
 
-      {/* Minimal Top HUD (kept dir="ltr" so Objective Pill stays top-left & icons top-right cleanly) */}
       <header className="minimal-hud" dir="ltr">
         <div className="hud-left">
+          {stage !== 'INTRO' && (
+            <div className="chapter-tag" dir="rtl">
+              <span className="chapter-eyebrow">{chapter.eyebrow}</span>
+              <span className="chapter-title">{chapter.title}</span>
+              <span className="chapter-place">
+                <MapPin size={11} /> {chapter.place}
+                <span className="chapter-dot">·</span>
+                <Clock3 size={11} /> {chapter.time}
+              </span>
+            </div>
+          )}
+
           {objectiveHint && !isPaused && (
             <div className="objective-pill" dir="rtl">
               {objectiveHint}
             </div>
           )}
+
+          {ambient && !isPaused && stage !== 'INTRO' && (
+            <button
+              type="button"
+              className="ambient-detail-chip"
+              onClick={() => setNotesOpen((open) => !open)}
+              aria-label="نمایش جزئیات صحنه"
+            >
+              <span className="ambient-dot" />
+              <span>{ambient.label}</span>
+            </button>
+          )}
         </div>
 
         <div className="hud-right">
+          {discovered.length > 0 && stage !== 'INTRO' && (
+            <button
+              type="button"
+              className="hud-icon-btn"
+              onClick={() => {
+                audioManager.playSfx('ui_tap');
+                setNotesOpen((open) => !open);
+              }}
+              aria-label="دفترچه مشاهدات"
+            >
+              <BookOpen size={18} />
+            </button>
+          )}
+
           <button
             type="button"
             className="hud-icon-btn"
@@ -82,7 +145,7 @@ export const HUDAndPauseMenu: React.FC = () => {
               type="button"
               className="hud-icon-btn"
               onClick={handleOpenPause}
-              aria-label={isPaused ? 'ادامه‌ی بازی' : 'توقف و تنظیمات'}
+              aria-label={isPaused ? 'ادامه بازی' : 'توقف و تنظیمات'}
             >
               {isPaused ? <Play size={18} /> : <Pause size={18} />}
             </button>
@@ -90,21 +153,51 @@ export const HUDAndPauseMenu: React.FC = () => {
         </div>
       </header>
 
-      {/* زیرنویس داستانی فارسی */}
+      {notesOpen && !isPaused && discovered.length > 0 && (
+        <aside className="notes-panel" dir="rtl" aria-label="مشاهدات تا اینجا">
+          <div className="notes-header">
+            <span className="notes-title">
+              <BookOpen size={15} /> دفترچه مشاهدات
+            </span>
+            <button
+              type="button"
+              className="notes-close-btn"
+              onClick={() => setNotesOpen(false)}
+              aria-label="بستن دفترچه"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <ul className="notes-list">
+            {discovered.map((detail) => (
+              <li key={detail.label}>
+                <strong>{detail.label}</strong>
+                <span>{detail.text}</span>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+
       {narrativeCaption && !isPaused && (
         <div className="narrative-caption-bar" dir="rtl" role="status" aria-live="polite">
           <p>{narrativeCaption}</p>
         </div>
       )}
 
-      {/* پنجره‌ی توقف و تنظیمات */}
       {isPaused && (
-        <div className="pause-overlay" dir="rtl" role="dialog" aria-modal="true" aria-label="تنظیمات بازی">
+        <div
+          className="pause-overlay"
+          dir="rtl"
+          role="dialog"
+          aria-modal="true"
+          aria-label="تنظیمات بازی"
+        >
           <div className="pause-modal">
             <div className="pause-header">
               <div className="pause-title-group">
                 <Sliders size={18} />
-                <h2>توقف و تنظیمات</h2>
+                <h2>چند دقیقه مکث</h2>
               </div>
               <button
                 type="button"
@@ -121,7 +214,7 @@ export const HUDAndPauseMenu: React.FC = () => {
             <div className="settings-section">
               <div className="setting-row">
                 <label htmlFor="music-vol">
-                  صدای موسیقی (٪{Math.round(musicVolume * 100).toLocaleString('fa-IR')})
+                  موسیقی (٪{Math.round(musicVolume * 100).toLocaleString('fa-IR')})
                 </label>
                 <input
                   id="music-vol"
@@ -137,7 +230,7 @@ export const HUDAndPauseMenu: React.FC = () => {
 
               <div className="setting-row">
                 <label htmlFor="sfx-vol">
-                  افکت‌های صوتی محیط (٪{Math.round(sfxVolume * 100).toLocaleString('fa-IR')})
+                  صداهای محیط (٪{Math.round(sfxVolume * 100).toLocaleString('fa-IR')})
                 </label>
                 <input
                   id="sfx-vol"
@@ -152,7 +245,7 @@ export const HUDAndPauseMenu: React.FC = () => {
               </div>
 
               <div className="setting-row">
-                <label>کیفیت گرافیکی موبایل</label>
+                <label>کیفیت تصویر</label>
                 <div className="graphics-segmented">
                   {profiles.map((prof) => (
                     <button
@@ -169,6 +262,13 @@ export const HUDAndPauseMenu: React.FC = () => {
                   ))}
                 </div>
               </div>
+
+              <div className="setting-row">
+                <label>کنترلها</label>
+                <p className="settings-help">
+                  چپ: راه رفتن · راست: چرخش دوربین · دکمه زرد: تعامل با چیزی که نزدیک شدی
+                </p>
+              </div>
             </div>
 
             <div className="pause-footer">
@@ -181,11 +281,11 @@ export const HUDAndPauseMenu: React.FC = () => {
                     setConfirmRestart(true);
                   }}
                 >
-                  <RotateCcw size={15} /> شروع دوباره از ابتدا
+                  <RotateCcw size={15} /> شروع دوباره از اول
                 </button>
               ) : (
                 <div className="confirm-restart-row">
-                  <span>داستان از اول شروع شود؟</span>
+                  <span>ذخیره پاک شود و از اول شروع کنیم؟</span>
                   <button
                     type="button"
                     className="confirm-yes-btn"
@@ -195,7 +295,7 @@ export const HUDAndPauseMenu: React.FC = () => {
                       restartGame();
                     }}
                   >
-                    بله، از ابتدا
+                    بله، از اول
                   </button>
                   <button
                     type="button"

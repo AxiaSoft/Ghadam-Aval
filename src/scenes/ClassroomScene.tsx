@@ -110,7 +110,7 @@ export const ClassroomScene: React.FC = () => {
 
     if (stage === 'CLASSROOM_GAMEPLAY') {
       setCinematicShot(null);
-      setObjectiveHint('از راهرو عبور کن و روی صندلیِ خالی بنشین');
+      setObjectiveHint('ردیف آخر یک صندلی خالی هست. برو بشین.');
     }
   }, [stage, setCinematicShot, setNarrativeCaption, setObjectiveHint, transitionTo]);
 
@@ -242,8 +242,8 @@ export const ClassroomScene: React.FC = () => {
     () => [
       {
         id: 'classroom_empty_seat',
-        label: 'نشستن روی صندلی خالی',
-        sublabel: 'ردیف عقب سمت چپ',
+        label: 'نشستن ردیف آخر',
+        sublabel: 'همان صندلی کنار خودکار جا مانده',
         position: [playerSeatPos[0], 0, playerSeatPos[2]],
         radius: 1.25,
         accentColor: '#f4c76c',

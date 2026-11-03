@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useGameStore } from '../state/gameStore';
 import { disposeSceneResources } from '../assets/AssetManager';
+import { AtmosphereField } from './AtmosphereField';
 import { ColdWorldAndTransformScene } from './ColdWorldAndTransformScene';
 import { MissionPathScene } from './MissionPathScene';
 import { MissionObjectScene } from './MissionObjectScene';
@@ -53,7 +54,6 @@ export const SceneManager: React.FC = () => {
       break;
   }
 
-  // Dispose GPU geometries/materials of previous environment on switch (Section 18)
   useEffect(() => {
     const currentGroup = envGroupRef.current;
     return () => {
@@ -63,6 +63,7 @@ export const SceneManager: React.FC = () => {
 
   return (
     <group ref={envGroupRef} key={envKey}>
+      <AtmosphereField />
       {envKey === 'cold_and_transform' && <ColdWorldAndTransformScene />}
       {envKey === 'mission_1_path' && <MissionPathScene />}
       {envKey === 'mission_2_object' && <MissionObjectScene />}

@@ -58,6 +58,15 @@ export type PathColorChoice = 'blue' | 'pink' | 'gold';
 export type MissionObjectChoice = 'star' | 'flower' | 'book';
 export type FinalDecisionChoice = 'leave_trigger';
 
+/** نتیجه‌ی گفت‌وگوی آخر؛ برای ساختن تیتراژ متناسب با تصمیم بازیکن */
+export type EndingVariant = 'yes' | 'slow' | 'no';
+
+/** یک جزئیات قابل مشاهده در صحنه، جدا از دیالوگ */
+export interface SceneDetail {
+  label: string;
+  text: string;
+}
+
 export type MusicTrackId =
   | 'none'
   | 'intro_cold'
@@ -145,11 +154,16 @@ export interface DialogueNode {
   maleEmotion?: CharacterEmotion;
   femaleEmotion?: CharacterEmotion;
   cameraPreset?: 'male_close' | 'female_close' | 'over_shoulder_male' | 'two_shot';
+  /** نشانی کوتاه از زمان و مکان، بالای کارت دیالوگ */
+  beatLabel?: string;
+  /** یادداشت محیطی کوتاه؛ چیزی که دوربین نشان میدهد، نه چیزی که گفته میشود */
+  sceneNote?: string;
   choices?: {
     id: string;
     text: string;
     rtl?: boolean;
     nextNodeId: string;
+    endingVariant?: EndingVariant;
   }[];
   nextNodeId?: string | null;
 }
