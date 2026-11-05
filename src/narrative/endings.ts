@@ -33,8 +33,8 @@ const PLACE_NOTES: Record<AtmosphereChoice, string> = {
 
 const VALUE_NOTES: Record<BeginningValueChoice, string> = {
   honesty: 'حرف ساده و راست، حتی اگر کوتاه باشد',
-  humor: 'یه شوخی کوچیک که مصنوعی نباشد',
-  attention_to_detail: 'حواس جمع به همان خط جاافتاده جزوه',
+  humor: 'یک شوخی که مصنوعی نباشد',
+  attention_to_detail: 'حواس جمع به همان خط خالی برگه',
   trust: 'بتوانی «نه» بگویی و چیزی عجیب نشود',
   time: 'کسی برای جواب سلام عجله نکند',
 };
@@ -53,12 +53,12 @@ const VARIANT_COPY: Record<
   { title: string; quote: string; endingClause: string }
 > = {
   yes: {
-    title: 'پس پنجشنبه، بعد از کلاس.',
+    title: 'پس پنجشنبه، قبل از کلاس.',
     quote: '«قرار نبود چیز عجیبی باشد.»',
-    endingClause: 'یه قرار ساده گذاشته شد',
+    endingClause: 'یه قرار ساده برای چک کردن برگهها گذاشته شد',
   },
   slow: {
-    title: 'همین سلام، فعلاً کافی بود.',
+    title: 'همین خط، فعلاً کافی بود.',
     quote: '«لازم نیست امروز تصمیمی گرفته شود.»',
     endingClause: 'قرار شد عجله نشود',
   },
@@ -86,16 +86,16 @@ export function getEndingPresentation(
 
   const details = [
     `چیزی که آن روز حالت را سر جا آورد: ${happiness}.`,
-    `جایی که دلت میخواست بنشینی: ${place}.`,
+    `جایی که دلت میخواست جزوه را همانجا مرور کنی: ${place}.`,
     `چیزی که برایت مهم بود: ${value}.`,
   ];
 
   if (variant === 'no') {
-    details.push('پسر همان پسر چند ردیف جلوتر ماند؛ اسمی رد و بدل نشد.');
+    details.push('پسر همان پسر دو ردیف جلوتر ماند؛ اسمی رد و بدل نشد.');
   } else {
     const plan = answers.afternoon
       ? AFTERNOON_PLANS[answers.afternoon]
-      : 'یه قهوه بعد از کلاس، هر وقت شد';
+      : 'یه چای بعد از کلاس، هر وقت شد';
     details.push(`قرار احتمالی: ${plan}.`);
   }
 
@@ -103,7 +103,7 @@ export function getEndingPresentation(
     eyebrow: 'پایان این روز',
     title: copy.title,
     quote: copy.quote,
-    summary: `امروز از یه سوال کوتاه سر کلاس شروع شد، با یه خط جاافتاده تو جزوه ادامه پیدا کرد و جلوی در لابی ${copy.endingClause}. هیچ چیز عجیبی اتفاق نیفتاد؛ فقط چند دقیقه حرف زدیم.`,
+    summary: `امروز از یه برگهٔ چاپی شروع شد که خط آخرش خالی بود، با یه سوال کوتاه سر کلاس ادامه پیدا کرد و جلوی در لابی ${copy.endingClause}. هیچ چیز عجیبی اتفاق نیفتاد؛ فقط چند دقیقه حرف زدیم.`,
     details,
     buttonLabel: 'یک روز دیگر از اول',
   };

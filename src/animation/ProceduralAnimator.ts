@@ -83,9 +83,9 @@ export class ProceduralAnimator {
     // 1. BREATHING & ORGANIC MULTI-HARMONIC IDLE SWAY
     const breath = Math.sin(t * 1.65) * 0.5 + 0.5;
     const idleSwayZ =
-      (Math.sin(t * 0.73) * 0.014 + Math.sin(t * 1.31) * 0.008) * (1 - this.walkBlend * 0.7);
+      (Math.sin(t * 0.73) * 0.006 + Math.sin(t * 1.31) * 0.004) * (1 - this.walkBlend * 0.7);
     const idleSwayX =
-      (Math.cos(t * 0.59) * 0.012 + Math.sin(t * 1.12) * 0.006) * (1 - this.walkBlend * 0.7);
+      (Math.cos(t * 0.59) * 0.006 + Math.sin(t * 1.12) * 0.003) * (1 - this.walkBlend * 0.7);
 
     // 2. WALK CYCLE & FOOTSTEPS
     if (this.walkBlend > 0.04) {
@@ -158,10 +158,10 @@ export class ProceduralAnimator {
     } else if (params.pose === 'sit_lean_forward') {
       desiredChestLeanX += 0.28;
     } else if (params.pose === 'talk') {
-      desiredChestLeanX += 0.05 + Math.sin(t * 1.8) * 0.025;
-      desiredChestTwistY += Math.sin(t * 1.15) * 0.055;
+      desiredChestLeanX += 0.025 + Math.sin(t * 1.8) * 0.012;
+      desiredChestTwistY += Math.sin(t * 1.15) * 0.028;
     } else if (params.pose === 'laugh' || emotion === 'happy_laugh') {
-      desiredChestLeanX += -0.05 + Math.sin(t * 7.5) * 0.035;
+      desiredChestLeanX += -0.02 + Math.sin(t * 7.5) * 0.018;
     } else if (params.pose === 'interact') {
       desiredChestLeanX += 0.16;
     }
@@ -240,10 +240,10 @@ export class ProceduralAnimator {
       } else if (params.pose === 'talk' || params.isSpeaking) {
         const g1 = Math.sin(t * 2.5) * 0.5 + 0.5;
         const g2 = Math.cos(t * 1.9);
-        armRX += -0.26 * g1;
-        foreRX += -0.34 * g1;
-        armLX += -0.16 * (1 - g1);
-        foreLX += -0.24 * Math.abs(g2);
+        armRX += -0.13 * g1;
+        foreRX += -0.17 * g1;
+        armLX += -0.08 * (1 - g1);
+        foreLX += -0.12 * Math.abs(g2);
       } else if (params.pose === 'laugh' || emotion === 'happy_laugh') {
         armRX = -0.68;
         armRZ = 0.08;
@@ -263,10 +263,20 @@ export class ProceduralAnimator {
       }
     }
 
+    // ریزحرکت روزمره: خودکار آرام توی دست میچرخد، بدون ژست نمایشی
+    if (
+      nodes.heldPen &&
+      nodes.handR &&
+      (emotion === 'thoughtful' || params.pose === 'sit_nervous' || params.pose === 'interact')
+    ) {
+      nodes.heldPen.rotation.z = Math.sin(t * 1.7) * 0.06;
+      nodes.handR.rotation.y = Math.sin(t * 1.1) * 0.04;
+    }
+
     // 6. HEAD TRACKING & GAZE BEHAVIORS
-    let targetYaw = Math.sin(t * 0.48) * 0.05;
-    let targetPitch = Math.cos(t * 0.62) * 0.03;
-    let targetRoll = Math.sin(t * 0.53) * 0.025;
+    let targetYaw = Math.sin(t * 0.48) * 0.025;
+    let targetPitch = Math.cos(t * 0.62) * 0.018;
+    let targetRoll = Math.sin(t * 0.53) * 0.012;
 
     if (params.gazeBehavior === 'look_backward') {
       targetYaw = 1.12;
@@ -300,9 +310,9 @@ export class ProceduralAnimator {
     }
 
     if (params.pose === 'talk' || params.isSpeaking) {
-      targetPitch += Math.sin(t * 3.8) * 0.042;
-      targetYaw += Math.cos(t * 2.1) * 0.045;
-      targetRoll += Math.sin(t * 1.7) * 0.035;
+      targetPitch += Math.sin(t * 3.8) * 0.022;
+      targetYaw += Math.cos(t * 2.1) * 0.024;
+      targetRoll += Math.sin(t * 1.7) * 0.018;
     } else if (params.pose === 'laugh' || emotion === 'happy_laugh') {
       targetPitch -= 0.1 + Math.sin(t * 7.8) * 0.045;
       targetRoll += 0.09;
@@ -401,28 +411,28 @@ export class ProceduralAnimator {
         targetBrowTiltL = -0.05;
         targetBrowTiltR = 0.05;
         targetLowerSmile = 0.0055;
-        targetCheek = 1.25;
+        targetCheek = 1.08;
         break;
       case 'hopeful':
         targetBrowLift = 0.0065;
         targetBrowTiltL = -0.12;
         targetBrowTiltR = 0.12;
         targetLowerSmile = 0.0045;
-        targetCheek = 1.22;
+        targetCheek = 1.06;
         break;
       case 'shy':
         targetBrowLift = 0.003;
         targetBrowTiltL = -0.22; // Sympathetic raised inner brows!
         targetBrowTiltR = 0.22;
         targetLowerSmile = 0.0035;
-        targetCheek = 1.45;
+        targetCheek = 1.12;
         break;
       case 'nervous':
         targetBrowLift = 0.002;
         targetBrowTiltL = -0.26;
         targetBrowTiltR = 0.26;
         targetLowerSmile = 0.001;
-        targetCheek = 1.35;
+        targetCheek = 1.10;
         break;
       case 'curious':
         targetBrowLift = 0.008;
@@ -436,7 +446,7 @@ export class ProceduralAnimator {
         targetBrowTiltL = -0.08;
         targetBrowTiltR = 0.08;
         targetLowerSmile = 0.0085;
-        targetCheek = 1.42;
+        targetCheek = 1.12;
         break;
       case 'thoughtful':
         targetBrowLift = -0.002;

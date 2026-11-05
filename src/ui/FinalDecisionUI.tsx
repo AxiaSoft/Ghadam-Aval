@@ -14,7 +14,7 @@ export const FinalDecisionUI: React.FC = () => {
     if (!linger) return;
 
     setNarrativeCaption(
-      'هنوز نرفتی. لیوانت را روی میز میگذاری و یک لحظه به پنجره نگاه میکنی.'
+      'هنوز نرفتی. برگهات را دوباره مرتب میکنی و یک لحظه به پنجره نگاه میکنی.'
     );
 
     const timer = window.setTimeout(() => {
@@ -44,7 +44,7 @@ export const FinalDecisionUI: React.FC = () => {
   return (
     <div className="final-decision-dock" dir="rtl" role="region" aria-label="خروج از لابی">
       <div className="final-decision-header">
-        <span className="decision-eyebrow">لابی / قبل از در</span>
+        <span className="decision-eyebrow">لابی / بعد از ارائه</span>
         <span className="decision-sub">با جویاستیک هم میشود سمت در رفت</span>
       </div>
 
@@ -56,7 +56,7 @@ export const FinalDecisionUI: React.FC = () => {
             onClick={handleLeaveLobby}
           >
             <span className="decision-idx">۱</span>
-            <span>بلند شوم و سمت در بروم</span>
+            <span>برگهام را بردارم و سمت در بروم</span>
           </button>
           <button type="button" className="decision-choice-btn" onClick={handleStay}>
             <span className="decision-idx">۲</span>

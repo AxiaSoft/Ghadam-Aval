@@ -1,7 +1,7 @@
 import { GameStage, MusicTrackId } from '../types/game';
 
 /**
- * قطعهها همان هشت فضای قبلین را پوشش میدهند، ولی توضیحشان به جای «حالوهوای کلی»
+ * قطعهها همان هشت فضای قبلین را پوشش میدهند، ولی توضیحشان به جای «فضای کلی»
  * به همان چیزی اشاره میکند که توی صحنه دیده میشود.
  * برای عوض کردن یک صدا، کافی است فایل همان نام را جایگزین کنی یا آدرسش را اینجا تغییر بدهی.
  */
@@ -18,8 +18,8 @@ export const MUSIC_TRACK_FILES: Record<Exclude<MusicTrackId, 'none'>, MusicTrack
   intro_cold: {
     id: 'intro_cold',
     url: new URL('./tracks/01_intro_cold.mp3', import.meta.url).href,
-    titleFa: '۱. صفحه شروع — راهروی خلوت',
-    moodFa: 'پیانوی آرام و صدای باد پشت پنجره؛ انگار چراغها تازه روشن شدهاند',
+    titleFa: '۱. صفحه شروع — راهروی طبقه دوم',
+    moodFa: 'پیانوی آرام، صدای قدمها تو راهرو و چراغهایی که تازه روشن شدهاند',
     volumeScale: 0.95,
   },
   questionnaire_mystery: {
@@ -32,29 +32,29 @@ export const MUSIC_TRACK_FILES: Record<Exclude<MusicTrackId, 'none'>, MusicTrack
   transformation_uplift: {
     id: 'transformation_uplift',
     url: new URL('./tracks/03_transformation_uplift.mp3', import.meta.url).href,
-    titleFa: '۳. رنگ برمیگردد',
-    moodFa: 'زهیهای گرم که آرام بالا میآیند؛ همان لحظه افتادن نور روی دیوار',
+    titleFa: '۳. چراغها روشن میشوند',
+    moodFa: 'زهیهای گرم که آرام بالا میآیند؛ همان لحظه افتادن نور روی کاشیها',
     volumeScale: 1.0,
   },
   missions_adventure: {
     id: 'missions_adventure',
     url: new URL('./tracks/04_missions_adventure.mp3', import.meta.url).href,
-    titleFa: '۴. محوطه تا سرِدر',
-    moodFa: 'قدمزدن آرام در هوای باز، بدون هیچ عجله یا هیجان ساختگی',
+    titleFa: '۴. پرینتر تا دم در ۲۰۴',
+    moodFa: 'قدمزدن آرام تو راهرو، صدای کاغذ و بیست دقیقه تا ارائه',
     volumeScale: 0.95,
   },
   classroom_calm: {
     id: 'classroom_calm',
     url: new URL('./tracks/05_classroom_calm.mp3', import.meta.url).href,
     titleFa: '۵. کلاس ۲۰۴',
-    moodFa: 'خلوت صبحگاهی، صدای بخاری و ورق خوردن دفتر',
+    moodFa: 'صدای بخاری، فهرست روی تخته و ورق خوردن برگهها',
     volumeScale: 0.85,
   },
   classroom_ending: {
     id: 'classroom_ending',
     url: new URL('./tracks/06_classroom_ending.mp3', import.meta.url).href,
-    titleFa: '۶. یک سوال و یک خط خالی',
-    moodFa: 'ویولنسل و پیانوی آرام؛ همان مکث کوتاه بعد از زنگ',
+    titleFa: '۶. همان خط آخر',
+    moodFa: 'ویولنسل و پیانوی آرام؛ همان مکث بعد از یک سوال کوتاه',
     volumeScale: 0.95,
   },
   lobby_warm: {

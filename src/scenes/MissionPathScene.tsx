@@ -2,60 +2,23 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { PlayerController } from '../characters/PlayerController';
+import { StylizedCharacter } from '../characters/StylizedCharacter';
 import { CameraRig } from '../camera/CameraRig';
 import { InteractionSystem } from '../interaction/InteractionSystem';
 import { useGameStore } from '../state/gameStore';
 import { resetPlayerTransform } from '../state/inputStore';
 import { InteractionTarget, PathColorChoice } from '../types/game';
 import { audioManager } from '../audio/AudioManager';
-import { CUTSCENE_MIN_DURATION_MS, getPathChoiceMessage } from '../dialogue/dialogueData';
-
-const PATH_CONFIGS: {
-  id: PathColorChoice;
-  label: string;
-  sublabel: string;
-  nameFa: string;
-  color: string;
-  emissive: string;
-  endPos: [number, number, number];
-  angle: number;
-}[] = [
-  {
-    id: 'blue',
-    label: 'رد آبی، کنار دیوار قدیمی',
-    sublabel: 'ساکتتر است و آفتاب کمتری دارد',
-    nameFa: 'آبی',
-    color: '#4c94e6',
-    emissive: '#1e5ba8',
-    endPos: [-3.1, 0, -4.6],
-    angle: 0.46,
-  },
-  {
-    id: 'pink',
-    label: 'رد صورتی، از وسط محوطه',
-    sublabel: 'راه مستقیمی است تا جلوی سرِدر',
-    nameFa: 'صورتی',
-    color: '#ea7fa2',
-    emissive: '#a63a5e',
-    endPos: [0, 0, -5.2],
-    angle: 0,
-  },
-  {
-    id: 'gold',
-    label: 'رد طلایی، سمت آفتاب',
-    sublabel: 'نور عصر روی آن افتاده',
-    nameFa: 'طلایی',
-    color: '#ebb64b',
-    emissive: '#9e6b14',
-    endPos: [3.1, 0, -4.6],
-    angle: -0.46,
-  },
-];
+import {
+  CUTSCENE_MIN_DURATION_MS,
+  getPathChoiceMessage,
+  PRECLASS_OPTIONS,
+} from '../dialogue/dialogueData';
+import { CorridorShell, PrinterCorner, WindowBench } from './UniversityProps';
 
 export const MissionPathScene: React.FC = () => {
   const { scene } = useThree();
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
-  const answers = useGameStore((s) => s.answers);
   const setObjectiveHint = useGameStore((s) => s.setObjectiveHint);
   const setNarrativeCaption = useGameStore((s) => s.setNarrativeCaption);
   const setCinematicShot = useGameStore((s) => s.setCinematicShot);
@@ -68,37 +31,36 @@ export const MissionPathScene: React.FC = () => {
   useEffect(() => {
     resetPlayerTransform([0, 0, 3.0], Math.PI, 0, 0.24);
     setCinematicShot(null);
-    setObjectiveHint('جلوتر سه تا راه هست. نزدیک هر کدام که رفتی، لمس کن.');
+    setObjectiveHint('کنار پرینتر، برگهٔ آخر بیرون آمده. یکی از سه کار معمولیت را انتخاب کن.');
 
-    scene.background = new THREE.Color(
-      answers.atmosphere === 'starry_sky' ? '#b7cff2' : '#d4ecff'
-    );
-    scene.fog = new THREE.FogExp2('#eaf2fa', 0.022);
+    scene.background = new THREE.Color('#e7eef3');
+    scene.fog = new THREE.FogExp2('#eee7dc', 0.022);
 
     return () => {
       setObjectiveHint(null);
     };
-  }, [scene, answers.atmosphere, setCinematicShot, setObjectiveHint]);
+  }, [scene, setCinematicShot, setObjectiveHint]);
 
-  const handleSelectPath = useCallback(
-    (cfg: (typeof PATH_CONFIGS)[number]) => {
+  const handleSelect = useCallback(
+    (id: PathColorChoice, pos: [number, number, number]) => {
       if (chosenRef.current) return;
       chosenRef.current = true;
       setChosen(true);
 
       audioManager.playSfx('object_interact');
-      choosePath(cfg.id);
+      choosePath(id);
       setObjectiveHint(null);
-      setNarrativeCaption(getPathChoiceMessage(cfg.nameFa, cfg.sublabel));
+      setNarrativeCaption(getPathChoiceMessage(id));
 
       setCinematicShot({
-        position: [cfg.endPos[0] * 0.65, 2.2, cfg.endPos[2] + 3.4],
-        lookAt: [cfg.endPos[0], 1.25, cfg.endPos[2] - 1.2],
+        position: [pos[0] * 0.5, 1.9, pos[2] + 3.2],
+        lookAt: [pos[0], 1.1, pos[2] - 0.6],
         fov: 46,
-        duration: 1.8,
+        duration: 1.7,
       });
 
       window.setTimeout(() => {
+        setNarrativeCaption(null);
         transitionTo('MISSION_2', { withFade: true });
       }, CUTSCENE_MIN_DURATION_MS);
     },
@@ -107,164 +69,55 @@ export const MissionPathScene: React.FC = () => {
 
   const targets = useMemo<InteractionTarget[]>(
     () =>
-      PATH_CONFIGS.map((cfg) => ({
-        id: `path_${cfg.id}`,
-        label: cfg.label,
-        sublabel: cfg.sublabel,
-        position: [cfg.endPos[0] * 0.85, 0, cfg.endPos[2] + 0.55],
-        radius: 2.1,
-        accentColor: cfg.color,
-        onInteract: () => handleSelectPath(cfg),
+      PRECLASS_OPTIONS.map((option) => ({
+        id: `preclass_${option.id}`,
+        label: option.label,
+        sublabel: option.sublabel,
+        position: option.pos,
+        radius: 1.9,
+        accentColor: option.accent,
+        onInteract: () => handleSelect(option.id, option.pos),
       })),
-    [handleSelectPath]
+    [handleSelect]
   );
 
   return (
     <group>
-      <CameraRig followDistance={3.6} followHeight={1.5} />
+      <CameraRig followDistance={3.2} followHeight={1.45} />
 
-      <hemisphereLight args={['#fff7ea', '#668f5e', 1.1]} />
+      <hemisphereLight args={['#fff8ec', '#b4a18a', 1.05]} />
       <directionalLight
-        position={[7, 11, 5]}
-        intensity={1.95}
-        color="#ffe0ab"
+        position={[3, 7, 5]}
+        intensity={1.7}
+        color="#ffe2b4"
         castShadow={graphicsProfile !== 'LOW'}
         shadow-mapSize-width={graphicsProfile === 'HIGH' ? 2048 : 1024}
         shadow-mapSize-height={graphicsProfile === 'HIGH' ? 2048 : 1024}
       />
+      <pointLight position={[0, 2.8, -2]} intensity={0.55} distance={8} color="#fff2d8" />
 
-      {/* Lush sunlit meadow ground */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[28, 48]} />
-        <meshStandardMaterial color="#73a16a" roughness={0.9} />
-      </mesh>
+      <CorridorShell initialWarmth={1} />
+      <PrinterCorner position={[-1.8, 0, -3.6]} initialWarmth={1} />
+      <WindowBench position={[2.5, 0, 0.4]} rotationY={-Math.PI / 2} initialWarmth={1} />
 
-      {/* Rolling horizon hills & sun glow for atmospheric depth */}
-      {[
-        [-14, -1.0, -20, 9.5, 3.8],
-        [0, -1.2, -23, 12.0, 4.4],
-        [14, -1.0, -20, 9.5, 3.8],
-      ].map(([hx, hy, hz, sx, sy], idx) => (
-        <mesh key={`hill-${idx}`} position={[hx, hy, hz]} scale={[sx, sy, 5]}>
-          <sphereGeometry args={[1, 18, 12]} />
-          <meshStandardMaterial color="#5d9464" roughness={0.92} />
-        </mesh>
-      ))}
-      <mesh position={[6, 9.5, -24]}>
-        <circleGeometry args={[2.2, 24]} />
-        <meshBasicMaterial color="#fff3cf" transparent opacity={0.78} />
-      </mesh>
-
-      {/* Starting stone plaza */}
-      <mesh position={[0, 0.02, 3.3]} receiveShadow>
-        <cylinderGeometry args={[2.3, 2.45, 0.06, 32]} />
-        <meshStandardMaterial color="#e7dcc9" roughness={0.78} />
-      </mesh>
-
-      {/* Three Colored Pathways (Blue, Pink, Gold) */}
-      {PATH_CONFIGS.map((cfg) => {
-        const steps = 11;
-        const startX = 0;
-        const startZ = 1.6;
-        return (
-          <group key={cfg.id}>
-            {Array.from({ length: steps }).map((_, i) => {
-              const t = (i + 1) / steps;
-              const x = THREE.MathUtils.lerp(startX, cfg.endPos[0], t);
-              const z = THREE.MathUtils.lerp(startZ, cfg.endPos[2], t);
-              return (
-                <mesh
-                  key={i}
-                  position={[x, 0.025 + i * 0.001, z]}
-                  rotation={[0, cfg.angle, 0]}
-                  receiveShadow
-                >
-                  <boxGeometry args={[1.18, 0.05, 0.62]} />
-                  <meshStandardMaterial
-                    color={cfg.color}
-                    emissive={cfg.emissive}
-                    emissiveIntensity={0.22}
-                    roughness={0.48}
-                  />
-                </mesh>
-              );
-            })}
-
-            {/* Path Destination Stone Archway Shrine */}
-            <group position={cfg.endPos} rotation={[0, cfg.angle, 0]}>
-              <mesh position={[0, 0.03, 0]} receiveShadow>
-                <cylinderGeometry args={[1.15, 1.25, 0.07, 24]} />
-                <meshStandardMaterial color={cfg.color} roughness={0.45} />
-              </mesh>
-              <mesh position={[-0.78, 1.25, -0.3]} castShadow={graphicsProfile !== 'LOW'}>
-                <cylinderGeometry args={[0.1, 0.12, 2.5, 12]} />
-                <meshStandardMaterial color="#efe5d5" roughness={0.7} />
-              </mesh>
-              <mesh position={[0.78, 1.25, -0.3]} castShadow={graphicsProfile !== 'LOW'}>
-                <cylinderGeometry args={[0.1, 0.12, 2.5, 12]} />
-                <meshStandardMaterial color="#efe5d5" roughness={0.7} />
-              </mesh>
-              <mesh position={[0, 2.55, -0.3]}>
-                <boxGeometry args={[1.88, 0.2, 0.3]} />
-                <meshStandardMaterial
-                  color={cfg.color}
-                  emissive={cfg.emissive}
-                  emissiveIntensity={0.35}
-                  roughness={0.4}
-                />
-              </mesh>
-              {/* Glowing lantern spheres flanking archway */}
-              {[-1.05, 1.05].map((lx, li) => (
-                <group key={li} position={[lx, 0, 0.4]}>
-                  <mesh position={[0, 0.5, 0]}>
-                    <cylinderGeometry args={[0.04, 0.06, 1.0, 8]} />
-                    <meshStandardMaterial color="#d8ccb8" roughness={0.75} />
-                  </mesh>
-                  <mesh position={[0, 1.08, 0]}>
-                    <sphereGeometry args={[0.13, 14, 12]} />
-                    <meshStandardMaterial
-                      color={cfg.color}
-                      emissive={cfg.color}
-                      emissiveIntensity={0.85}
-                      roughness={0.2}
-                    />
-                  </mesh>
-                </group>
-              ))}
-            </group>
-          </group>
-        );
-      })}
-
-      {/* Framing garden trees */}
-      {[
-        [-6.2, 0, -2.5],
-        [6.2, 0, -2.5],
-        [-5.8, 0, 2.8],
-        [5.8, 0, 2.8],
-        [-2.2, 0, -9.5],
-        [2.2, 0, -9.5],
-      ].map(([tx, ty, tz], idx) => (
-        <group key={idx} position={[tx, ty, tz]}>
-          <mesh position={[0, 0.85, 0]}>
-            <cylinderGeometry args={[0.12, 0.18, 1.7, 8]} />
-            <meshStandardMaterial color="#6e4f3a" roughness={0.88} />
-          </mesh>
-          <mesh position={[0, 2.05, 0]}>
-            <sphereGeometry args={[0.95, 14, 12]} />
-            <meshStandardMaterial
-              color={idx % 2 === 0 ? '#55945d' : '#64a468'}
-              roughness={0.8}
-            />
-          </mesh>
-        </group>
-      ))}
+      {/* پسر همان دانشکده، چند قدم آنطرفتر، سرش توی برگهٔ خودش است */}
+      <StylizedCharacter
+        kind="male"
+        position={[2.35, 0.02, -4.2]}
+        rotationY={-0.35}
+        pose="idle"
+        emotion="thoughtful"
+        gazeBehavior="down_shy"
+        showPen
+      />
 
       <InteractionSystem targets={targets} enabled={!chosen} />
 
       <PlayerController
-        bounds={{ minX: -6.2, maxX: 6.2, minZ: -8.2, maxZ: 5.2 }}
+        bounds={{ minX: -2.9, maxX: 2.9, minZ: -5.4, maxZ: 4.2 }}
         controlEnabled={!chosen}
+        overridePose={chosen ? 'interact' : undefined}
+        emotion={chosen ? 'thoughtful' : 'neutral'}
       />
     </group>
   );

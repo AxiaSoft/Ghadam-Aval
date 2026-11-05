@@ -22,6 +22,7 @@ import {
   DIALOGUE_NODES,
   DIALOGUE_START_NODE,
 } from '../dialogue/dialogueData';
+import { LobbyDetails } from './UniversityProps';
 
 // چیدمان منسجم و روشن لابی تا تمام شخصیت‌ها هم در حالت عمودی موبایل و هم افقی کاملاً داخل کادر باشند
 const MALE_SEAT_POS: [number, number, number] = [1.85, 0, 0.05];
@@ -132,7 +133,7 @@ export const LobbyAndEndingScene: React.FC = () => {
     }
   }, [stage, transitionTo]);
 
-  // سکانس سینمایی لابی — تمام زوایای دوربین برای نمایش کامل کاراکترها در موبایل و دسکتاپ تنظیم شده‌اند
+  // سکانس سینمایی لابی — تمام جهتهای دوربین برای نمایش کامل کاراکترها در موبایل و دسکتاپ تنظیم شده‌اند
   useEffect(() => {
     if (stage !== 'LOBBY_CINEMATIC') return;
 
@@ -172,6 +173,7 @@ export const LobbyAndEndingScene: React.FC = () => {
 
     // ۳. حرکت نرم در فضای باز وسط به سمت پسر — تنها کسی که ساکت نشسته
     tl.call(() => {
+      setMaleGaze('down_shy');
       setMaleEmotion('thoughtful');
       setCinematicShot({
         position: [0.15, 1.48, 1.55],
@@ -182,10 +184,10 @@ export const LobbyAndEndingScene: React.FC = () => {
       setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat3);
     }, [], beat * 2);
 
-    // ۴. نگاه زیرچشمی پسر به سمت دختر
+    // ۴. نگاه کوتاه از برگه به در
     tl.call(() => {
-      setMaleGaze('target');
-      setMaleEmotion('shy');
+      setMaleGaze('look_away');
+      setMaleEmotion('thoughtful');
       setCinematicShot({
         position: [0.55, 1.4, 0.95],
         lookAt: [MALE_SEAT_POS[0], 1.18, MALE_SEAT_POS[2]],
@@ -221,8 +223,8 @@ export const LobbyAndEndingScene: React.FC = () => {
     // ۶. خم شدن پسر به جلو برای بلند شدن
     tl.call(() => {
       setMalePose('sit_lean_forward');
-      setMaleEmotion('nervous');
-      setMaleGaze('target');
+      setMaleEmotion('thoughtful');
+      setMaleGaze('down_shy');
       setCinematicShot({
         position: [0.48, 1.38, 1.05],
         lookAt: [MALE_SEAT_POS[0], 1.14, MALE_SEAT_POS[2]],
@@ -235,7 +237,7 @@ export const LobbyAndEndingScene: React.FC = () => {
     // ۷. تردید و تکیه دادن دوباره به صندلی
     tl.call(() => {
       setMalePose('sit');
-      setMaleEmotion('shy');
+      setMaleEmotion('thoughtful');
       setMaleGaze('down_shy');
       setCinematicShot({
         position: [0.28, 1.44, 1.32],
@@ -272,7 +274,7 @@ export const LobbyAndEndingScene: React.FC = () => {
     if (stage !== 'FINAL_DECISION') return;
 
     if (!finalDecision) {
-      setObjectiveHint('حرفت تمام شد. اگر میخواهی بروی، سمت در حرکت کن.');
+      setObjectiveHint('حرفت تمام شد. برگهات را بردار و سمت در حرکت کن.');
       setMaleSeated(true);
       setMalePose('sit');
       setMaleEmotion('shy');
@@ -429,7 +431,7 @@ export const LobbyAndEndingScene: React.FC = () => {
       {
         id: 'lobby_exit_doors',
         label: 'رفتن سمت در',
-        sublabel: 'همان دستگیرهای که زیر نور عصر سرد است',
+        sublabel: 'برگه و دستمال کاغذی روی میز میمانند',
         position: [0, 0, 4.45],
         radius: 2.05,
         accentColor: '#f5c76e',
@@ -508,6 +510,9 @@ export const LobbyAndEndingScene: React.FC = () => {
         shadow-mapSize-height={graphicsProfile === 'HIGH' ? 2048 : 1024}
       />
       <pointLight position={[0, 3.8, 0.5]} intensity={0.62} color="#ffe8c2" />
+
+      {/* برگه، دستمال، لیوان و ساعت روی میز کنار پنجره */}
+      <LobbyDetails position={[0, 0.86, 2.1]} />
 
       {/* کفپوش وسیع و گرم لابی (۱۶.۶ در ۱۵.۶ متر) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>

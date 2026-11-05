@@ -14,6 +14,7 @@ import {
   CUTSCENE_CAPTIONS,
   CUTSCENE_MIN_DURATION_MS,
 } from '../dialogue/dialogueData';
+import { CampusSign } from './UniversityProps';
 
 export const MissionUniversityScene: React.FC = () => {
   const { scene } = useThree();
@@ -33,7 +34,7 @@ export const MissionUniversityScene: React.FC = () => {
   useEffect(() => {
     resetPlayerTransform([0, 0, 4.8], Math.PI, 0, 0.22);
     setCinematicShot(null);
-    setObjectiveHint('سرِدر جلو است. برو سمت در نیمهباز.');
+    setObjectiveHint('تابلوی کوچک کنار پلهها سمت کلاس ۲۰۴ را نشان میدهد. برو سمت در نیمهباز.');
 
     scene.background = new THREE.Color('#cce6ff');
     scene.fog = new THREE.FogExp2('#eaf2f8', 0.018);
@@ -60,7 +61,7 @@ export const MissionUniversityScene: React.FC = () => {
     setEntering(true);
     setObjectiveHint(null);
     audioManager.playSfx('door_open');
-    setNarrativeCaption(CUTSCENE_CAPTIONS.universityEnter);
+    setNarrativeCaption(CUTSCENE_CAPTIONS.classroomDoor);
 
     setCinematicShot({
       position: [0, 1.85, -1.8],
@@ -79,8 +80,8 @@ export const MissionUniversityScene: React.FC = () => {
     () => [
       {
         id: 'univ_main_entrance',
-        label: 'رفتن تو دانشکده',
-        sublabel: 'همان دری که کمی عقبتر مانده',
+        label: 'رفتن سمت کلاس ۲۰۴',
+        sublabel: 'همان تابلوی کوچک کنار پلهها',
         position: [0, 0, -4.1],
         radius: 2.25,
         accentColor: '#f5c76e',
@@ -116,6 +117,8 @@ export const MissionUniversityScene: React.FC = () => {
         shadow-mapSize-width={graphicsProfile === 'HIGH' ? 2048 : 1024}
         shadow-mapSize-height={graphicsProfile === 'HIGH' ? 2048 : 1024}
       />
+
+      <CampusSign position={[-2.6, 0, 1.2]} rotationY={0.25} />
 
       {/* Campus Lawn */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>

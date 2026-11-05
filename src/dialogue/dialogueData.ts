@@ -5,20 +5,20 @@ import {
   DialogueNode,
   HappinessChoice,
   MissionObjectChoice,
+  PathColorChoice,
   QuestionnaireAnswers,
 } from '../types/game';
 
 /**
  * تمام متنهای بازی در این فایل است.
- * اصل نوشتن: جمله کوتاه، دلیل مشخص، جزئیات دیدهشده، بدون قول بزرگ و بدون فشار.
+ * اصل نوشتن: جمله کوتاه، دلیل مشخص، جزئیات دیدهشده، بدون تکرار گزینه در پاسخ.
  * پسر اسم ندارد؛ در تمام برچسبها فقط «پسر» نوشته میشود.
  */
 
-// مدت نمایش هر زیرنویس کاتسین. کمی کوتاهتر از قبل تا ریتم روزمره حفظ شود.
 export const CUTSCENE_MIN_DURATION_MS = 4200;
 export const CUTSCENE_MIN_DURATION_SEC = 4.2;
 
-export const DIALOGUE_START_NODE = 'leave_male_call';
+export const DIALOGUE_START_NODE = 'lobby_open';
 
 // ============================================================================
 // ۱. صفحهها، بارگذاری و پیامهای کلی
@@ -26,42 +26,42 @@ export const DIALOGUE_START_NODE = 'leave_male_call';
 export const SCREEN_TEXTS = {
   mainTitle: 'قدم اول',
 
-  introEyebrow: 'یک روز معمولی، دانشکده',
-  introTime: 'چهارشنبه، ۸:۱۰ صبح',
+  introEyebrow: 'چهارشنبه، قبل از کلاس ۲۰۴',
+  introTime: '۸:۱۰ صبح',
   introPlace: 'راهروی طبقه دوم',
   introDescription:
-    'جزوه امروز یک خط کم دارد. تو سر کلاس یک سوال کوتاه میپرسی؛ پسر، چند ردیف جلوتر، همان خط را جا میاندازد. بقیه ماجرا قبل از در لابی و با انتخاب تو اتفاق میافتد.',
-  introControlHint: 'چپ: حرکت  ·  راست: دوربین  ·  نزدیک شدن: تعامل',
-  introFootnote: 'بدون اسم، بدون قول بزرگ؛ فقط چند دقیقه از یک روز.',
+    'امروز نوبت ارائهٔ توست. برگهٔ چاپی یک خط کم دارد؛ تو سر کلاس یک سوال کوتاه میپرسی و پسر، دو ردیف جلوتر، همان خط را جا میاندازد. بقیهٔ ماجرا قبل از در لابی اتفاق میافتد.',
+  introControlHint: 'چپ: حرکت  ·  راست: دوربین  ·  نزدیک شدن: لمس کن',
+  introFootnote: 'اسمی توی کار نیست؛ فقط چند دقیقه قبل از کلاس.',
   startButton: 'شروع این روز',
   resumeButton: 'ادامه از همانجا',
 
   loadingEyebrow: 'در حال آماده کردن صحنه',
   loadingTitle: 'قدم اول',
   loadingNotes: [
-    'اول چراغهای راهرو روشن میشوند.',
-    'بعد صدای زنگ کلاس از دور میآید.',
-    'دفترها باز میشوند؛ یکی هنوز یک خط خالی دارد.',
-    'در آخر، نور عصر میافتد روی کف لابی.',
+    'اول چراغهای راهرو یکییکی روشن میشوند.',
+    'بعد پرینتر کنار کتابخانه یک برگه بیرون میدهد.',
+    'روی تخته، فهرست ارائهها نوشته میشود.',
+    'در آخر، برگهها روی میز لابی کنار دو لیوان کاغذی میمانند.',
   ],
 
   respectfulHeader: 'همینجا میایستیم',
   respectfulYesMessage:
-    'ممنون که راحت گفتی. وقتی رابطهای هست، ادامه دادن این داستان بیاحترامی است. پس همینجا تمام میشود؛ روز خوبی داشته باش.',
+    'ممنون که راحت گفتی. وقتی رابطهای هست، ادامه دادن این گفتوگو بیاحترامی است. خط آخر را فردا خودم مینویسم؛ روز خوبی داشته باش.',
   returnToStartButton: 'برگشت به صفحه اول',
 
   finalHeader: 'پایان این روز',
-  finalTitle: 'همین یک سلام هم کافی بود.',
+  finalTitle: 'همین یک خط هم کافی بود.',
   finalQuote: '«قدم اول لازم نیست بزرگ باشد.»',
   playAgainButton: 'یک روز دیگر از اول',
 
   soonMeetText: 'همان فضا، یک بار دیگر',
   postgameNote:
-    'هر بار چند جزئیات تازه پیدا میشود: یک لیوان، یک خط جزوه، یک مکث قبل از در.',
+    'هر بار یک جزئیات تازه پیدا میشود: برگهٔ گرم پرینتر، جوهر پخششده، دستمال کاغذی، خودکار روی میز.',
 };
 
 // ============================================================================
-// ۲. پرسشنامه: سوالها باید به چیزی تبدیل شوند که بعداً واقعاً دیده شود
+// ۲. پرسشنامه: هر جواب به یک چیز قابل دیدن تبدیل میشود
 // ============================================================================
 export interface QuestionnaireStep {
   key: keyof QuestionnaireAnswers;
@@ -79,8 +79,8 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
     key: 'happiness',
     chapterLabel: 'گام ۱ از ۴',
-    question: 'تو یک روز شلوغ دانشگاه، چی معمولاً یک ذره آرومت میکند؟',
-    note: 'جواب این سوال، یک جزئیات کوچک توی کلاس میشود.',
+    question: 'وقتی سرت شلوغ است، چی یک ذره آرومت میکند؟',
+    note: 'همان شیء روی نیمکت یا میز کلاس دیده میشود.',
     hint: 'چیزی که واقعاً انجام میدهی، نه چیزی که دوست داری انجام بدهی.',
     options: [
       { id: 'music', label: 'یک آهنگ کوتاه با هدفون، بین دو کلاس' },
@@ -93,8 +93,8 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
     key: 'afternoon',
     chapterLabel: 'گام ۲ از ۴',
-    question: 'اگر امروز بعد از کلاس یک ساعت خالی داشته باشی، چیکار میکنی؟',
-    note: 'اگر آخر داستان قرارِ کوچکی گذاشته شود، از همینجا میآید.',
+    question: 'بعد از ارائه، یک ساعت خالی داشته باشی چیکار میکنی؟',
+    note: 'پیشنهاد آخر پسر از همینجا میآید.',
     hint: 'لازم نیست جواب جالبی باشد؛ همان کاری که معمولاً میکنی.',
     options: [
       { id: 'cafe', label: 'کافه کنار کتابخانه، یک چای و یک کتاب' },
@@ -107,8 +107,8 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
     key: 'atmosphere',
     chapterLabel: 'گام ۳ از ۴',
-    question: 'کدام گوشه دانشگاه بیشتر دلت میخواهد بنشینی؟',
-    note: 'این انتخاب، جای خلوت آخر داستان را تعیین میکند.',
+    question: 'کدام گوشهٔ دانشگاه برای مرور جزوه راحتتر است؟',
+    note: 'جای خلوت تیتراژ و دفترچه مشاهدات از همینجا میآید.',
     hint: 'به جایی فکر کن که بدون دلیل خاصی دوست داری بروی آنجا.',
     options: [
       { id: 'starry_sky', label: 'پشت بام خوابگاه، وقتی چراغها کم میشوند' },
@@ -121,13 +121,13 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
     key: 'beginningValue',
     chapterLabel: 'گام ۴ از ۴',
-    question: 'تو یک آشنایی تازه، چی باعث میشود راحت باشی؟',
-    note: 'پسر آخر لابی دقیقاً با همین لحن جلو میآید.',
-    hint: 'این سوال درباره عشق نیست؛ درباره راحت بودن است.',
+    question: 'تو یک همگروهی تازه، چی باعث میشود راحت باشی؟',
+    note: 'لحن جملهٔ آخر پسر و جملهٔ احتیاطیش از همینجا میآید.',
+    hint: 'این سوال درباره عشق نیست؛ درباره راحت بودن سر یک کار مشترک است.',
     options: [
-      { id: 'honesty', label: 'طرف حرفش را راست بگوید، حتی اگر ساده باشد' },
-      { id: 'humor', label: 'یک شوخی کوچیک، بدون اینکه مصنوعی باشد' },
-      { id: 'attention_to_detail', label: 'حواسش به چیزهای ریز باشد، مثل یک خط جزوه' },
+      { id: 'honesty', label: 'راست بگوید، حتی اگر ساده باشد' },
+      { id: 'humor', label: 'شوخی مصنوعی نکند' },
+      { id: 'attention_to_detail', label: 'حواسش به جزئیات باشد، مثل یک خط برگه' },
       { id: 'trust', label: 'بتوانم «نه» بگویم و چیزی عجیب نشود' },
       { id: 'time', label: 'کسی عجله نکند، حتی برای جواب سلام' },
     ],
@@ -137,7 +137,7 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
 export const RELATIONSHIP_PROMPT = {
   chapterLabel: 'یک سوال قبل از شروع',
   question: 'الان با کسی رابطه داری؟',
-  note: 'فقط برای اینکه داستان وارد جایی نشود که برایت ناخوشایند باشد.',
+  note: 'فقط برای اینکه گفتوگو وارد جایی نشود که برایت ناخوشایند باشد.',
   options: {
     yes: 'بله، دارم.',
     no: 'نه، ندارم.',
@@ -149,224 +149,236 @@ export const RELATIONSHIP_PROMPT = {
 // ============================================================================
 export const CUTSCENE_CAPTIONS = {
   worldTransform:
-    'دیگر لازم نیست تصورش کنی: پنجرهها روشن میشوند، رنگ دیوارها برمیگردد و صدای قدمها تو راهرو میپیچد.',
+    'چراغهای راهرو یکییکی روشن میشوند. رنگ کاشیها و درهای چوبی برمیگردد و صدای قدمها تو راهرو میپیچد.',
   universityEnter:
-    'ساعت هشت و بیست و هشت دقیقه است. بوی قهوه از کافه کنار کتابخانه میآید و در نیمهباز است.',
-  pathChoice: 'جلوتر سه رد رنگ کمرنگ روی زمین افتاده؛ هیچ تابلویی بالایشان نیست.',
-  objectChoice: 'روی سه پایه چیزی گذاشته شده، بدون برچسب و بدون توضیح.',
+    'ساعت هشت و بیست و هشت دقیقه است. تابلو کوچک کنار پلهها نوشته «کلاس ۲۰۴ ←» و در نیمهباز است.',
+  classroomDoor:
+    'روی تخته فهرست ارائهها نوشته شده؛ اسم تو ردیف سوم است. پسر دو ردیف جلوتر برگهاش را صاف کرده.',
+  pathChoice: 'کنار پرینتر، برگهٔ آخر هنوز گرم است و خط آخرش سفید مانده.',
+  objectChoice: 'روی نیمکت، برگه، خودکار و یک لیوان کاغذی کنار هم گذاشته شدهاند.',
   universityGate: 'سرِدر جلو است. یکی از لنگههای در کمی عقبتر مانده.',
 
   classroomEntry:
-    'کلاس هنوز نیمهخالیه. بخاری کنار تخته صدای ریزی میدهد و روی ردیف آخر یک خودکار جا مانده.',
+    'کلاس ۲۰۴ هنوز نیمهخالیه. روی تخته فهرست ارائهها نوشته شده؛ اسم تو ردیف سوم است. بخاری کنار تخته صدای ریزی میدهد.',
   classroomBeat1:
-    'مینشینی ردیف آخر. استاد شروع میکند و تو دفترت را باز میکنی روی یک صفحه تازه.',
+    'مینشینی ردیف آخر. پروژکتور روشن است، ولی اسلاید اول هنوز بالا نیامده.',
   classroomBeat2:
-    'چند ردیف جلوتر، پسر خط آخر جزوهاش را جا میاندازد و نوک خودکارش را هی میچرخاند.',
+    'دو ردیف جلوتر، پسر برگهاش را صاف میکند. خط آخرش مثل برگهٔ تو خالی است.',
   classroomBeat3:
-    'یک سوال کوتاه از عقب کلاس میپرسی. استاد جواب میدهد؛ پسر برمیگردد ببیند کی پرسیده.',
+    'قبل از شروع، یک سوال کوتاه میپرسی: «جواب آخرین سوال کدام اسلاید است؟» استاد همان خط را میگوید.',
   classroomBeat4:
-    'نگاهت که به او میافتد، سریع برمیگردد سمت تخته و همان خط خالی را دوباره مینویسد.',
+    'پسر برمیگردد، نگاهش به برگهٔ تو میافتد، بعد سریع همان خط را مینویسد.',
   classroomBeat5:
-    'زنگ میخورد. صدای زیپ کیفها و کشیده شدن صندلیها جای صدای استاد را میگیرد.',
+    'ارائهات تمام میشود. صدای زیپ کیفها و کشیده شدن صندلیها جای صدای پروژکتور را میگیرد.',
   classroomBeat6:
-    'دم در، پسر یک لحظه مکث میکند، انگار بخواهد چیزی بپرسد؛ بعد کیفش را جابجا میکند و رد میشود.',
+    'دم در، پسر خودکاری را روی میز میگذارد و کیفش را جابجا میکند؛ هنوز چیزی نمیگوید.',
 
   lobbyBeat1:
-    'لابی پر از صدای آدم است، ولی هر کس سر یک میز کوچیک نشسته. دو لیوان کاغذی کنار پنجره مانده.',
+    'لابی پر از صدای آدم است. روی میز کنار پنجره، دو لیوان کاغذی، یک دستمال و یک برگهٔ چاپی مانده.',
   lobbyBeat2:
-    'تو روبهروی دوستت نشستی. درباره همان سوال کلاس حرف میزنید و خطی که هنوز تو جزوه خالی است.',
+    'تو روبهروی دوستت نشستی. دربارهٔ ارائه و همان خط خالی حرف میزنید، نه دربارهٔ چیز دیگری.',
   lobbyBeat3:
-    'پسر یک میز آنورتر تنها نشسته. دوستش زود رفته و او هنوز دفترش را باز گذاشته، بدون اینکه بنویسد.',
+    'پسر یک میز آنورتر تنها نشسته. برگهاش را جلویش گذاشته و دفترش را بسته، ولی هنوز نرفته.',
   lobbyBeat4:
-    'هر چند دقیقه یک بار به در نگاه میکند، نه به آدمها. بعد دوباره برمیگردد سر همان صفحه.',
+    'یک بار به برگه نگاه میکند، یک بار به در. بعد خودکارش را برمیدارد و دوباره میگذارد.',
   lobbyBeat5:
-    'دوستت یک خنده کوتاه میکند و حواستان پیش حرف خودتان است. بیرون، نور عصر افتاده روی کف لابی.',
+    'دوستت میگوید «حداقل خوب پیش رفت» و بلند میشود. بیرون، نور عصر افتاده روی کف لابی.',
   lobbyBeat6:
-    'پسر دستش را میگذارد روی میز، انگار بلند شود؛ ولی دوباره مینشیند. هنوز جملهای پیدا نکرده.',
+    'پسر دستش را میگذارد روی میز، انگار بلند شود؛ ولی دوباره مینشیند.',
   lobbyBeat7:
-    'بالاخره دفترش را میبندد. نه با عجله، فقط انگار تصمیمش را گرفته.',
+    'بالاخره برگه را برمیدارد. نه با عجله، فقط انگار تصمیمش را گرفته.',
   lobbyReadyToLeave: 'حرفتان تمام میشود. کیفت را برمیداری و سمت در راه میافتی.',
   lobbyLeavingTrigger:
-    'پشت سرت صدای صندلی میآید. پسر بلند شده، دفترش را گرفته و دارد میآید؛ هنوز معلوم نیست چه میخواهد بگوید.',
+    'پشت سرت صدای صندلی میآید. پسر بلند شده، برگهاش را گرفته و دارد میآید.',
 };
 
 // ============================================================================
-// ۴. کمککنندههای شخصیسازی
+// ۴. مرحلهٔ ۱ و ۲: یک خط داستانی پیوسته، بهجای سه راه و سه شیء
 // ============================================================================
-const VALUE_PHRASES: Record<BeginningValueChoice, string> = {
-  honesty: 'راست گفتن',
-  humor: 'یک شوخی کوچیک',
-  attention_to_detail: 'حواس جمع به جزئیات',
-  trust: 'راحت بودن و بتوانی نه بگویی',
-  time: 'عجله نکردن',
+export interface StoryChoiceOption<T extends string> {
+  id: T;
+  label: string;
+  sublabel: string;
+  response: string;
+  pos: [number, number, number];
+  accent: string;
+}
+
+export const PRECLASS_OPTIONS: StoryChoiceOption<PathColorChoice>[] = [
+  {
+    id: 'blue',
+    label: 'زیر خط خالی را همانجا مشخص کن',
+    sublabel: 'با همان خودکار توی کیفت',
+    response: 'یک خط نازک زیر سفیدی میکشی. حداقل سر کلاس میدانی دنبال چی میگردی.',
+    pos: [-2.2, 0, -2.6],
+    accent: '#6f93b8',
+  },
+  {
+    id: 'pink',
+    label: 'اول تابلو اعلانات را چک کن',
+    sublabel: 'شاید ترتیب ارائهها عوض شده باشد',
+    response: 'اسمت هنوز ردیف سوم است. کنارش یک برگهٔ قدیمی از ترم قبل مانده، با همان خط تیره وسطش.',
+    pos: [0, 0, -3.4],
+    accent: '#c98d86',
+  },
+  {
+    id: 'gold',
+    label: 'برگه را بگیر و برو سر نیمکت',
+    sublabel: 'همانجا با فرصت ببینش',
+    response: 'کاغذ هنوز گرم است. لبهاش کمی تا خورده، ولی خط آخر همانطور خالی است.',
+    pos: [2.2, 0, -2.6],
+    accent: '#d3ad67',
+  },
+];
+
+export const REHEARSAL_OPTIONS: StoryChoiceOption<MissionObjectChoice>[] = [
+  {
+    id: 'star',
+    label: 'سه اسلاید آخر را زیر لب مرور کن',
+    sublabel: 'قبل از اینکه زنگ بخورد',
+    response: 'جملهٔ دوم گیر میکند، دوباره از اول میگویی. پسر آنطرف میز خودکارش را آرام زمین میگذارد.',
+    pos: [-2.0, 0, -2.2],
+    accent: '#8aa9c4',
+  },
+  {
+    id: 'flower',
+    label: 'خط خالی را همانجا پر کن',
+    sublabel: 'جوابی که استاد گفت',
+    response: 'جواب را مینویسی، ولی جوهر کمی پخش میشود. پسر یک دستمال کاغذی جلو میگذارد و برمیگردد سر برگهٔ خودش.',
+    pos: [0, 0, -3.0],
+    accent: '#c98d86',
+  },
+  {
+    id: 'book',
+    label: 'کیفت را مرتب کن و دو دقیقه کاری نکن',
+    sublabel: 'فقط نفس بگیر',
+    response: 'زیپ کیف بسته میشود. صدای زنگ از راهرو میآید؛ هنوز چند دقیقه مانده.',
+    pos: [2.0, 0, -2.2],
+    accent: '#b9a27c',
+  },
+];
+
+const HAPPINESS_ECHO: Record<HappinessChoice, string> = {
+  music: 'هدفونت را هنوز توی کیف گذاشتی.',
+  talking: 'دوستت همانطرف میز نشسته، ولی چیزی نمیپرسد.',
+  going_out: 'کتت را پشت نیمکت گذاشتی.',
+  unexpected: 'زنگ کمی زودتر از چیزی که فکر میکردی خورد.',
+  simple_things: 'لیوانت را مرتب کردی کنار برگه.',
 };
 
-function getValuePhrase(value?: BeginningValueChoice): string {
-  return value ? VALUE_PHRASES[value] : 'راحت بودن';
+export function getPathChoiceMessage(id: PathColorChoice): string {
+  return PRECLASS_OPTIONS.find((option) => option.id === id)?.response ?? '';
 }
 
 export function getPersonalizedObjectMessage(
-  obj: MissionObjectChoice,
+  id: MissionObjectChoice,
   answers: QuestionnaireAnswers
 ): string {
-  const valuePhrase = getValuePhrase(answers.beginningValue);
-
-  if (obj === 'star') {
-    return `ستاره شیشهای را برمیداری. نور توی آن میشکند و یک لکه کوچک روی میز میاندازد. لازم نیست معنی خاصی پشتش باشد؛ همین ${valuePhrase} کافی است.`;
-  }
-  if (obj === 'flower') {
-    return `گل را برمیداری. یکی از برگهایش کمی افتاده و حواست همانجا میرود، نه پیش حرفهای بزرگ. ${valuePhrase} هم معمولاً از همینجور چیزها شروع میشود.`;
-  }
-  return `کتاب باز است و صفحه سفیدش هنوز خط نخورده. ${valuePhrase} یعنی مجبور نیستی زود پرش کنی.`;
+  const base = REHEARSAL_OPTIONS.find((option) => option.id === id)?.response ?? '';
+  const echo = answers.happiness ? HAPPINESS_ECHO[answers.happiness] : '';
+  return echo ? `${base} ${echo}` : base;
 }
 
+// ============================================================================
+// ۵. کمککنندههای شخصیسازی گفتوگوی آخر
+// ============================================================================
 function getAfternoonSuggestion(afternoon?: AfternoonChoice): string {
   switch (afternoon) {
     case 'cafe':
-      return 'پنجشنبه بعد از کلاس، کافه کنار کتابخانه، یک چای بخوریم';
+      return 'پنج دقیقه قبلش کافه کنار کتابخانه، یک چای و همان برگهها';
     case 'walk':
-      return 'پنجشنبه بعد از کلاس یک دور تو محوطه تا سرِدر قدم بزنیم';
+      return 'پنج دقیقه قبلش یک دور تا سرِدر، حین راه برگهها را چک کنیم';
     case 'movie':
-      return 'یک روز چند دقیقه درباره همان فیلم کوتاه حرف بزنیم';
+      return 'بعدش چند دقیقه درباره همان فیلم کوتاه حرف بزنیم';
     case 'games':
       return 'سر یک میز کافه یک بازی ساده بکنیم';
     case 'adventure':
       return 'یک روز بیبرنامه از در بیرون برویم و هر جا رسیدیم برگردیم';
     default:
-      return 'یک روز بعد از کلاس یک چای بخوریم و بیشتر حرف بزنیم';
+      return 'پنج دقیقه قبلش یک چای بخوریم و برگهها را چک کنیم';
   }
 }
 
-function getBeginningValueEcho(value?: BeginningValueChoice): string {
+export function getInvitationCaveat(value?: BeginningValueChoice): string {
   switch (value) {
     case 'honesty':
-      return 'راستش دلیلش فقط جزوه نبود؛ میخواستم سلام کنم، ولی دنبال یک جمله معمولی میگشتم که الکی نباشد.';
+      return 'راستش دلیلش همین برگه است، چیز دیگری پشتش نیست.';
     case 'humor':
-      return 'از بس تو ذهنم جمله چیدم، آخرش فقط همان خط جزوه یادم ماند.';
+      return 'قول نمیدهم سر جلسه جملهٔ بهتری پیدا کنم.';
     case 'attention_to_detail':
-      return 'همان سوالی که پرسیدی، خط آخر جزوهام را کامل کرد. اینجور چیزها معمولاً یادم میماند.';
-    case 'trust':
-      return 'نمیخواستم یکهو جلو بیایم و ناراحتت کنم؛ اگر عجله داری، همینجا تمامش میکنم.';
-    case 'time':
-      return 'اصلاً عجله ندارم. اگر امروز نشد، فردا هم سر کلاس هستیم.';
-    default:
-      return 'گفتم حداقل یک سلام ساده بکنم، بدون مقدمهچینی.';
-  }
-}
-
-function getHappinessEcho(happiness?: HappinessChoice): string {
-  switch (happiness) {
-    case 'music':
-      return 'همان موقع هدفونت را درآورده بودی که سوال کنی.';
-    case 'talking':
-      return 'قبل از سوال، یک جمله کوتاه به بغلت گفتی.';
-    case 'going_out':
-      return 'کتت را پشت صندلی گذاشتی و برگشتی سر دفتر.';
-    case 'unexpected':
-      return 'یک دفعه خندیدی، بعد سوال پرسیدی.';
-    case 'simple_things':
-      return 'لیوانت را مرتب کردی کنار دفتر، بعد پرسیدی.';
-    default:
-      return 'همان سوال کوتاه، هنوز یادم هست.';
-  }
-}
-
-function getInvitationCaveat(value?: BeginningValueChoice): string {
-  switch (value) {
-    case 'honesty':
-      return 'راستش دلیلش همین است، چیز دیگری پشتش نیست.';
-    case 'humor':
-      return 'قول نمیدهم سر قرار جمله بهتری پیدا کنم.';
-    case 'attention_to_detail':
-      return 'جزوه را هم میآورم، خط آخرش را با هم چک کنیم.';
+      return 'خط آخر را هم با هم چک کنیم، همان که امروز خالی ماند.';
     case 'trust':
       return 'اگر راحت نیستی، همینجا تمامش میکنم.';
     case 'time':
-      return 'اصلاً عجله نیست؛ فردا هم سر کلاس هستیم.';
+      return 'عجله نیست؛ فردا هم سر کلاس هستیم.';
     default:
-      return 'اگر نخواستی، هیچ چیزی هم قرار نیست عوض شود.';
+      return 'اگر نخواستی، هیچی عوض نمیشود.';
   }
 }
 
-export function getPathChoiceMessage(nameFa: string, detail: string): string {
-  return `رفتی سمت رد ${nameFa}. ${detail} جلوتر هنوز چیزی مشخص نیست، فقط راه ادامه دارد.`;
-}
-
 // ============================================================================
-// ۵. گفتوگوی لابی: شروع با یک دلیل واقعی، ادامه با انتخاب بازیکن
+// ۶. گفتوگوی لابی: هر جواب یک واکنش تازه میگیرد، نه تکرار گزینه
 // ============================================================================
 export const DIALOGUE_NODES: Record<string, DialogueNode> = {
-  leave_male_call: {
-    id: 'leave_male_call',
+  lobby_open: {
+    id: 'lobby_open',
     speaker: 'male',
     speakerLabel: 'پسر',
     rtl: true,
-    maleEmotion: 'nervous',
+    maleEmotion: 'thoughtful',
     femaleEmotion: 'curious',
     cameraPreset: 'male_close',
     beatLabel: 'لابی / ۱۰:۱۹',
-    sceneNote: 'دفترش را گرفته، ولی هنوز بازش نکرده.',
-    text: 'ببخشید، یک لحظه... جزوه امروز را کامل نوشتی؟ من خط آخرش را جا انداختم و دیدم داری میروی، گفتم قبل از اینکه بری بپرسم. همان سوالی که سر کلاس پرسیدی، یادم ماند.',
+    sceneNote: 'برگه را گرفته، ولی هنوز بازش نکرده.',
+    text: 'ببخشید، یک لحظه. سر کلاس آن خط آخر را نوشتی؟ من جا انداختم و برگهام ناقص ماند. گفتم قبل از اینکه بری بپرسم، چون فردا همین برگه را دوباره میخواهیم.',
     choices: [
       {
-        id: 'leave_resp_note',
-        text: 'آره، جزوه پیشمه. همینجا نشونت بدم.',
+        id: 'line_photo',
+        text: 'آره، نوشتم. بگیر عکس بگیر، برگهام پیشمه.',
         rtl: true,
-        nextNodeId: 'female_note_practical',
+        nextNodeId: 'male_takes_photo',
       },
       {
-        id: 'leave_resp_shared',
-        text: 'منم همان قسمت را نفهمیدم. دو دقیقه با هم چک کنیم؟',
+        id: 'line_compare',
+        text: 'منم همان قسمت را جا انداختم. دو دقیقه با هم چک کنیم؟',
         rtl: true,
-        nextNodeId: 'female_note_shared',
+        nextNodeId: 'male_compare',
       },
       {
-        id: 'leave_resp_time',
-        text: 'امروز عجله دارم، ولی فردا قبل از کلاس میتوانم بدهم بهت.',
+        id: 'line_tomorrow',
+        text: 'امروز عجله دارم، فردا قبل از کلاس میدم بهت.',
         rtl: true,
-        nextNodeId: 'female_note_short',
+        nextNodeId: 'male_respects_time',
       },
     ],
   },
 
-  female_note_practical: {
-    id: 'female_note_practical',
-    speaker: 'female',
-    speakerLabel: 'تو',
+  male_takes_photo: {
+    id: 'male_takes_photo',
+    speaker: 'male',
+    speakerLabel: 'پسر',
     rtl: true,
-    maleEmotion: 'thoughtful',
+    maleEmotion: 'neutral',
     femaleEmotion: 'neutral',
-    cameraPreset: 'female_close',
+    cameraPreset: 'two_shot',
     beatLabel: 'لابی / ۱۰:۱۹',
-    text: 'آره، پیشمه. بگیر نگاه کن؛ خط آخر را هم مشخص کردم.',
-    nextNodeId: 'male_note_followup',
+    sceneNote: 'گوشی را بالای برگه میگیرد، بدون اینکه چیز دیگری بپرسد.',
+    text: 'مرسی. عکسش را گرفتم. حداقل فردا دوباره گیر نمیکنم.',
+    nextNodeId: 'male_why_waited',
   },
 
-  female_note_shared: {
-    id: 'female_note_shared',
-    speaker: 'female',
-    speakerLabel: 'تو',
+  male_compare: {
+    id: 'male_compare',
+    speaker: 'male',
+    speakerLabel: 'پسر',
     rtl: true,
     maleEmotion: 'curious',
-    femaleEmotion: 'warm_smile',
+    femaleEmotion: 'thoughtful',
     cameraPreset: 'two_shot',
     beatLabel: 'لابی / ۱۰:۲۰',
-    text: 'منم همان قسمت را جا انداختم. بشینیم دو دقیقه چک کنیم، شاید هر دو حل شود.',
-    nextNodeId: 'male_note_followup',
-  },
-
-  female_note_short: {
-    id: 'female_note_short',
-    speaker: 'female',
-    speakerLabel: 'تو',
-    rtl: true,
-    maleEmotion: 'thoughtful',
-    femaleEmotion: 'neutral',
-    cameraPreset: 'female_close',
-    beatLabel: 'لابی / ۱۰:۱۹',
-    sceneNote: 'کیفت هنوز روی شانهات است.',
-    text: 'امروز عجله دارم. فردا قبل از کلاس میآورم، باشه؟',
-    nextNodeId: 'male_respects_time',
+    sceneNote: 'دو برگه را کنار هم روی میز میگذارد.',
+    text: 'باشه، دو تا برگه را بگذاریم کنار هم. شاید یکیامان درست نوشته باشیم.',
+    nextNodeId: 'male_why_waited',
   },
 
   male_respects_time: {
@@ -378,116 +390,85 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     femaleEmotion: 'neutral',
     cameraPreset: 'two_shot',
     beatLabel: 'لابی / ۱۰:۲۰',
-    text: 'باشه، پس فردا. دستت درد نکند که وایسادی؛ نمیخواهم بیشتر معطلت کنم.',
-    choices: [
-      {
-        id: 'time_resp_tomorrow',
-        text: 'فردا حتماً. اگر جزوه را آوردم، صدات میکنم.',
-        rtl: true,
-        nextNodeId: 'ending_female_slow',
-        endingVariant: 'slow',
-      },
-      {
-        id: 'time_resp_stop',
-        text: 'مرسی، ولی ترجیح میدهم همینجا تمام شود.',
-        rtl: true,
-        nextNodeId: 'ending_female_no',
-        endingVariant: 'no',
-      },
-      {
-        id: 'time_resp_stay',
-        text: 'راستش عجلهام کم شد؛ همین الانم میشود چکش کنیم.',
-        rtl: true,
-        nextNodeId: 'male_note_followup',
-      },
-    ],
+    sceneNote: 'کیفت همچنان روی شانهات است؛ او یک قدم عقبتر میایستد.',
+    text: 'باشه، پس فردا. معطلت نکنم؛ همین که ماندی کافی بود.',
+    nextNodeId: 'male_why_waited',
   },
 
-  male_note_followup: {
-    id: 'male_note_followup',
+  male_why_waited: {
+    id: 'male_why_waited',
     speaker: 'male',
     speakerLabel: 'پسر',
     rtl: true,
-    maleEmotion: 'warm_smile',
+    maleEmotion: 'thoughtful',
     femaleEmotion: 'curious',
     cameraPreset: 'male_close',
     beatLabel: 'لابی / ۱۰:۲۰',
-    sceneNote: 'دفتر بالاخره باز میشود، ولی هر دو هنوز ایستادهاید.',
-    text: 'مرسی. راستش سر کلاس هم میخواستم سر صحبت را باز کنم، ولی جملهای پیدا نکردم که الکی نباشد.',
-    dynamicText: (answers: QuestionnaireAnswers) =>
-      `مرسی. راستش سر کلاس هم میخواستم سر صحبت را باز کنم، ولی جملهای پیدا نکردم که الکی نباشد. ${getBeginningValueEcho(answers.beginningValue)} ${getHappinessEcho(answers.happiness)}`,
+    sceneNote: 'برگه بالاخره باز میشود، ولی هر دو هنوز ایستادهاید.',
+    text: 'راستش سر کلاس هم خواستم بپرسم، ولی وسط ارائه نمیخواستم حواست را پرت کنم. دیدم سوال کوتاهی کردی، گفتم بعدش بپرسم راحتتر است.',
     choices: [
       {
-        id: 'mid_direct',
-        text: 'خب حالا که جزوه حل شد، چی میخواستی بگی؟',
+        id: 'why_plain',
+        text: 'خب بعدش چی شد که تا لابی صبر کردی؟',
         rtl: true,
-        nextNodeId: 'female_mid_direct',
+        nextNodeId: 'male_plain_reason',
       },
       {
-        id: 'mid_playful',
-        text: 'پس آن برگشتن سر کلاس هم به خاطر همان سوال بود؟',
+        id: 'why_laugh',
+        text: 'پس آن برگشتن سر کلاس هم به خاطر همان خط بود؟',
         rtl: true,
-        nextNodeId: 'female_mid_playful',
+        nextNodeId: 'male_small_laugh',
       },
       {
-        id: 'mid_gentle',
-        text: 'منم امروز حواسم خوب جمع نشده بود. خوشحال شدم سر حرف باز شد.',
+        id: 'why_shared',
+        text: 'منم امروز تمرین نکرده بودم. خوشحال شدم سوال آنقدر کوتاه ماند.',
         rtl: true,
-        nextNodeId: 'female_mid_gentle',
+        nextNodeId: 'male_shared_pressure',
       },
     ],
   },
 
-  female_mid_direct: {
-    id: 'female_mid_direct',
-    speaker: 'female',
-    speakerLabel: 'تو',
+  male_plain_reason: {
+    id: 'male_plain_reason',
+    speaker: 'male',
+    speakerLabel: 'پسر',
     rtl: true,
-    maleEmotion: 'curious',
+    maleEmotion: 'neutral',
     femaleEmotion: 'neutral',
-    cameraPreset: 'female_close',
-    text: 'خب حالا که جزوه حل شد، چی میخواستی بگی؟',
-    nextNodeId: 'male_invitation',
+    cameraPreset: 'two_shot',
+    beatLabel: 'لابی / ۱۰:۲۰',
+    text: 'هیچی، جملهام گیر داشت. آخرش گفتم همان برگه را بپرسم، سادهتر است.',
+    nextNodeId: 'male_small_invitation',
   },
 
-  female_mid_playful: {
-    id: 'female_mid_playful',
-    speaker: 'female',
-    speakerLabel: 'تو',
-    rtl: true,
-    maleEmotion: 'shy',
-    femaleEmotion: 'warm_smile',
-    cameraPreset: 'female_close',
-    text: 'پس آن برگشتن سر کلاس هم به خاطر همان سوال بود؟',
-    nextNodeId: 'male_laugh_bridge',
-  },
-
-  male_laugh_bridge: {
-    id: 'male_laugh_bridge',
+  male_small_laugh: {
+    id: 'male_small_laugh',
     speaker: 'male',
     speakerLabel: 'پسر',
     rtl: true,
     maleEmotion: 'happy_laugh',
     femaleEmotion: 'warm_smile',
     cameraPreset: 'male_close',
-    text: 'آره، دیگر لو رفتم. خواستم یک جمله بسازم، آخرش فقط همان خط جزوه یادم ماند.',
-    nextNodeId: 'male_invitation',
+    beatLabel: 'لابی / ۱۰:۲۰',
+    text: 'آره، لو رفتم. خواستم چیز بامزهای بگویم، آخرش فقط خط آخر یادم ماند.',
+    nextNodeId: 'male_small_invitation',
   },
 
-  female_mid_gentle: {
-    id: 'female_mid_gentle',
-    speaker: 'female',
-    speakerLabel: 'تو',
+  male_shared_pressure: {
+    id: 'male_shared_pressure',
+    speaker: 'male',
+    speakerLabel: 'پسر',
     rtl: true,
-    maleEmotion: 'hopeful',
+    maleEmotion: 'thoughtful',
     femaleEmotion: 'thoughtful',
     cameraPreset: 'two_shot',
-    text: 'منم امروز حواسم خوب جمع نشده بود. خوشحال شدم سر حرف باز شد.',
-    nextNodeId: 'male_invitation',
+    beatLabel: 'لابی / ۱۰:۲۰',
+    text: 'منم اسلاید سوم را دوبار چک کردم. حداقل هر دو سر کلاس بودیم.',
+    nextNodeId: 'male_small_invitation',
   },
 
-  male_invitation: {
-    id: 'male_invitation',
+  male_small_invitation: {
+    id: 'male_small_invitation',
     speaker: 'male',
     speakerLabel: 'پسر',
     rtl: true,
@@ -496,9 +477,9 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     cameraPreset: 'two_shot',
     beatLabel: 'لابی / ۱۰:۲۱',
     sceneNote: 'همهمه لابی هست، ولی حرفتان همانجا پیش میرود.',
-    text: 'خلاصه خوشحال شدم وایسادی.',
+    text: 'اگر هفتهٔ دیگه باز ارائه داشتیم، برگهها را با هم چک کنیم. اگر نه هم، همین الانم حل شد.',
     dynamicText: (answers: QuestionnaireAnswers) =>
-      `خلاصه خوشحال شدم وایسادی. اگر هفته دیگه یک ساعت خالی داشتی، ${getAfternoonSuggestion(answers.afternoon)}. ${getInvitationCaveat(answers.beginningValue)} اگر نه هم، هیچی؛ همین چند دقیقه هم خوب بود.`,
+      `اگر هفتهٔ دیگه باز ارائه داشتیم، ${getAfternoonSuggestion(answers.afternoon)}. ${getInvitationCaveat(answers.beginningValue)} اگر نه هم، همین الانم حل شد.`,
     choices: [
       {
         id: 'final_yes',
@@ -509,14 +490,14 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
       },
       {
         id: 'final_slow',
-        text: 'فعلاً همین قدم اول کافیه؛ بعدتر ببینیم.',
+        text: 'فعلاً همین برگه کافیه؛ بعدتر ببینیم.',
         rtl: true,
         nextNodeId: 'ending_female_slow',
         endingVariant: 'slow',
       },
       {
         id: 'final_no',
-        text: 'مرسی، ولی ترجیح میدهم فقط همکلاسی بمانیم.',
+        text: 'مرسی، ولی ترجیح میدهم فقط سر کلاس همدیگر را ببینیم.',
         rtl: true,
         nextNodeId: 'ending_female_no',
         endingVariant: 'no',
@@ -532,7 +513,8 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'warm_smile',
     femaleEmotion: 'warm_smile',
     cameraPreset: 'female_close',
-    text: 'آره، بد نیست. فقط بذار بعد از امتحان باشد.',
+    beatLabel: 'لابی / ۱۰:۲۲',
+    text: 'باشه، بعد از امتحان. من برگهام را نگه میدارم.',
     nextNodeId: 'ending_male_happy',
   },
 
@@ -544,7 +526,8 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'hopeful',
     femaleEmotion: 'thoughtful',
     cameraPreset: 'female_close',
-    text: 'فعلاً همین قدم اول کافیه؛ بعدتر ببینیم.',
+    beatLabel: 'لابی / ۱۰:۲۲',
+    text: 'فعلاً همین خط حل شد، کافیه.',
     nextNodeId: 'ending_male_slow',
   },
 
@@ -556,6 +539,7 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'thoughtful',
     femaleEmotion: 'neutral',
     cameraPreset: 'female_close',
+    beatLabel: 'لابی / ۱۰:۲۲',
     text: 'مرسی، ولی ترجیح میدهم فقط همکلاسی بمانیم.',
     nextNodeId: 'ending_male_respectful',
   },
@@ -568,7 +552,8 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'warm_smile',
     femaleEmotion: 'warm_smile',
     cameraPreset: 'two_shot',
-    text: 'باشه. پس بعد از امتحان. من جزوه را هم میآورم که دستم یک چیزی باشد.',
+    beatLabel: 'لابی / ۱۰:۲۲',
+    text: 'منم خط آخر را مینویسم. پس پنجشنبه، قبل از کلاس.',
     nextNodeId: null,
   },
 
@@ -580,7 +565,8 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'hopeful',
     femaleEmotion: 'thoughtful',
     cameraPreset: 'two_shot',
-    text: 'باشه، عجله نیست. فردا سر کلاس سلام میکنم؛ همان کافیه.',
+    beatLabel: 'لابی / ۱۰:۲۲',
+    text: 'آره. فردا سر کلاس سلام میکنم، دیگه چیزی نمیپرسم.',
     nextNodeId: null,
   },
 
@@ -592,7 +578,8 @@ export const DIALOGUE_NODES: Record<string, DialogueNode> = {
     maleEmotion: 'thoughtful',
     femaleEmotion: 'neutral',
     cameraPreset: 'two_shot',
-    text: 'فهمیدم. مرسی که راحت گفتی. فردا سر کلاس مثل قبل، فقط سلام.',
+    beatLabel: 'لابی / ۱۰:۲۲',
+    text: 'فهمیدم. فردا مثل قبل، فقط سلام. برگه را هم خودم مینویسم.',
     nextNodeId: null,
   },
 };
