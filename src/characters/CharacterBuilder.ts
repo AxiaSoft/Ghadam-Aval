@@ -53,6 +53,7 @@ export function instantiateCharacterRig(
     receiveShadow?: boolean;
     tintSweater?: string;
     showPen?: boolean;
+    hideGlasses?: boolean;
   } = {}
 ): CharacterRigNodes {
   const root = template.clone(true);
@@ -120,6 +121,11 @@ export function instantiateCharacterRig(
     nodes.heldPen.visible = Boolean(options.showPen);
   }
 
+  // عینک فقط برای یک نفر میماند؛ مدل GLB پسر بدون عینک دیده میشود.
+  if (nodes.glasses && options.hideGlasses) {
+    nodes.glasses.visible = false;
+  }
+
   return nodes;
 }
 
@@ -129,15 +135,15 @@ export function buildFallbackCharacterTemplate(kind: 'female' | 'male' | 'studen
   const isFemale = kind === 'female';
 
   const skin = new THREE.MeshStandardMaterial({
-    color: isStudent ? '#d4cbc5' : isFemale ? '#f6d0bc' : '#eec3ae',
+    color: isStudent ? '#d8cfc8' : isFemale ? '#e8c7b2' : '#e2bda8',
     roughness: 0.6,
   });
   const outfit = new THREE.MeshStandardMaterial({
-    color: isStudent ? '#78808a' : isFemale ? '#c45b50' : '#1a1c21',
+    color: isStudent ? '#7c828a' : isFemale ? '#8b8e93' : '#3c4a57',
     roughness: 0.65,
   });
   const dark = new THREE.MeshStandardMaterial({
-    color: isStudent ? '#4a5058' : isFemale ? '#262f42' : '#7d838c',
+    color: isStudent ? '#4a5058' : isFemale ? '#343941' : '#2d3238',
     roughness: 0.74,
   });
 
@@ -158,6 +164,19 @@ export function buildFallbackCharacterTemplate(kind: 'female' | 'male' | 'studen
   torso.position.y = 0.12;
   chest.add(torso);
 
+  // بند کیف و کیف کوچک؛ بهجای ژستهای نمایشی، یک جزئیات روزمره
+  const strapMat = new THREE.MeshStandardMaterial({
+    color: isFemale ? '#4a3f35' : isStudent ? '#3f444a' : '#2e363f',
+    roughness: 0.86,
+  });
+  const strap = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.42, 0.02), strapMat);
+  strap.position.set(0.07, 0.12, 0.13);
+  strap.rotation.z = -0.34;
+  chest.add(strap);
+  const bag = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.22, 0.08), strapMat);
+  bag.position.set(-0.16, -0.05, 0.08);
+  hips.add(bag);
+
   const neck = new THREE.Group();
   neck.name = 'Neck';
   neck.position.y = 0.28;
@@ -172,7 +191,7 @@ export function buildFallbackCharacterTemplate(kind: 'female' | 'male' | 'studen
   head.add(headMesh);
 
   const hairFallbackMat = new THREE.MeshStandardMaterial({
-    color: isStudent ? '#4a5058' : '#251c17',
+    color: isStudent ? '#454a50' : '#2b2521',
     roughness: 0.55,
   });
   const fallbackHair = new THREE.Mesh(
@@ -183,11 +202,11 @@ export function buildFallbackCharacterTemplate(kind: 'female' | 'male' | 'studen
   fallbackHair.rotation.x = -0.45;
   head.add(fallbackHair);
 
-  if (!isStudent) {
+  if (!isStudent && isFemale) {
     const glasses = new THREE.Group();
     glasses.name = 'Glasses3D';
     const frameMat = new THREE.MeshStandardMaterial({
-      color: isFemale ? '#d48c6a' : '#202630',
+      color: '#6b5a4a',
       metalness: 0.65,
       roughness: 0.28,
     });

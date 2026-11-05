@@ -48,15 +48,15 @@ export interface PlayerSessionLog {
 const SESSION_STORAGE_KEY = 'the_first_move_response_session_v2';
 
 const PATH_LABELS: Record<PathColorChoice, string> = {
-  blue: 'رد آبی، کنار دیوار قدیمی',
-  pink: 'رد صورتی، از وسط محوطه',
-  gold: 'رد طلایی، سمت آفتاب',
+  blue: 'زیر خط خالی را مشخص کن',
+  pink: 'اول تابلو اعلانات را چک کن',
+  gold: 'برگه را ببر سر نیمکت',
 };
 
 const OBJECT_LABELS: Record<MissionObjectChoice, string> = {
-  star: 'ستاره شیشهای',
-  flower: 'گل روی پایه',
-  book: 'کتاب باز',
+  star: 'سه اسلاید آخر را مرور کن',
+  flower: 'خط خالی را همانجا پر کن',
+  book: 'کیف را مرتب کن و دو دقیقه کاری نکن',
 };
 
 function createFreshSession(): PlayerSessionLog {

@@ -20,6 +20,7 @@ import {
   CUTSCENE_MIN_DURATION_MS,
   CUTSCENE_MIN_DURATION_SEC,
 } from '../dialogue/dialogueData';
+import { PresentationBoard } from './UniversityProps';
 
 // Classroom Desk Layout: 4 Rows x 3 Columns (facing -Z toward whiteboard at z = -5.4)
 const DESK_ROWS_Z = [-2.3, -0.55, 1.2, 2.95];
@@ -110,7 +111,7 @@ export const ClassroomScene: React.FC = () => {
 
     if (stage === 'CLASSROOM_GAMEPLAY') {
       setCinematicShot(null);
-      setObjectiveHint('ردیف آخر یک صندلی خالی هست. برو بشین.');
+      setObjectiveHint('ردیف آخر یک صندلی خالی هست. برگهات را بگذار و بشین.');
     }
   }, [stage, setCinematicShot, setNarrativeCaption, setObjectiveHint, transitionTo]);
 
@@ -243,7 +244,7 @@ export const ClassroomScene: React.FC = () => {
       {
         id: 'classroom_empty_seat',
         label: 'نشستن ردیف آخر',
-        sublabel: 'همان صندلی کنار خودکار جا مانده',
+        sublabel: 'کنار برگهای که خط آخرش خالی است',
         position: [playerSeatPos[0], 0, playerSeatPos[2]],
         radius: 1.25,
         accentColor: '#f4c76c',
@@ -379,6 +380,9 @@ export const ClassroomScene: React.FC = () => {
           <meshBasicMaterial color="#c46d5e" />
         </mesh>
       </group>
+
+      {/* فهرست ارائهها روی تخته */}
+      <PresentationBoard position={[0, 1.88, -5.44]} />
 
       {/* Teacher's Desk & Packing Teacher */}
       <group position={[1.65, 0, -4.15]}>

@@ -1,8 +1,8 @@
 {
   "name": "the-first-move",
   "private": true,
-  "version": "2.0.0",
-  "description": "قدم اول — یک روز معمولی دانشگاه، بازنویسیشده با دیالوگ انسانیتر و قابل اجرا از GitHub Pages",
+  "version": "2.1.0",
+  "description": "قدم اول — یک روز معمولی دانشگاه، با خط داستانی برگهٔ چاپی، محیط دانشگاهی پرجزئیات و اجرای مستقیم از GitHub Pages",
   "type": "module",
   "homepage": "https://axiasoft.github.io/Ghadam-Aval/",
   "scripts": {

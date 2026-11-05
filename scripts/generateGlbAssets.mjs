@@ -751,7 +751,8 @@ function buildMainCharacter(gender = 'female') {
     eyeY: eyeY - 0.001,
     glassesZ: faceFrontZ + 0.021,
   });
-  head.add(glasses3D);
+  // عینک فقط برای یکی از دو شخصیت اصلی ساخته میشود.
+  if (isFemale) head.add(glasses3D);
 
   // SEAMLESS ARMS WITH JOINT SPHERES & SCULPTED HANDS
   const shoulderX = isFemale ? 0.156 : 0.184;

@@ -23,7 +23,7 @@ import {
   startNewResponseSession,
 } from '../utils/responseLogger';
 
-const STORAGE_KEY = 'the_first_move_save_v5';
+const STORAGE_KEY = 'the_first_move_save_v6';
 
 /**
  * Valid state machine transitions to prevent accidental stage skipping

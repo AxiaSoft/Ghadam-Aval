@@ -60,16 +60,20 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
         ? 'male_character'
         : 'student_npc';
 
+  const resolvedTintTop =
+    tintTop ?? (kind === 'female' ? '#8b8e93' : kind === 'male' ? '#3c4a57' : '#6b7078');
+
   const rigNodes = useMemo<CharacterRigNodes>(() => {
     const cached = assetManager.getCached(assetKey);
     const template = cached ?? buildFallbackCharacterTemplate(kind);
     return instantiateCharacterRig(template, {
       castShadow,
       receiveShadow: graphicsProfile === 'HIGH',
-      tintSweater: tintTop,
+      tintSweater: resolvedTintTop,
       showPen,
+      hideGlasses: kind === 'male',
     });
-  }, [assetKey, kind, castShadow, graphicsProfile, tintTop, showPen]);
+  }, [assetKey, kind, castShadow, graphicsProfile, resolvedTintTop, showPen]);
 
   const animator = useMemo(() => new ProceduralAnimator(phaseOffset), [phaseOffset]);
 
