@@ -1831,3 +1831,32 @@ button {
   animation-duration: 0.001ms !important;
   transition-duration: 0.001ms !important;
 }
+
+/* A brighter, welcoming setting for the written questions. */
+.joyful-questionnaire {
+  background: radial-gradient(circle at 20% 20%, #fff1c9 0%, #fbd9d5 42%, #cfe9e2 100%);
+  pointer-events: auto;
+}
+.joyful-panel {
+  background: rgba(255, 253, 248, .94);
+  color: #3d3843;
+  border-color: rgba(184, 119, 105, .35);
+  box-shadow: 0 18px 48px rgba(120, 81, 77, .18);
+}
+.joyful-panel .story-question-title { display: block; color: #3d3843; }
+.joyful-panel .question-chapter { color: #9b504a; }
+.joyful-panel .text-quiet-btn { color: #694b4a; }
+.question-text-input {
+  display: block;
+  width: 100%;
+  margin: 18px 0;
+  padding: 12px;
+  border: 1px solid #cfaea2;
+  border-radius: 12px;
+  color: #302b35;
+  background: #fff;
+  font: inherit;
+  resize: vertical;
+}
+.question-text-input:focus-visible { outline: 3px solid #d78c77; outline-offset: 2px; }
+.joyful-panel button:disabled { opacity: .5; cursor: not-allowed; }

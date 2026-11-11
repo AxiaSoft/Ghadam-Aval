@@ -17,6 +17,7 @@ export interface StylizedCharacterProps {
   rotationY?: number;
   pose?: CharacterPose;
   seated?: boolean;
+  seatHands?: 'lap' | 'desk';
   emotion?: CharacterEmotion;
   gazeBehavior?: CharacterGazeBehavior;
   gazeTarget?: THREE.Vector3 | null;
@@ -35,6 +36,7 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
   rotationY = 0,
   pose = 'idle',
   seated = false,
+  seatHands = 'lap',
   emotion = 'neutral',
   gazeBehavior = 'forward',
   gazeTarget = null,
@@ -92,6 +94,7 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
     animator.update(rigNodes, delta, {
       pose,
       seated,
+      seatHands,
       emotion,
       gazeBehavior,
       gazeTargetWorld: gazeTarget,

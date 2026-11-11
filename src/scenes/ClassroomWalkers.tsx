@@ -57,6 +57,6 @@ export const ClassroomWalker: React.FC<WalkerProps> = ({ row, col, exiting, dela
     }
   });
   const start = route.current[0];
-  return <group visible={!exited}><StylizedCharacter {...character} groupRef={group} position={[start.x, 0, start.z]}
+  return <group visible={!exited}><StylizedCharacter {...character} seatHands="desk" groupRef={group} position={[start.x, 0, start.z]}
     pose={exiting ? (walking ? 'walk' : 'idle') : pose} walkSpeed={walking ? 0.8 : 0} /></group>;
 };
