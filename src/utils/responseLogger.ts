@@ -4,7 +4,7 @@ import {
   QuestionnaireAnswers,
   RelationshipAnswer,
 } from '../types/game';
-import { QUESTIONNAIRE_STEPS, RELATIONSHIP_PROMPT } from '../dialogue/dialogueData';
+import { RELATIONSHIP_PROMPT } from '../dialogue/dialogueData';
 
 export interface LoggedQuestionnaireAnswer {
   stepKey: keyof QuestionnaireAnswers;
@@ -133,34 +133,6 @@ function enqueueServerSync(snapshot: PlayerSessionLog): void {
 export function startNewResponseSession(): void {
   currentSession = createFreshSession();
   saveSessionLocally(currentSession);
-}
-
-export function recordQuestionnaireResponse(
-  key: keyof QuestionnaireAnswers,
-  answerId: string
-): void {
-  const step = QUESTIONNAIRE_STEPS.find((s) => s.key === key);
-  const option = step?.options.find((o) => o.id === answerId);
-  const now = new Date().toISOString();
-
-  const entry: LoggedQuestionnaireAnswer = {
-    stepKey: key,
-    chapterLabel: step?.chapterLabel ?? String(key),
-    question: step?.question ?? String(key),
-    answerId,
-    answerText: option?.label ?? answerId,
-    answeredAt: now,
-  };
-
-  const filtered = currentSession.questionnaireResponses.filter((r) => r.stepKey !== key);
-  currentSession = {
-    ...currentSession,
-    updatedAt: now,
-    questionnaireResponses: [...filtered, entry],
-  };
-
-  saveSessionLocally(currentSession);
-  enqueueServerSync(currentSession);
 }
 
 export function recordRelationshipResponse(answerId: RelationshipAnswer): void {

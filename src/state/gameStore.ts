@@ -1,14 +1,10 @@
 import { create } from 'zustand';
 import {
-  AfternoonChoice,
-  AtmosphereChoice,
-  BeginningValueChoice,
   CinematicShot,
   EndingVariant,
   FinalDecisionChoice,
   GameStage,
   GraphicsProfile,
-  HappinessChoice,
   InteractionTarget,
   MissionObjectChoice,
   PathColorChoice,
@@ -18,7 +14,6 @@ import {
 import {
   recordMissionObjectResponse,
   recordMissionPathResponse,
-  recordQuestionnaireResponse,
   recordRelationshipResponse,
   startNewResponseSession,
 } from '../utils/responseLogger';
@@ -148,10 +143,6 @@ export interface GameStoreState {
   transitionTo: (nextStage: GameStage, options?: { force?: boolean; withFade?: boolean }) => void;
   resumeSavedJourney: () => void;
   unlockAudio: () => void;
-  setQuestionnaireAnswer: (
-    key: keyof QuestionnaireAnswers,
-    value: HappinessChoice | AfternoonChoice | AtmosphereChoice | BeginningValueChoice
-  ) => void;
   setTextAnswer: (index: number, value: string) => void;
   advanceQuestionnaire: () => void;
   regressQuestionnaire: () => void;
@@ -318,23 +309,16 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     resumeSavedJourney: () => {
       const target = get().savedResumeStage;
       if (!target) return;
-      set({ savedResumeStage: null, audioUnlocked: true });
+      // Older saves may contain an index from the removed multiple-choice survey.
+      // Restart only that unfinished opening rather than skipping the relationship question.
+      const legacyOpening = target === 'QUESTIONNAIRE' && get().relationshipAnswer !== 'no';
+      set({ savedResumeStage: null, audioUnlocked: true,
+        ...(legacyOpening ? { questionnaireIndex: 0, textAnswers: [] } : {}) });
       get().transitionTo(target, { force: true, withFade: true });
     },
 
     unlockAudio: () => {
       set({ audioUnlocked: true });
-    },
-
-    setQuestionnaireAnswer: (key, value) => {
-      set((s) => ({
-        answers: {
-          ...s.answers,
-          [key]: value,
-        },
-      }));
-      syncSave();
-      recordQuestionnaireResponse(key, value);
     },
 
     setTextAnswer: (index, value) => {

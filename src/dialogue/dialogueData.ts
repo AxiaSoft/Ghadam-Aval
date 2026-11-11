@@ -1,6 +1,5 @@
 import {
   AfternoonChoice,
-  AtmosphereChoice,
   BeginningValueChoice,
   DialogueNode,
   HappinessChoice,
@@ -38,9 +37,6 @@ export const SCREEN_TEXTS = {
     'در آخر، برگهها روی میز لابی کنار دو لیوان کاغذی میمانند.',
   ],
 
-  respectfulHeader: 'همینجا میایستیم',
-  respectfulYesMessage:
-    'ممنون که راحت گفتی. وقتی رابطهای هست، ادامه دادن این گفتوگو بیاحترامی است. خط آخر را فردا خودم مینویسم؛ روز خوبی داشته باش.',
   returnToStartButton: 'برگشت به صفحه اول',
 
   finalHeader: 'پایان این روز',
@@ -56,63 +52,6 @@ export const SCREEN_TEXTS = {
 // ============================================================================
 // ۲. پرسشنامه: هر جواب به یک چیز قابل دیدن تبدیل میشود
 // ============================================================================
-export interface QuestionnaireStep {
-  key: keyof QuestionnaireAnswers;
-  chapterLabel: string;
-  question: string;
-  note?: string;
-  hint?: string;
-  options: {
-    id: HappinessChoice | AfternoonChoice | AtmosphereChoice | BeginningValueChoice;
-    label: string;
-  }[];
-}
-
-export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
-  {
-    key: 'afternoon',
-    chapterLabel: 'گام ۱ از ۳',
-    question: 'بعد از ارائه، یک ساعت خالی داشته باشی چیکار میکنی؟',
-    note: 'پیشنهاد آخر پسر از همینجا میآید.',
-    hint: 'لازم نیست جواب جالبی باشد؛ همان کاری که معمولاً میکنی.',
-    options: [
-      { id: 'cafe', label: 'کافه کنار کتابخانه، یک چای و یک کتاب' },
-      { id: 'walk', label: 'یک دور تو محوطه، بدون هدف خاص' },
-      { id: 'movie', label: 'یک فیلم کوتاه، ترجیحاً با زیرنویس' },
-      { id: 'games', label: 'یک بازی ساده روی گوشی یا سر میز' },
-      { id: 'adventure', label: 'بیرون زدن بیبرنامه و برگشتن هر وقت شد' },
-    ],
-  },
-  {
-    key: 'atmosphere',
-    chapterLabel: 'گام ۲ از ۳',
-    question: 'کدام گوشهٔ دانشگاه برای مرور جزوه راحتتر است؟',
-    note: 'جای خلوت تیتراژ و دفترچه مشاهدات از همینجا میآید.',
-    hint: 'به جایی فکر کن که بدون دلیل خاصی دوست داری بروی آنجا.',
-    options: [
-      { id: 'starry_sky', label: 'پشت بام خوابگاه، وقتی چراغها کم میشوند' },
-      { id: 'flowers_gardens', label: 'کنار باغچه جلوی دانشکده' },
-      { id: 'city_night', label: 'پلههای بیرونی، رو به چراغهای خیابان' },
-      { id: 'minimalist', label: 'ردیف آخر کتابخانه، جایی که کسی نیست' },
-      { id: 'nature', label: 'زیر درختهای پشت ساختمان قدیمی' },
-    ],
-  },
-  {
-    key: 'beginningValue',
-    chapterLabel: 'گام ۳ از ۳',
-    question: 'تو یک همگروهی تازه، چی باعث میشود راحت باشی؟',
-    note: 'لحن جملهٔ آخر پسر و جملهٔ احتیاطیش از همینجا میآید.',
-    hint: 'این سوال درباره عشق نیست؛ درباره راحت بودن سر یک کار مشترک است.',
-    options: [
-      { id: 'honesty', label: 'راست بگوید، حتی اگر ساده باشد' },
-      { id: 'humor', label: 'شوخی مصنوعی نکند' },
-      { id: 'attention_to_detail', label: 'حواسش به جزئیات باشد، مثل یک خط برگه' },
-      { id: 'trust', label: 'بتوانم «نه» بگویم و چیزی عجیب نشود' },
-      { id: 'time', label: 'کسی عجله نکند، حتی برای جواب سلام' },
-    ],
-  },
-];
-
 export const RELATIONSHIP_PROMPT = {
   chapterLabel: 'یک سوال قبل از شروع',
   question: 'برای اینکه سوالات رو شروع کنم اول بهم بگو الان توی رابطه هستید؟',

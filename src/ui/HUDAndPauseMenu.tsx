@@ -47,6 +47,7 @@ export const HUDAndPauseMenu: React.FC = () => {
   const [confirmRestart, setConfirmRestart] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
 
+  const isOpening = ['INTRO', 'QUESTIONNAIRE', 'RELATIONSHIP_QUESTION', 'RESPECTFUL_ENDING'].includes(stage);
   const chapter = getChapter(stage);
   const ambient = getAmbientDetail(stage);
   const discovered = getDiscoveredDetails(stage);
@@ -85,7 +86,7 @@ export const HUDAndPauseMenu: React.FC = () => {
 
       <header className="minimal-hud" dir="ltr">
         <div className="hud-left">
-          {stage !== 'INTRO' && (
+          {!isOpening && (
             <div className="chapter-tag" dir="rtl">
               <span className="chapter-eyebrow">{chapter.eyebrow}</span>
               <span className="chapter-title">{chapter.title}</span>
@@ -103,7 +104,7 @@ export const HUDAndPauseMenu: React.FC = () => {
             </div>
           )}
 
-          {ambient && !isPaused && stage !== 'INTRO' && (
+          {ambient && !isPaused && !isOpening && (
             <button
               type="button"
               className="ambient-detail-chip"
@@ -117,7 +118,7 @@ export const HUDAndPauseMenu: React.FC = () => {
         </div>
 
         <div className="hud-right">
-          {discovered.length > 0 && stage !== 'INTRO' && (
+          {discovered.length > 0 && !isOpening && (
             <button
               type="button"
               className="hud-icon-btn"
