@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { TREE_BRANCHES } from './treeBranches';
 
 type PlantProps = {
   position: [number, number, number];
@@ -87,8 +88,17 @@ function Foliage({ shapes, texture, lowDetail, variation = 0 }: {
 export const CampusTree: React.FC<PlantProps> = ({ position, leafTexture, barkTexture, lowDetail, variation = 0, flowers = false }) => (
   <group position={position} rotation={[0, variation * .37, 0]}>
     <mesh position={[0,1.03,0]} castShadow={!lowDetail}><cylinderGeometry args={[.105,.18,2.06,10]} /><meshStandardMaterial map={barkTexture} color="#795d49" roughness={1} /></mesh>
-    {[[-.25,1.95,0,.52],[.25,1.99,0,-.52],[0,2.05,.22,.32]].map(([x,y,z,r],i) =>
-      <mesh key={i} position={[x,y,z]} rotation={[r,0,-r]}><cylinderGeometry args={[.04,.085,.85,7]} /><meshStandardMaterial map={barkTexture} color="#735842" roughness={1} /></mesh>)}
+    {TREE_BRANCHES.map(({ start, end }, i) => {
+      const base = new THREE.Vector3(...start);
+      const tip = new THREE.Vector3(...end);
+      const direction = tip.clone().sub(base);
+      const midpoint = base.clone().add(tip).multiplyScalar(.5);
+      const orientation = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
+      return <mesh key={i} position={midpoint} quaternion={orientation} castShadow={!lowDetail}>
+        <cylinderGeometry args={[.035,.085,direction.length(),7]} />
+        <meshStandardMaterial map={barkTexture} color="#735842" roughness={1} />
+      </mesh>;
+    })}
     <Foliage shapes={CROWN} texture={leafTexture} lowDetail={lowDetail} variation={variation} />
     {flowers && [[.42,.3],[-.35,.4],[.24,-.45]].map(([x,z],i) => <group key={i} position={[x,0,z]}>
       <mesh position={[0,.11,0]}><cylinderGeometry args={[.008,.008,.22,5]} /><meshStandardMaterial color="#58734f" /></mesh>
