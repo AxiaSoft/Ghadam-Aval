@@ -155,7 +155,7 @@ export function instantiateCharacterRig(
     nodes.heldPen.visible = Boolean(options.showPen);
   }
 
-  // عینک فقط برای یک نفر میماند؛ مدل GLB پسر بدون عینک دیده میشود.
+  // برای تنوع دانشجویان پس‌زمینه، عینک نسخهٔ انتخابی پنهان می‌شود.
   if (nodes.glasses && options.hideGlasses) {
     nodes.glasses.visible = false;
   }

@@ -471,7 +471,7 @@ export const ClassroomScene: React.FC = () => {
         return (
           <StylizedCharacter
             key={idx}
-            kind="student"
+            kind={idx % 2 === 0 && (graphicsProfile !== 'LOW' || idx === 0) ? 'student_female' : 'student'}
             position={[
               classDismissed ? sx - 0.55 : sx,
               0,
@@ -480,6 +480,7 @@ export const ClassroomScene: React.FC = () => {
             rotationY={classDismissed ? Math.PI * 0.85 : Math.PI}
             pose={classDismissed ? 'walk' : 'sit'}
             walkSpeed={classDismissed ? 0.55 : 0}
+            tintTop={['#7d7178', '#697b80', '#897f70', '#677867'][idx % 4]}
             phaseOffset={idx * 0.27}
           />
         );

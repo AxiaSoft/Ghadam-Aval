@@ -227,6 +227,11 @@ export const CameraRig: React.FC<CameraRigProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cinematicShot, camera, reducedMotion, stage, aspectBucket, compactHeightBucket]);
 
+  // Keep shot transitions in sync with paused character animation.
+  useEffect(() => {
+    tweenRef.current?.paused(isPaused);
+  }, [isPaused, cinematicShot]);
+
   useFrame((state, delta) => {
     if (isPaused) return;
     const dt = Math.min(delta, 0.05);

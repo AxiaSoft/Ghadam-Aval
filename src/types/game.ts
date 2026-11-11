@@ -113,6 +113,7 @@ export type CharacterPose =
   | 'sit_lean_forward'
   | 'interact'
   | 'greet'
+  | 'wait_gesture'
   | 'talk'
   | 'laugh';
 

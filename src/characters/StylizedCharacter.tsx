@@ -12,7 +12,7 @@ import { CharacterEmotion, CharacterGazeBehavior, CharacterPose } from '../types
 import { useGameStore } from '../state/gameStore';
 
 export interface StylizedCharacterProps {
-  kind: 'female' | 'male' | 'student';
+  kind: 'female' | 'male' | 'student' | 'student_female';
   position?: [number, number, number];
   rotationY?: number;
   pose?: CharacterPose;
@@ -51,10 +51,10 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
 
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
   const isPaused = useGameStore((s) => s.isPaused);
-  const castShadow = graphicsProfile !== 'LOW' && kind !== 'student';
+  const castShadow = graphicsProfile !== 'LOW' && kind !== 'student' && kind !== 'student_female';
 
   const assetKey: AssetKey =
-    kind === 'female'
+    kind === 'female' || kind === 'student_female'
       ? 'female_character'
       : kind === 'male'
         ? 'male_character'
@@ -65,12 +65,13 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
 
   const rigNodes = useMemo<CharacterRigNodes>(() => {
     const cached = assetManager.getCached(assetKey);
-    const template = cached ?? buildFallbackCharacterTemplate(kind);
+    const template = cached ?? buildFallbackCharacterTemplate(kind === 'student_female' ? 'female' : kind);
     return instantiateCharacterRig(template, {
       castShadow,
       receiveShadow: graphicsProfile === 'HIGH',
       tintSweater: resolvedTintTop,
       showPen,
+      hideGlasses: kind === 'student_female',
     });
   }, [assetKey, kind, castShadow, graphicsProfile, resolvedTintTop, showPen]);
 
@@ -96,8 +97,8 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
       gazeTargetWorld: gazeTarget,
       walkSpeed,
       isSpeaking,
-      isFemale: kind === 'female',
-      baseHipsY: kind === 'male' ? 0.963 : kind === 'female' ? 0.9 : 0.88,
+      isFemale: kind === 'female' || kind === 'student_female',
+      baseHipsY: kind === 'male' ? 0.963 : kind === 'female' || kind === 'student_female' ? 0.9 : 0.88,
     });
   });
 
@@ -116,7 +117,7 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
         position={[0, 0.012, isSeated ? 0.08 : 0]}
         receiveShadow={false}
       >
-        <circleGeometry args={[kind === 'student' ? 0.24 : 0.28, 16]} />
+        <circleGeometry args={[kind === 'student' || kind === 'student_female' ? 0.24 : 0.28, 16]} />
         <meshBasicMaterial color="#0d1017" transparent opacity={0.26} depthWrite={false} />
       </mesh>
     </group>

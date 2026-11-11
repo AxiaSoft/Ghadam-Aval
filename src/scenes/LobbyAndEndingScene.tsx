@@ -24,10 +24,13 @@ import {
   DIALOGUE_START_NODE,
 } from '../dialogue/dialogueData';
 import { LobbyDetails } from './UniversityProps';
+import { advanceLobbyWalk, planLobbyDeparture } from './lobbyDeparture';
 
 // چیدمان منسجم و روشن لابی تا تمام شخصیت‌ها هم در حالت عمودی موبایل و هم افقی کاملاً داخل کادر باشند
 const MALE_SEAT_POS: [number, number, number] = [1.85, 0, 0.05];
-const MALE_SEAT_ROT = -1.42;
+const MALE_SEAT_ROT = 1.88;
+const MALE_FRIEND_POS: [number, number, number] = [3.1, 0, -0.35];
+const MALE_FRIEND_ROT = -1.26;
 const FEMALE_SEAT_POS: [number, number, number] = [-1.85, 0, 0.45];
 const FEMALE_SEAT_ROT = 0.78; // روبه‌روی دوستش روی صندلی
 const FEMALE_TABLE_POS: [number, number, number] = [-1.46, 0, 0.86];
@@ -46,7 +49,7 @@ const LOBBY_INDOOR_CLAMP = {
   maxY: 4.1,
 };
 
-// دانشجویان نشسته در لابی — همه دو‌به‌دو مشغول حرف زدن با کناری‌شان هستند جز پسر که تنها نشسته!
+// دانشجویان نشستهٔ پس‌زمینه و دوست بازیکن.
 const SEATED_TALKING_PAIRS: {
   pos: [number, number, number];
   rot: number;
@@ -91,6 +94,16 @@ export const LobbyAndEndingScene: React.FC = () => {
   const [malePos, setMalePos] = useState<[number, number, number]>(MALE_SEAT_POS);
   const [maleRot, setMaleRot] = useState<number>(MALE_SEAT_ROT);
   const [leavingToExitAuto, setLeavingToExitAuto] = useState(false);
+  const [maleLooksAtFriend, setMaleLooksAtFriend] = useState(true);
+  const [friendTalking, setFriendTalking] = useState(true);
+  const [dialoguePositions, setDialoguePositions] = useState({
+    female: LEAVE_DIALOGUE_FEMALE_POS,
+    male: LEAVE_DIALOGUE_MALE_POS,
+  });
+  const maleGroupRef = useRef<THREE.Group>(null);
+  const playerArrivedRef = useRef(false);
+  const maleArrivedRef = useRef(false);
+  const departureActiveRef = useRef(false);
 
   const maleWalkRef = useRef<{
     active: boolean;
@@ -105,17 +118,14 @@ export const LobbyAndEndingScene: React.FC = () => {
   });
   const motesRef = useRef<THREE.Points>(null);
 
-  const femaleSeatWorld = useMemo(
-    () => new THREE.Vector3(FEMALE_SEAT_POS[0], 1.28, FEMALE_SEAT_POS[2]),
-    []
-  );
+  const maleFriendWorld = useMemo(() => new THREE.Vector3(MALE_FRIEND_POS[0], 1.3, MALE_FRIEND_POS[2]), []);
   const maleDialogHeadWorld = useMemo(
-    () => new THREE.Vector3(LEAVE_DIALOGUE_MALE_POS[0], 1.48, LEAVE_DIALOGUE_MALE_POS[2]),
-    []
+    () => new THREE.Vector3(dialoguePositions.male[0], 1.48, dialoguePositions.male[2]),
+    [dialoguePositions]
   );
   const femaleDialogHeadWorld = useMemo(
-    () => new THREE.Vector3(LEAVE_DIALOGUE_FEMALE_POS[0], 1.42, LEAVE_DIALOGUE_FEMALE_POS[2]),
-    []
+    () => new THREE.Vector3(dialoguePositions.female[0], 1.42, dialoguePositions.female[2]),
+    [dialoguePositions]
   );
 
   useEffect(() => {
@@ -143,15 +153,20 @@ export const LobbyAndEndingScene: React.FC = () => {
     setMaleRot(MALE_SEAT_ROT);
     setMaleSeated(true);
     setMalePose('sit');
-    setMaleEmotion('thoughtful');
-    setMaleGaze('forward');
+    setMaleEmotion('neutral');
+    setMaleGaze('target');
+    setMaleLooksAtFriend(true);
+    setFriendTalking(true);
     setFemaleCinematicPose('talk');
     setFemaleCinematicEmotion('warm_smile');
 
     const beat = CUTSCENE_MIN_DURATION_SEC;
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ paused: useGameStore.getState().isPaused });
+    const unsubscribePause = useGameStore.subscribe((state) => {
+      tl.paused(state.isPaused);
+    });
 
-    // ۱. نمای باز و کامل داخل لابی (نمایش هم‌زمان دختر و دوستش، پسر تنها و سایر جفت‌ها در کادر موبایل)
+    // ۱. نمای باز لابی و دو گروه در حال گفت‌وگو
     tl.call(() => {
       setCinematicShot({
         position: [0.0, 2.45, 4.75],
@@ -173,43 +188,22 @@ export const LobbyAndEndingScene: React.FC = () => {
       setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat2);
     }, [], beat * 1);
 
-    // ۳. حرکت نرم در فضای باز وسط به سمت پسر — تنها کسی که ساکت نشسته
+    // ۳. پسر با همراهش صحبت می‌کند
     tl.call(() => {
-      setMaleGaze('down_shy');
-      setMaleEmotion('thoughtful');
+      setMalePose('talk');
+      setFriendTalking(false);
+      setMaleGaze('target');
+      setMaleEmotion('neutral');
       setCinematicShot({
-        position: [0.15, 1.48, 1.55],
-        lookAt: [MALE_SEAT_POS[0], 1.12, MALE_SEAT_POS[2]],
+        position: [1.9, 1.65, 2.7],
+        lookAt: [2.48, 1.12, -0.12],
         fov: 44,
         duration: 1.9,
       });
-      setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat3);
+      setNarrativeCaption(null);
     }, [], beat * 2);
 
-    // ۴. نگاه کوتاه از برگه به در
-    tl.call(() => {
-      setMaleGaze('look_away');
-      setMaleEmotion('thoughtful');
-      setCinematicShot({
-        position: [0.55, 1.4, 0.95],
-        lookAt: [MALE_SEAT_POS[0], 1.18, MALE_SEAT_POS[2]],
-        fov: 40,
-        duration: 1.6,
-      });
-      setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat4);
-    }, [], beat * 3);
-
-    // میانه نما: زاویه باز از کنار پسر به سمت دختر و دوستش در کادر
-    tl.call(() => {
-      setCinematicShot({
-        position: [1.35, 1.68, -1.25],
-        lookAt: [-1.35, 1.12, 0.72],
-        fov: 47,
-        duration: 1.5,
-      });
-    }, [], beat * 3 + beat * 0.52);
-
-    // ۵. خنده دختر و دوستش
+    // ۴. دوست بازیکن آماده رفتن می‌شود
     tl.call(() => {
       setFemaleCinematicPose('laugh');
       setFemaleCinematicEmotion('happy_laugh');
@@ -220,35 +214,7 @@ export const LobbyAndEndingScene: React.FC = () => {
         duration: 1.8,
       });
       setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat5);
-    }, [], beat * 4);
-
-    // ۶. خم شدن پسر به جلو برای بلند شدن
-    tl.call(() => {
-      setMalePose('sit_lean_forward');
-      setMaleEmotion('thoughtful');
-      setMaleGaze('down_shy');
-      setCinematicShot({
-        position: [0.48, 1.38, 1.05],
-        lookAt: [MALE_SEAT_POS[0], 1.14, MALE_SEAT_POS[2]],
-        fov: 40,
-        duration: 1.6,
-      });
-      setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat6);
-    }, [], beat * 5);
-
-    // ۷. تردید و تکیه دادن دوباره به صندلی
-    tl.call(() => {
-      setMalePose('sit');
-      setMaleEmotion('thoughtful');
-      setMaleGaze('down_shy');
-      setCinematicShot({
-        position: [0.28, 1.44, 1.32],
-        lookAt: [MALE_SEAT_POS[0], 1.15, MALE_SEAT_POS[2]],
-        fov: 42,
-        duration: 1.6,
-      });
-      setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyBeat7);
-    }, [], beat * 6);
+    }, [], beat * 3);
 
     // بازگشت کنترل به بازیکن با زاویه دید باز در مرکز لابی
     tl.call(() => {
@@ -264,84 +230,66 @@ export const LobbyAndEndingScene: React.FC = () => {
           setNarrativeCaption(null);
         }
       }, CUTSCENE_MIN_DURATION_MS);
-    }, [], beat * 7);
+    }, [], beat * 4);
 
     return () => {
       tl.kill();
+      unsubscribePause();
     };
   }, [stage, setCinematicShot, setNarrativeCaption, transitionTo]);
 
-  // FINAL_DECISION: وقتی دختر می‌خواهد از لابی برود، پسر بلند می‌شود و دیالوگ آغاز می‌شود
+  // The companion gets a silent hand gesture before the boy starts walking.
   useEffect(() => {
     if (stage !== 'FINAL_DECISION') return;
-
     if (!finalDecision) {
       setObjectiveHint('حرفت تمام شد. برگهات را بردار و سمت در حرکت کن.');
       setMaleSeated(true);
       setMalePose('sit');
-      setMaleEmotion('shy');
+      setMaleEmotion('neutral');
       setMaleGaze('target');
+      setMaleLooksAtFriend(true);
+      setFriendTalking(true);
       return;
     }
-
+    if (finalDecision !== 'leave_trigger') return;
     setObjectiveHint(null);
+    setNarrativeCaption(null);
+    const player = transientInput.playerPosition;
+    const { female, male } = planLobbyDeparture(player.x, player.z);
+    setDialoguePositions({ female, male });
+    playerArrivedRef.current = false;
+    maleArrivedRef.current = false;
+    departureActiveRef.current = true;
+    setLeavingToExitAuto(true);
+    setFriendTalking(false);
+    setMalePose('sit');
+    setMaleLooksAtFriend(false);
+    setMaleGaze('target');
+    setCinematicShot({ position: [2.1, 1.75, 3.3], lookAt: [2.45, 1.12, -0.1], fov: 52, duration: 1 });
 
-    if (finalDecision === 'leave_trigger') {
-      setLeavingToExitAuto(true);
-      setNarrativeCaption(CUTSCENE_CAPTIONS.lobbyLeavingTrigger);
+    const tl = gsap.timeline({ paused: useGameStore.getState().isPaused });
+    const unsubscribePause = useGameStore.subscribe((state) => tl.paused(state.isPaused));
+    tl.call(() => {
+      setMaleLooksAtFriend(true);
+      setMalePose('wait_gesture');
+    }, [], 0.75);
+    tl.call(() => {
+      audioManager.playSfx('chair_move');
+      setMaleSeated(false);
+      setMalePose('walk');
+      setMaleLooksAtFriend(false);
+      maleWalkRef.current = { active: true, progress: 0, from: MALE_SEAT_POS, to: male };
       setCinematicShot({
-        position: [0.04, 1.68, 4.55],
-        lookAt: [0.06, 1.06, 1.75],
-        fov: 48,
-        duration: 1.8,
+        position: [(female[0] + male[0]) / 2, 1.65, Math.min(6.1, female[2] + 2.8)],
+        lookAt: [(female[0] + male[0]) / 2, 1.1, female[2]], fov: 50, duration: 1.5,
       });
-
-      const tStand = window.setTimeout(() => {
-        audioManager.playSfx('chair_move');
-        setMaleSeated(false);
-        setMalePose('walk');
-        setMaleEmotion('nervous');
-        maleWalkRef.current = {
-          active: true,
-          progress: 0,
-          from: [MALE_SEAT_POS[0] - 0.25, 0, MALE_SEAT_POS[2] + 0.2],
-          to: LEAVE_DIALOGUE_MALE_POS,
-        };
-      }, 450);
-
-      const tArriveStand = window.setTimeout(() => {
-        maleWalkRef.current.active = false;
-        setLeavingToExitAuto(false);
-        resetPlayerTransform(LEAVE_DIALOGUE_FEMALE_POS, LEAVE_DIALOGUE_FEMALE_ROT, 0, 0.22);
-        setMalePos(LEAVE_DIALOGUE_MALE_POS);
-        setMaleRot(LEAVE_DIALOGUE_MALE_ROT);
-        setMalePose('greet');
-        setMaleEmotion('nervous');
-        setMaleGaze('target');
-      }, Math.min(3600, Math.max(1800, CUTSCENE_MIN_DURATION_MS - 900)));
-
-      // زمان خواندن متن کات‌سین قبل از شروع کارت دیالوگ (۵ ثانیه)
-      const tStartDial = window.setTimeout(() => {
-        setNarrativeCaption(null);
-        setActiveDialogueNode(DIALOGUE_START_NODE);
-        transitionTo('DIALOGUE');
-      }, CUTSCENE_MIN_DURATION_MS);
-
-      return () => {
-        window.clearTimeout(tStand);
-        window.clearTimeout(tArriveStand);
-        window.clearTimeout(tStartDial);
-      };
-    }
-  }, [
-    stage,
-    finalDecision,
-    setActiveDialogueNode,
-    setCinematicShot,
-    setNarrativeCaption,
-    setObjectiveHint,
-    transitionTo,
-  ]);
+    }, [], 2.25);
+    return () => {
+      tl.kill(); unsubscribePause();
+      departureActiveRef.current = false;
+      maleWalkRef.current.active = false;
+    };
+  }, [stage, finalDecision, setCinematicShot, setNarrativeCaption, setObjectiveHint]);
 
   // قاب‌بندی سینمایی دوربین در طول گفت‌وگو (هر دو شخصیت کاملاً داخل کادر و بالای باکس دیالوگ)
   useEffect(() => {
@@ -350,13 +298,13 @@ export const LobbyAndEndingScene: React.FC = () => {
     if (!node) return;
 
     setMaleSeated(false);
-    setMalePos(LEAVE_DIALOGUE_MALE_POS);
+    setMalePos(dialoguePositions.male);
     setMaleRot(LEAVE_DIALOGUE_MALE_ROT);
 
-    const fx = LEAVE_DIALOGUE_FEMALE_POS[0];
-    const fz = LEAVE_DIALOGUE_FEMALE_POS[2];
-    const mx = LEAVE_DIALOGUE_MALE_POS[0];
-    const mz = LEAVE_DIALOGUE_MALE_POS[2];
+    const fx = dialoguePositions.female[0];
+    const fz = dialoguePositions.female[2];
+    const mx = dialoguePositions.male[0];
+    const mz = dialoguePositions.male[2];
     const midX = (fx + mx) * 0.5;
     const midZ = (fz + mz) * 0.5;
 
@@ -382,22 +330,23 @@ export const LobbyAndEndingScene: React.FC = () => {
         duration: 1.25,
       });
     }
-  }, [stage, activeDialogueNodeId, setCinematicShot]);
+  }, [stage, activeDialogueNodeId, setCinematicShot, dialoguePositions]);
 
   useEffect(() => {
     if (stage !== 'FINAL_ENDING') return;
-    const midX = (LEAVE_DIALOGUE_FEMALE_POS[0] + LEAVE_DIALOGUE_MALE_POS[0]) * 0.5;
-    const midZ = (LEAVE_DIALOGUE_FEMALE_POS[2] + LEAVE_DIALOGUE_MALE_POS[2]) * 0.5;
+    const midX = (dialoguePositions.female[0] + dialoguePositions.male[0]) * 0.5;
+    const midZ = (dialoguePositions.female[2] + dialoguePositions.male[2]) * 0.5;
     setCinematicShot({
       position: [midX, 1.56, midZ + 2.45],
       lookAt: [midX, 1.18, midZ],
       fov: 46,
       duration: 2.2,
     });
-  }, [stage, setCinematicShot]);
+  }, [stage, setCinematicShot, dialoguePositions]);
 
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime;
+    if (useGameStore.getState().isPaused) return;
 
     if (stage === 'FINAL_DECISION' && !finalDecision) {
       // وقتی دختر با جوی‌استیک به سمت درِ خروجی لابی می‌رود، خودکار صحنه شروع دیالوگ فعال می‌شود
@@ -407,18 +356,36 @@ export const LobbyAndEndingScene: React.FC = () => {
     }
 
     if (maleWalkRef.current.active) {
-      maleWalkRef.current.progress = Math.min(1, maleWalkRef.current.progress + delta * 0.42);
+      const distance = Math.hypot(
+        maleWalkRef.current.to[0] - maleWalkRef.current.from[0],
+        maleWalkRef.current.to[2] - maleWalkRef.current.from[2]
+      );
+      const previousProgress = maleWalkRef.current.progress;
+      maleWalkRef.current.progress = advanceLobbyWalk(previousProgress, distance, delta);
       const p = maleWalkRef.current.progress;
       const nx = THREE.MathUtils.lerp(maleWalkRef.current.from[0], maleWalkRef.current.to[0], p);
       const nz = THREE.MathUtils.lerp(maleWalkRef.current.from[2], maleWalkRef.current.to[2], p);
-      setMalePos([nx, 0, nz]);
+      if (maleGroupRef.current) maleGroupRef.current.position.set(nx, 0, nz);
       // چرخش خالق در جهت حرکت تا عقب به عقب نرود
       const walkDx = maleWalkRef.current.to[0] - maleWalkRef.current.from[0];
       const walkDz = maleWalkRef.current.to[2] - maleWalkRef.current.from[2];
-      setMaleRot(Math.atan2(walkDx, walkDz));
-      if (Math.floor(p * 8) !== Math.floor((p - delta * 0.42) * 8)) {
+      if (maleGroupRef.current) maleGroupRef.current.rotation.y = Math.atan2(walkDx, walkDz);
+      if (Math.floor(p * distance / 0.7) !== Math.floor(previousProgress * distance / 0.7)) {
         audioManager.playSfx('footstep');
       }
+      if (p >= 1) {
+        maleWalkRef.current.active = false;
+        maleArrivedRef.current = true;
+        setMalePos(maleWalkRef.current.to);
+        setMaleRot(LEAVE_DIALOGUE_MALE_ROT);
+        setMalePose('idle');
+      }
+    }
+    if (departureActiveRef.current && maleArrivedRef.current && playerArrivedRef.current) {
+      departureActiveRef.current = false;
+      setLeavingToExitAuto(false);
+      setActiveDialogueNode(DIALOGUE_START_NODE);
+      transitionTo('DIALOGUE');
     }
 
     if (motesRef.current) {
@@ -726,7 +693,7 @@ export const LobbyAndEndingScene: React.FC = () => {
           </group>
 
           <StylizedCharacter
-            kind="student"
+            kind={idx % 2 === 0 && (graphicsProfile !== 'LOW' || idx === 0) ? 'student_female' : 'student'}
             position={st.pos}
             rotationY={st.rot}
             seated={true}
@@ -738,9 +705,20 @@ export const LobbyAndEndingScene: React.FC = () => {
         </React.Fragment>
       ))}
 
-      {/* شخصیت پسر (نشسته در سکوت تا لحظه‌ای که دختر می‌خواهد از لابی برود) */}
+      {/* همراه پسر تا بعد از اشاره روی صندلی خودش می‌ماند. */}
+      <group position={MALE_FRIEND_POS} rotation={[0, MALE_FRIEND_ROT, 0]}>
+        <mesh position={[0, 0.34, 0]}><boxGeometry args={[0.68, 0.28, 0.64]} /><meshStandardMaterial color="#807c70" roughness={0.85} /></mesh>
+        <mesh position={[0, 0.64, -0.24]}><boxGeometry args={[0.68, 0.44, 0.16]} /><meshStandardMaterial color="#726c60" roughness={0.85} /></mesh>
+      </group>
+      <StylizedCharacter kind="student" position={MALE_FRIEND_POS} rotationY={MALE_FRIEND_ROT}
+        seated pose={friendTalking ? 'talk' : 'sit'} isSpeaking={friendTalking}
+        gazeBehavior="target" gazeTarget={new THREE.Vector3(MALE_SEAT_POS[0], 1.25, MALE_SEAT_POS[2])}
+        tintTop="#66766f" phaseOffset={0.63} />
+
+      {/* پسر با همراهش صحبت می‌کند و پس از اشاره به او به سمت بازیکن می‌رود. */}
       <StylizedCharacter
         kind="male"
+        groupRef={maleGroupRef}
         position={malePos}
         rotationY={maleRot}
         seated={maleSeated && !isDialogueOrEnding}
@@ -755,8 +733,8 @@ export const LobbyAndEndingScene: React.FC = () => {
         }
         emotion={activeMaleEmotion}
         gazeBehavior={stage === 'DIALOGUE' || stage === 'FINAL_ENDING' ? 'target' : maleGaze}
-        gazeTarget={isDialogueOrEnding ? femaleDialogHeadWorld : femaleSeatWorld}
-        isSpeaking={isMaleSpeaking}
+        gazeTarget={isDialogueOrEnding ? femaleDialogHeadWorld : maleLooksAtFriend ? maleFriendWorld : femaleDialogHeadWorld}
+        isSpeaking={isMaleSpeaking || (!isDialogueOrEnding && malePose === 'talk')}
         phaseOffset={0.5}
       />
 
@@ -776,7 +754,7 @@ export const LobbyAndEndingScene: React.FC = () => {
           isSeatedInLobbyCinematic
             ? FEMALE_SEAT_POS
             : isDialogueOrEnding
-              ? LEAVE_DIALOGUE_FEMALE_POS
+              ? dialoguePositions.female
               : null
         }
         overrideRotationY={
@@ -801,9 +779,10 @@ export const LobbyAndEndingScene: React.FC = () => {
         gazeBehavior={isDialogueOrEnding ? 'target' : 'forward'}
         gazeTarget={isDialogueOrEnding ? maleDialogHeadWorld : null}
         isSpeaking={isFemaleSpeaking}
+        onReachAutoWalkTarget={() => { playerArrivedRef.current = true; }}
         autoWalkTarget={
           leavingToExitAuto
-            ? new THREE.Vector3(LEAVE_DIALOGUE_FEMALE_POS[0], 0, LEAVE_DIALOGUE_FEMALE_POS[2])
+            ? new THREE.Vector3(dialoguePositions.female[0], 0, dialoguePositions.female[2])
             : null
         }
       />
