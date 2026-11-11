@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { PlayerController, ObstacleCircle } from '../characters/PlayerController';
-import { StylizedCharacter } from '../characters/StylizedCharacter';
+import { CampusStudent } from './CampusStudent';
 import { CameraRig } from '../camera/CameraRig';
 import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
 import { InteractionSystem } from '../interaction/InteractionSystem';
@@ -308,25 +308,9 @@ export const MissionUniversityScene: React.FC = () => {
           flowers={answers.atmosphere === 'flowers_gardens' || answers.atmosphere === 'nature'} />
       ))}
 
-      {/* Simplified desaturated background students on campus */}
-      {graphicsProfile !== 'LOW' && (
-        <>
-          <StylizedCharacter
-            kind="student"
-            position={[-3.05, 0, 2.2]}
-            rotationY={Math.PI / 2}
-            pose="sit"
-            phaseOffset={0.3}
-          />
-          <StylizedCharacter
-            kind="student_female"
-            position={[4.2, 0, -3.1]}
-            rotationY={-0.6}
-            pose="idle"
-            phaseOffset={0.7}
-          />
-        </>
-      )}
+      {/* Optional conversations never interrupt the player's objective. */}
+      <CampusStudent variant="seated" position={[-3.05, 0, 2.2]} rotationY={Math.PI / 2} enabled={!entering} />
+      <CampusStudent variant="standing" position={[4.2, 0, -3.1]} rotationY={-0.6} enabled={!entering} />
 
       <InteractionSystem targets={targets} enabled={!entering} />
 
