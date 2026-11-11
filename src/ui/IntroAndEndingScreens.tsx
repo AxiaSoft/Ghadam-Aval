@@ -4,10 +4,12 @@ import { audioManager } from '../audio/AudioManager';
 import { SCREEN_TEXTS } from '../dialogue/dialogueData';
 import { getEndingPresentation } from '../narrative/endings';
 import { startNewResponseSession } from '../utils/responseLogger';
+import { getPostgameKind } from './postgameMenu';
 
 export const IntroAndEndingScreens: React.FC = () => {
   const stage = useGameStore((s) => s.stage);
   const endingVariant = useGameStore((s) => s.endingVariant);
+  const relationshipAnswer = useGameStore((s) => s.relationshipAnswer);
   const savedResumeStage = useGameStore((s) => s.savedResumeStage);
   const postGameMenu = useGameStore((s) => s.postGameMenu);
   const unlockAudio = useGameStore((s) => s.unlockAudio);
@@ -21,7 +23,7 @@ export const IntroAndEndingScreens: React.FC = () => {
     unlockAudio();
     audioManager.playSfx('ui_tap');
     startNewResponseSession();
-    useGameStore.setState({ questionnaireIndex: 0, textAnswers: [], answers: {}, relationshipAnswer: null });
+    useGameStore.setState({ questionnaireIndex: 0, textAnswers: [], answers: {}, relationshipAnswer: null, endingVariant: null });
     setPostGameMenu(false);
     transitionTo('QUESTIONNAIRE');
   };
@@ -73,17 +75,14 @@ export const IntroAndEndingScreens: React.FC = () => {
 
   // ۲. منوی بعد از پایان: همان فضا، بدون نمایش عجیب و غریب
   if (stage === 'INTRO' && postGameMenu) {
+    const kind = getPostgameKind(relationshipAnswer, endingVariant);
+    const presentation = kind === 'relationship' ? null : getEndingPresentation(kind);
     return (
-      <div className="cinematic-screen intro-screen intro-postgame" dir="rtl">
+      <div className="cinematic-screen intro-screen intro-postgame" data-ending={kind} dir="rtl">
         <div className="postgame-card">
-          <span className="postgame-eyebrow">{SCREEN_TEXTS.soonMeetText}</span>
-          <p className="postgame-note">{SCREEN_TEXTS.postgameNote}</p>
-
-          <div className="postgame-details" aria-hidden="true">
-            <span>یک دفتر باز</span>
-            <span>یک لیوان نیمهپر</span>
-            <span>یک مکث قبل از در</span>
-          </div>
+          <span className="postgame-mark" aria-hidden="true" />
+          <span className="postgame-eyebrow">{presentation?.title ?? 'چقدر عالی! 😀'}</span>
+          <p className="postgame-note">{presentation?.quote ?? 'امیدوارم پایدار باشید 🙂'}</p>
 
           <div className="postgame-actions">
             <button type="button" className="primary-cta-btn postgame-start-btn" onClick={handleStart}>

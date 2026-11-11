@@ -167,7 +167,6 @@ export const DialogueOverlay: React.FC = () => {
                 {(idx + 1).toLocaleString('fa-IR')}
               </span>
               <span className="dialogue-choice-label">{choice.text}</span>
-              {isRecommendedChoice(node.id, choice.id) && <span className="recommendation-badge">پیشنهادی</span>}
             </button>
           ))}
         </div>
