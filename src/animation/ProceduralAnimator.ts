@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { CharacterRigNodes } from '../characters/CharacterBuilder';
-import { CharacterEmotion, CharacterGazeBehavior, CharacterPose } from '../types/game';
+import type { CharacterRigNodes } from '../characters/CharacterBuilder';
+import type { CharacterEmotion, CharacterGazeBehavior, CharacterPose } from '../types/game';
 
 export interface ProceduralAnimParams {
   pose: CharacterPose;
@@ -83,9 +83,9 @@ export class ProceduralAnimator {
     // 1. BREATHING & ORGANIC MULTI-HARMONIC IDLE SWAY
     const breath = Math.sin(t * 1.65) * 0.5 + 0.5;
     const idleSwayZ =
-      (Math.sin(t * 0.73) * 0.006 + Math.sin(t * 1.31) * 0.004) * (1 - this.walkBlend * 0.7);
+      (Math.sin(t * 0.73) * 0.014 + Math.sin(t * 1.31) * 0.006) * (1 - this.walkBlend * 0.7);
     const idleSwayX =
-      (Math.cos(t * 0.59) * 0.006 + Math.sin(t * 1.12) * 0.003) * (1 - this.walkBlend * 0.7);
+      (Math.cos(t * 0.59) * 0.011 + Math.sin(t * 1.12) * 0.005) * (1 - this.walkBlend * 0.7);
 
     // 2. WALK CYCLE & FOOTSTEPS
     if (this.walkBlend > 0.04) {
@@ -158,8 +158,8 @@ export class ProceduralAnimator {
     } else if (params.pose === 'sit_lean_forward') {
       desiredChestLeanX += 0.28;
     } else if (params.pose === 'talk') {
-      desiredChestLeanX += 0.025 + Math.sin(t * 1.8) * 0.012;
-      desiredChestTwistY += Math.sin(t * 1.15) * 0.028;
+      desiredChestLeanX += 0.035 + Math.sin(t * 1.8) * 0.025;
+      desiredChestTwistY += Math.sin(t * 1.15) * 0.045;
     } else if (params.pose === 'laugh' || emotion === 'happy_laugh') {
       desiredChestLeanX += -0.02 + Math.sin(t * 7.5) * 0.018;
     } else if (params.pose === 'interact') {
@@ -230,6 +230,11 @@ export class ProceduralAnimator {
         armRX = -0.95;
         armRZ = -0.04;
         foreRX = -0.38;
+      } else if (params.pose === 'wait_gesture') {
+        // A short raised hand towards the companion, not a spoken line.
+        armRX = -1.03;
+        armRZ = -0.28;
+        foreRX = -1.15;
       } else if (params.pose === 'greet') {
         armRX = -0.74;
         armRZ = -0.22;
@@ -261,6 +266,11 @@ export class ProceduralAnimator {
       if (nodes.foreArmR) {
         nodes.foreArmR.rotation.x = damp(nodes.foreArmR.rotation.x, foreRX, 8, clampedDt);
       }
+    }
+
+    if (nodes.handR && params.pose !== 'greet' && params.pose !== 'sit_nervous') {
+      nodes.handR.rotation.z = damp(nodes.handR.rotation.z, 0, 7, clampedDt);
+      nodes.handR.rotation.x = damp(nodes.handR.rotation.x, 0, 7, clampedDt);
     }
 
     // ریزحرکت روزمره: خودکار آرام توی دست میچرخد، بدون ژست نمایشی

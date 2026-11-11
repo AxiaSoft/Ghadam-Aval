@@ -333,7 +333,7 @@ export const MissionUniversityScene: React.FC = () => {
             phaseOffset={0.3}
           />
           <StylizedCharacter
-            kind="student"
+            kind="student_female"
             position={[4.2, 0, -3.1]}
             rotationY={-0.6}
             pose="idle"
