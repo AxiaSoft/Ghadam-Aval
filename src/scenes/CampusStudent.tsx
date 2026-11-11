@@ -27,7 +27,8 @@ export const CampusStudent: React.FC<{
       rotationY={rotationY} seated={variant === 'seated'}
       pose={visibleLine ? 'talk' : variant === 'seated' ? 'sit' : 'idle'}
       isSpeaking={Boolean(visibleLine)} phaseOffset={variant === 'seated' ? .3 : .7} />
-    {visibleLine && <Html position={[0, variant === 'seated' ? 1.7 : 2.1, 0]} center zIndexRange={[34, 34]} style={{ pointerEvents: 'none' }}>
+    {visibleLine && <Html position={[0, variant === 'seated' ? 1.52 : 1.92, 0]} zIndexRange={[34, 34]}
+      style={{ left: 0, top: 0, transform: 'translate(-50%, -100%)', pointerEvents: 'none' }}>
       <div className="campus-chatter" dir="rtl" role="status">{visibleLine}</div>
     </Html>}
   </group>;

@@ -1,43 +1,4 @@
-import {
-  AfternoonChoice,
-  AtmosphereChoice,
-  BeginningValueChoice,
-  EndingVariant,
-  HappinessChoice,
-  QuestionnaireAnswers,
-} from '../types/game';
-
-const HAPPINESS_NOTES: Record<HappinessChoice, string> = {
-  music: 'یه آهنگ کوتاه، با هدفون، بین دو کلاس',
-  talking: 'چند دقیقه گپ با کسی که خوب میشناسدت',
-  going_out: 'پنج دقیقه بیرون زدن از ساختمان',
-  unexpected: 'یه اتفاق کوچیک که برنامه روز را عوض کرد',
-  simple_things: 'چای داغ، یا یه میز مرتب',
-};
-
-const AFTERNOON_PLANS: Record<AfternoonChoice, string> = {
-  cafe: 'کافه کنار کتابخانه، یه چای، بدون عجله',
-  walk: 'یه دور تو محوطه تا سرِدر و برگشتن',
-  movie: 'چند دقیقه حرف درباره یه فیلم کوتاه',
-  games: 'یه بازی ساده سر میز کافه',
-  adventure: 'بیرون زدن بیبرنامه و برگشتن هر وقت شد',
-};
-
-const PLACE_NOTES: Record<AtmosphereChoice, string> = {
-  starry_sky: 'پشت بام خوابگاه، وقتی چراغهای محوطه کم میشوند',
-  flowers_gardens: 'کنار باغچه جلوی دانشکده',
-  city_night: 'پلههای بیرونی، رو به چراغهای خیابان',
-  minimalist: 'ردیف آخر کتابخانه، جایی که کسی نشسته نیست',
-  nature: 'زیر درختهای پشت ساختمان قدیمی',
-};
-
-const VALUE_NOTES: Record<BeginningValueChoice, string> = {
-  honesty: 'حرف ساده و راست، حتی اگر کوتاه باشد',
-  humor: 'یک شوخی که مصنوعی نباشد',
-  attention_to_detail: 'حواس جمع به همان خط خالی برگه',
-  trust: 'بتوانی «نه» بگویی و چیزی عجیب نشود',
-  time: 'کسی برای جواب سلام عجله نکند',
-};
+import type { EndingVariant } from '../types/game';
 
 export interface EndingPresentation {
   eyebrow: string;
@@ -69,35 +30,11 @@ const VARIANT_COPY: Record<
   },
 };
 
-export function getEndingPresentation(
-  answers: QuestionnaireAnswers,
-  variant: EndingVariant
-): EndingPresentation {
-  const happiness = answers.happiness
-    ? HAPPINESS_NOTES[answers.happiness]
-    : 'یه چای داغ بین دو کلاس';
-  const place = answers.atmosphere
-    ? PLACE_NOTES[answers.atmosphere]
-    : 'همان ردیف آخر کلاس';
-  const value = answers.beginningValue
-    ? VALUE_NOTES[answers.beginningValue]
-    : 'راحت بودن، قبل از هر چیز دیگر';
+export function getEndingPresentation(variant: EndingVariant): EndingPresentation {
   const copy = VARIANT_COPY[variant];
-
-  const details = [
-    `چیزی که آن روز حالت را سر جا آورد: ${happiness}.`,
-    `جایی که دلت میخواست جزوه را همانجا مرور کنی: ${place}.`,
-    `چیزی که برایت مهم بود: ${value}.`,
-  ];
-
-  if (variant === 'no') {
-    details.push('پسر همان پسر دو ردیف جلوتر ماند؛ اسمی رد و بدل نشد.');
-  } else {
-    const plan = answers.afternoon
-      ? AFTERNOON_PLANS[answers.afternoon]
-      : 'یه چای بعد از کلاس، هر وقت شد';
-    details.push(`قرار احتمالی: ${plan}.`);
-  }
+  const details = variant === 'no'
+    ? ['پسر همان پسر دو ردیف جلوتر ماند؛ اسمی رد و بدل نشد.']
+    : [];
 
   return {
     eyebrow: 'پایان این روز',

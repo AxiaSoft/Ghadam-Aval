@@ -7,7 +7,6 @@ import { startNewResponseSession } from '../utils/responseLogger';
 
 export const IntroAndEndingScreens: React.FC = () => {
   const stage = useGameStore((s) => s.stage);
-  const answers = useGameStore((s) => s.answers);
   const endingVariant = useGameStore((s) => s.endingVariant);
   const savedResumeStage = useGameStore((s) => s.savedResumeStage);
   const postGameMenu = useGameStore((s) => s.postGameMenu);
@@ -125,7 +124,7 @@ export const IntroAndEndingScreens: React.FC = () => {
 
   // ۴. تیتراژ نهایی، متناسب با تصمیم آخر
   if (stage === 'FINAL_ENDING') {
-    const presentation = getEndingPresentation(answers, endingVariant ?? 'slow');
+    const presentation = getEndingPresentation(endingVariant ?? 'slow');
 
     return (
       <div className="cinematic-screen final-screen" dir="rtl">
@@ -135,11 +134,13 @@ export const IntroAndEndingScreens: React.FC = () => {
           <p className="final-persian-quote">{presentation.quote}</p>
           <p className="ending-summary">{presentation.summary}</p>
 
-          <ul className="ending-detail-list">
-            {presentation.details.map((detail) => (
-              <li key={detail}>{detail}</li>
-            ))}
-          </ul>
+          {presentation.details.length > 0 && (
+            <ul className="ending-detail-list">
+              {presentation.details.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          )}
 
           <div className="ending-actions">
             <button type="button" className="secondary-ghost-btn warm" onClick={handleReturnToMenu}>
