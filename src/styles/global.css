@@ -1977,3 +1977,28 @@ button {
   border: 7px solid transparent;
   border-top-color: rgba(25, 30, 36, .92);
 }
+
+/* Suggested story routes are visual hints, never preselected answers. */
+.dialogue-choice-btn.is-recommended,
+.story-option-btn.highlight-subtle {
+  border: 1.5px solid #f6d18d;
+  background: rgba(109, 76, 37, .96);
+  box-shadow: 0 0 0 2px rgba(242, 200, 120, .16), 0 8px 22px rgba(0, 0, 0, .3);
+}
+.dialogue-choice-btn.is-recommended:hover,
+.story-option-btn.highlight-subtle:hover { background: rgba(128, 88, 44, .98); }
+.dialogue-choice-label { flex: 1; }
+.recommendation-badge {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-inline-start: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f6d18d;
+  color: #342316;
+  font-size: .7rem;
+  font-weight: 800;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+.story-option-btn .recommendation-badge { float: left; }

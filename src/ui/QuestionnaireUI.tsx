@@ -91,6 +91,7 @@ export const QuestionnaireUI: React.FC = () => {
               onClick={() => handleRel('no')}
             >
               <span className="option-letter">۲.</span> خیر
+              <span className="recommendation-badge">ادامهٔ بازی</span>
             </button>
           </div>
         </div>
