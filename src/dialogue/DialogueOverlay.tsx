@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { DIALOGUE_NODES } from './dialogueData';
+import { isRecommendedChoice } from './recommendedChoices';
 import { DialogueNode } from '../types/game';
 import { useGameStore } from '../state/gameStore';
 import { audioManager } from '../audio/AudioManager';
@@ -159,13 +160,14 @@ export const DialogueOverlay: React.FC = () => {
             <button
               key={choice.id}
               type="button"
-              className="dialogue-choice-btn persian-rtl"
+              className={`dialogue-choice-btn persian-rtl ${isRecommendedChoice(node.id, choice.id) ? 'is-recommended' : ''}`}
               onClick={() => handleSelectChoice(choice)}
             >
               <span className="dialogue-choice-index">
                 {(idx + 1).toLocaleString('fa-IR')}
               </span>
-              <span>{choice.text}</span>
+              <span className="dialogue-choice-label">{choice.text}</span>
+              {isRecommendedChoice(node.id, choice.id) && <span className="recommendation-badge">پیشنهادی</span>}
             </button>
           ))}
         </div>
