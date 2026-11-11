@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  BookOpen,
   Clock3,
   MapPin,
   Pause,
@@ -9,16 +8,11 @@ import {
   Sliders,
   Volume2,
   VolumeX,
-  X,
 } from 'lucide-react';
 import { useGameStore } from '../state/gameStore';
 import { GraphicsProfile } from '../types/game';
 import { audioManager } from '../audio/AudioManager';
-import {
-  getAmbientDetail,
-  getChapter,
-  getDiscoveredDetails,
-} from '../narrative/world';
+import { getChapter } from '../narrative/world';
 
 const PROFILE_LABELS: Record<GraphicsProfile, string> = {
   LOW: 'کم',
@@ -45,16 +39,9 @@ export const HUDAndPauseMenu: React.FC = () => {
   const unlockAudio = useGameStore((s) => s.unlockAudio);
 
   const [confirmRestart, setConfirmRestart] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(false);
 
   const isOpening = ['INTRO', 'QUESTIONNAIRE', 'RELATIONSHIP_QUESTION', 'RESPECTFUL_ENDING'].includes(stage);
   const chapter = getChapter(stage);
-  const ambient = getAmbientDetail(stage);
-  const discovered = getDiscoveredDetails(stage);
-
-  useEffect(() => {
-    setNotesOpen(false);
-  }, [stage]);
 
   const handleToggleMute = () => {
     audioManager.unlock();
@@ -68,7 +55,6 @@ export const HUDAndPauseMenu: React.FC = () => {
     unlockAudio();
     audioManager.playSfx('ui_tap');
     setConfirmRestart(false);
-    setNotesOpen(false);
     setPaused(!isPaused);
   };
 
@@ -104,34 +90,9 @@ export const HUDAndPauseMenu: React.FC = () => {
             </div>
           )}
 
-          {ambient && !isPaused && !isOpening && (
-            <button
-              type="button"
-              className="ambient-detail-chip"
-              onClick={() => setNotesOpen((open) => !open)}
-              aria-label="نمایش جزئیات صحنه"
-            >
-              <span className="ambient-dot" />
-              <span>{ambient.label}</span>
-            </button>
-          )}
         </div>
 
         <div className="hud-right">
-          {discovered.length > 0 && !isOpening && (
-            <button
-              type="button"
-              className="hud-icon-btn"
-              onClick={() => {
-                audioManager.playSfx('ui_tap');
-                setNotesOpen((open) => !open);
-              }}
-              aria-label="دفترچه مشاهدات"
-            >
-              <BookOpen size={18} />
-            </button>
-          )}
-
           <button
             type="button"
             className="hud-icon-btn"
@@ -153,32 +114,6 @@ export const HUDAndPauseMenu: React.FC = () => {
           )}
         </div>
       </header>
-
-      {notesOpen && !isPaused && discovered.length > 0 && (
-        <aside className="notes-panel" dir="rtl" aria-label="مشاهدات تا اینجا">
-          <div className="notes-header">
-            <span className="notes-title">
-              <BookOpen size={15} /> دفترچه مشاهدات
-            </span>
-            <button
-              type="button"
-              className="notes-close-btn"
-              onClick={() => setNotesOpen(false)}
-              aria-label="بستن دفترچه"
-            >
-              <X size={16} />
-            </button>
-          </div>
-          <ul className="notes-list">
-            {discovered.map((detail) => (
-              <li key={detail.label}>
-                <strong>{detail.label}</strong>
-                <span>{detail.text}</span>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      )}
 
       {narrativeCaption && !isPaused && (
         <div className="narrative-caption-bar" dir="rtl" role="status" aria-live="polite">
