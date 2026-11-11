@@ -30,8 +30,8 @@ const STORAGE_KEY = 'the_first_move_save_v6';
  */
 const VALID_TRANSITIONS: Record<GameStage, GameStage[]> = {
   INTRO: ['QUESTIONNAIRE'],
-  QUESTIONNAIRE: ['RELATIONSHIP_QUESTION'],
-  RELATIONSHIP_QUESTION: ['RESPECTFUL_ENDING', 'WORLD_TRANSFORMATION'],
+  QUESTIONNAIRE: ['RELATIONSHIP_QUESTION', 'WORLD_TRANSFORMATION'],
+  RELATIONSHIP_QUESTION: ['RESPECTFUL_ENDING', 'QUESTIONNAIRE'],
   RESPECTFUL_ENDING: ['INTRO'],
   WORLD_TRANSFORMATION: ['MISSION_1'],
   MISSION_1: ['MISSION_2'],
@@ -70,6 +70,7 @@ export function detectDefaultGraphicsProfile(): GraphicsProfile {
 interface PersistedSave {
   stage: GameStage;
   questionnaireIndex: number;
+  textAnswers: string[];
   answers: QuestionnaireAnswers;
   relationshipAnswer: RelationshipAnswer | null;
   selectedPath: PathColorChoice | null;
@@ -110,6 +111,7 @@ export interface GameStoreState {
 
   // Progress & narrative state
   questionnaireIndex: number;
+  textAnswers: string[];
   answers: QuestionnaireAnswers;
   relationshipAnswer: RelationshipAnswer | null;
   selectedPath: PathColorChoice | null;
@@ -150,6 +152,7 @@ export interface GameStoreState {
     key: keyof QuestionnaireAnswers,
     value: HappinessChoice | AfternoonChoice | AtmosphereChoice | BeginningValueChoice
   ) => void;
+  setTextAnswer: (index: number, value: string) => void;
   advanceQuestionnaire: () => void;
   regressQuestionnaire: () => void;
   answerRelationship: (answer: RelationshipAnswer) => void;
@@ -198,6 +201,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     persistState({
       stage: s.stage,
       questionnaireIndex: s.questionnaireIndex,
+      textAnswers: s.textAnswers,
       answers: s.answers,
       relationshipAnswer: s.relationshipAnswer,
       selectedPath: s.selectedPath,
@@ -220,6 +224,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
     audioUnlocked: false,
 
     questionnaireIndex: saved?.questionnaireIndex ?? 0,
+    textAnswers: saved?.textAnswers ?? [],
     answers: saved?.answers ?? {},
     relationshipAnswer: saved?.relationshipAnswer ?? null,
     selectedPath: saved?.selectedPath ?? null,
@@ -332,19 +337,30 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       recordQuestionnaireResponse(key, value);
     },
 
+    setTextAnswer: (index, value) => {
+      set((s) => {
+        const textAnswers = [...s.textAnswers];
+        textAnswers[index] = value;
+        return { textAnswers };
+      });
+      syncSave();
+    },
+
     advanceQuestionnaire: () => {
       const idx = get().questionnaireIndex;
-      if (idx < 3) {
+      if (idx === 0) {
+        get().transitionTo('RELATIONSHIP_QUESTION');
+      } else if (idx < 4) {
         set({ questionnaireIndex: idx + 1 });
         syncSave();
-      } else {
-        get().transitionTo('RELATIONSHIP_QUESTION');
+      } else if (get().textAnswers.slice(0, 4).filter((answer) => answer?.trim()).length === 4) {
+        get().transitionTo('WORLD_TRANSFORMATION');
       }
     },
 
     regressQuestionnaire: () => {
       const idx = get().questionnaireIndex;
-      if (idx > 0) {
+      if (idx > 1) {
         set({ questionnaireIndex: idx - 1 });
         syncSave();
       }
@@ -355,7 +371,8 @@ export const useGameStore = create<GameStoreState>((set, get) => {
       syncSave();
       recordRelationshipResponse(answer);
       if (answer === 'no') {
-        get().transitionTo('WORLD_TRANSFORMATION');
+        set({ questionnaireIndex: 1 });
+        get().transitionTo('QUESTIONNAIRE');
       } else {
         get().transitionTo('RESPECTFUL_ENDING', { withFade: true });
       }
@@ -442,6 +459,7 @@ export const useGameStore = create<GameStoreState>((set, get) => {
         isPaused: false,
         savedResumeStage: null,
         questionnaireIndex: 0,
+        textAnswers: [],
         answers: {},
         relationshipAnswer: null,
         selectedPath: null,

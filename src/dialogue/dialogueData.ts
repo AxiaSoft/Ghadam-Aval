@@ -26,13 +26,6 @@ export const DIALOGUE_START_NODE = 'lobby_open';
 export const SCREEN_TEXTS = {
   mainTitle: 'قدم اول',
 
-  introEyebrow: 'چهارشنبه، قبل از کلاس ۲۰۴',
-  introTime: '۸:۱۰ صبح',
-  introPlace: 'راهروی طبقه دوم',
-  introDescription:
-    'امروز نوبت ارائهٔ توست. برگهٔ چاپی یک خط کم دارد؛ تو سر کلاس یک سوال کوتاه میپرسی و پسر، دو ردیف جلوتر، همان خط را جا میاندازد. بقیهٔ ماجرا قبل از در لابی اتفاق میافتد.',
-  introControlHint: 'چپ: حرکت  ·  راست: دوربین  ·  نزدیک شدن: لمس کن',
-  introFootnote: 'اسمی توی کار نیست؛ فقط چند دقیقه قبل از کلاس.',
   startButton: 'شروع این روز',
   resumeButton: 'ادامه از همانجا',
 
@@ -77,22 +70,8 @@ export interface QuestionnaireStep {
 
 export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
-    key: 'happiness',
-    chapterLabel: 'گام ۱ از ۴',
-    question: 'وقتی سرت شلوغ است، چی یک ذره آرومت میکند؟',
-    note: 'همان شیء روی نیمکت یا میز کلاس دیده میشود.',
-    hint: 'چیزی که واقعاً انجام میدهی، نه چیزی که دوست داری انجام بدهی.',
-    options: [
-      { id: 'music', label: 'یک آهنگ کوتاه با هدفون، بین دو کلاس' },
-      { id: 'talking', label: 'چند دقیقه گپ با کسی که خوب میشناسدت' },
-      { id: 'going_out', label: 'پنج دقیقه بیرون زدن از ساختمان' },
-      { id: 'unexpected', label: 'یک اتفاق کوچیک که برنامه روز را عوض کند' },
-      { id: 'simple_things', label: 'چای داغ، یا یک میز مرتب' },
-    ],
-  },
-  {
     key: 'afternoon',
-    chapterLabel: 'گام ۲ از ۴',
+    chapterLabel: 'گام ۱ از ۳',
     question: 'بعد از ارائه، یک ساعت خالی داشته باشی چیکار میکنی؟',
     note: 'پیشنهاد آخر پسر از همینجا میآید.',
     hint: 'لازم نیست جواب جالبی باشد؛ همان کاری که معمولاً میکنی.',
@@ -106,7 +85,7 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   },
   {
     key: 'atmosphere',
-    chapterLabel: 'گام ۳ از ۴',
+    chapterLabel: 'گام ۲ از ۳',
     question: 'کدام گوشهٔ دانشگاه برای مرور جزوه راحتتر است؟',
     note: 'جای خلوت تیتراژ و دفترچه مشاهدات از همینجا میآید.',
     hint: 'به جایی فکر کن که بدون دلیل خاصی دوست داری بروی آنجا.',
@@ -120,7 +99,7 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   },
   {
     key: 'beginningValue',
-    chapterLabel: 'گام ۴ از ۴',
+    chapterLabel: 'گام ۳ از ۳',
     question: 'تو یک همگروهی تازه، چی باعث میشود راحت باشی؟',
     note: 'لحن جملهٔ آخر پسر و جملهٔ احتیاطیش از همینجا میآید.',
     hint: 'این سوال درباره عشق نیست؛ درباره راحت بودن سر یک کار مشترک است.',
@@ -136,11 +115,11 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
 
 export const RELATIONSHIP_PROMPT = {
   chapterLabel: 'یک سوال قبل از شروع',
-  question: 'الان با کسی رابطه داری؟',
+  question: 'برای اینکه سوالات رو شروع کنم اول بهم بگو الان توی رابطه هستید؟',
   note: 'فقط برای اینکه گفتوگو وارد جایی نشود که برایت ناخوشایند باشد.',
   options: {
-    yes: 'بله، دارم.',
-    no: 'نه، ندارم.',
+    yes: 'بله',
+    no: 'خیر',
   },
 };
 

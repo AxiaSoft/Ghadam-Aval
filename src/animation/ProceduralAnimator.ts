@@ -5,6 +5,7 @@ import type { CharacterEmotion, CharacterGazeBehavior, CharacterPose } from '../
 export interface ProceduralAnimParams {
   pose: CharacterPose;
   seated?: boolean;
+  seatHands?: 'lap' | 'desk';
   emotion?: CharacterEmotion;
   gazeBehavior?: CharacterGazeBehavior;
   gazeTargetWorld?: THREE.Vector3 | null;
@@ -226,6 +227,18 @@ export class ProceduralAnimator {
         }
       }
 
+      // Away from a desk, keep the forearms lowered towards the thighs.
+      // An explicit wait gesture can still temporarily lift a hand.
+      const handsOnLap = isSeated && params.seatHands !== 'desk';
+      if (handsOnLap) {
+        armLX = -0.4;
+        armLZ = 0.17;
+        foreLX = 0;
+        armRX = -0.4;
+        armRZ = -0.17;
+        foreRX = 0;
+      }
+
       if (params.pose === 'interact') {
         armRX = -0.95;
         armRZ = -0.04;
@@ -242,18 +255,26 @@ export class ProceduralAnimator {
         if (nodes.handR) {
           nodes.handR.rotation.z = Math.sin(t * 5.4) * 0.16;
         }
-      } else if (params.pose === 'talk' || params.isSpeaking) {
+      } else if (!handsOnLap && (params.pose === 'talk' || params.isSpeaking)) {
         const g1 = Math.sin(t * 2.5) * 0.5 + 0.5;
         const g2 = Math.cos(t * 1.9);
         armRX += -0.13 * g1;
         foreRX += -0.17 * g1;
         armLX += -0.08 * (1 - g1);
         foreLX += -0.12 * Math.abs(g2);
-      } else if (params.pose === 'laugh' || emotion === 'happy_laugh') {
+      } else if (!handsOnLap && (params.pose === 'laugh' || emotion === 'happy_laugh')) {
         armRX = -0.68;
         armRZ = 0.08;
         foreRX = -1.12 + Math.sin(t * 7.2) * 0.07;
       }
+
+      // The simplified student rig has shorter arms and no separate hands.
+      // Extend those segments slightly while seated so their ends reach the lap.
+      const shortRigScale = handsOnLap && !nodes.handL && !nodes.handR ? 1.2 : 1;
+      nodes.armL.scale.y = damp(nodes.armL.scale.y, shortRigScale, 8, clampedDt);
+      nodes.armR.scale.y = damp(nodes.armR.scale.y, shortRigScale, 8, clampedDt);
+      if (nodes.foreArmL) nodes.foreArmL.scale.y = damp(nodes.foreArmL.scale.y, shortRigScale, 8, clampedDt);
+      if (nodes.foreArmR) nodes.foreArmR.scale.y = damp(nodes.foreArmR.scale.y, shortRigScale, 8, clampedDt);
 
       nodes.armL.rotation.x = damp(nodes.armL.rotation.x, armLX, 8, clampedDt);
       nodes.armL.rotation.z = damp(nodes.armL.rotation.z, armLZ, 8, clampedDt);

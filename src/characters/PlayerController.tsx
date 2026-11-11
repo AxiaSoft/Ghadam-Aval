@@ -26,6 +26,7 @@ export interface PlayerControllerProps {
   controlEnabled?: boolean;
   overridePose?: CharacterPose;
   overrideSeated?: boolean;
+  seatHands?: 'lap' | 'desk';
   emotion?: CharacterEmotion;
   overridePosition?: [number, number, number] | null;
   overrideRotationY?: number | null;
@@ -44,6 +45,7 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   controlEnabled = true,
   overridePose,
   overrideSeated = false,
+  seatHands = 'lap',
   emotion = 'neutral',
   overridePosition = null,
   overrideRotationY = null,
@@ -213,6 +215,7 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
       groupRef={groupRef}
       pose={activePose}
       seated={overrideSeated}
+      seatHands={seatHands}
       emotion={emotion}
       walkSpeed={walkSpeedRef.current || 0.85}
       gazeBehavior={gazeBehavior}

@@ -22,6 +22,7 @@ export const IntroAndEndingScreens: React.FC = () => {
     unlockAudio();
     audioManager.playSfx('ui_tap');
     startNewResponseSession();
+    useGameStore.setState({ questionnaireIndex: 0, textAnswers: [], answers: {}, relationshipAnswer: null });
     setPostGameMenu(false);
     transitionTo('QUESTIONNAIRE');
   };
@@ -53,13 +54,7 @@ export const IntroAndEndingScreens: React.FC = () => {
     return (
       <div className="cinematic-screen intro-screen" dir="ltr">
         <div className="intro-content" dir="rtl">
-          <div className="intro-meta">
-            <span className="intro-kicker">{SCREEN_TEXTS.introEyebrow}</span>
-            <span className="intro-time">{SCREEN_TEXTS.introTime}</span>
-          </div>
-
           <h1 className="cinematic-main-title">{SCREEN_TEXTS.mainTitle}</h1>
-          <p className="cinematic-subtitle">{SCREEN_TEXTS.introDescription}</p>
 
           <div className="intro-actions">
             <button type="button" className="primary-cta-btn" onClick={handleStart}>
@@ -72,10 +67,6 @@ export const IntroAndEndingScreens: React.FC = () => {
             )}
           </div>
 
-          <div className="intro-bottom-notes">
-            <p className="intro-control-hint">{SCREEN_TEXTS.introControlHint}</p>
-            <p className="intro-footnote">{SCREEN_TEXTS.introFootnote}</p>
-          </div>
         </div>
       </div>
     );
@@ -118,8 +109,10 @@ export const IntroAndEndingScreens: React.FC = () => {
     return (
       <div className="cinematic-screen ending-screen" dir="rtl">
         <div className="ending-card">
-          <span className="cinematic-eyebrow">{SCREEN_TEXTS.respectfulHeader}</span>
-          <p className="respectful-message">{SCREEN_TEXTS.respectfulYesMessage}</p>
+          <p className="respectful-message">چقدر عالی! 😀</p>
+          <p className="respectful-message">امیدوارم پایدار باشید 🙂</p>
+          <p className="respectful-message">چون تو رابطه ای زشته که ادامه سوالات رو بپرسم پس برای شما آرزوی موفقیت و خوش بختی میکنم 💙</p>
+          <p className="respectful-message">خدافظ 👋🏻😊</p>
           <div className="ending-actions">
             <button type="button" className="secondary-ghost-btn" onClick={handleReturnToMenu}>
               {SCREEN_TEXTS.returnToStartButton}

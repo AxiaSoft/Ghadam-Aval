@@ -503,6 +503,7 @@ export const ClassroomScene: React.FC = () => {
       {/* CHARACTER A — Female Player Character with 3D Eyeglasses */}
       <group visible={!playerHasExited}>
       <PlayerController
+        seatHands="desk"
         bounds={{ minX: -4.0, maxX: 4.0, minZ: -3.2, maxZ: 4.8 }}
         obstacles={obstacles}
         controlEnabled={stage === 'CLASSROOM_GAMEPLAY'}
