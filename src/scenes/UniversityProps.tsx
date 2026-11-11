@@ -64,6 +64,8 @@ function toneMeshProps(tone: CorridorTone, warmth = 1) {
 
 export const CorridorShell: React.FC<WarmthProps> = ({ initialWarmth = 1 }) => {
   const floorTexture = useSurfaceTexture('tiles', 2, 5);
+  const wallTexture = useSurfaceTexture('plaster', 3, 2);
+  const doorTexture = useSurfaceTexture('wood', 1, 2);
   const w = initialWarmth;
   const doors = ['۲۰۱', '۲۰۲', '۲۰۳', '۲۰۴', '۲۰۵', '۲۰۶'];
 
@@ -84,15 +86,15 @@ export const CorridorShell: React.FC<WarmthProps> = ({ initialWarmth = 1 }) => {
       {/* دیوارها، سقف و قرنیز */}
       <mesh position={[-3.5, 1.75, -2]} userData={{ corridorTone: 'wall' }}>
         <boxGeometry args={[0.2, 3.5, 16]} />
-        <meshStandardMaterial color={toneColor('wall', w)} roughness={0.9} />
+        <meshStandardMaterial color={toneColor('wall', w)} map={wallTexture} roughness={0.9} />
       </mesh>
       <mesh position={[3.5, 1.75, -2]} userData={{ corridorTone: 'wall' }}>
         <boxGeometry args={[0.2, 3.5, 16]} />
-        <meshStandardMaterial color={toneColor('wall', w)} roughness={0.9} />
+        <meshStandardMaterial color={toneColor('wall', w)} map={wallTexture} roughness={0.9} />
       </mesh>
       <mesh position={[0, 1.75, -10]} userData={{ corridorTone: 'wall' }}>
         <boxGeometry args={[7.2, 3.5, 0.2]} />
-        <meshStandardMaterial color={toneColor('wall', w)} roughness={0.9} />
+        <meshStandardMaterial color={toneColor('wall', w)} map={wallTexture} roughness={0.9} />
       </mesh>
       <mesh position={[0, 3.52, -2]} rotation={[Math.PI / 2, 0, 0]} userData={{ corridorTone: 'wall' }}>
         <planeGeometry args={[7.2, 16]} />
@@ -113,7 +115,7 @@ export const CorridorShell: React.FC<WarmthProps> = ({ initialWarmth = 1 }) => {
           <group key={`door-${idx}`} position={[side * 3.36, 1.15, z]}>
             <mesh userData={{ corridorTone: 'door' }}>
               <boxGeometry args={[0.08, 2.2, 1.2]} />
-              <meshStandardMaterial color={toneColor('door', w)} roughness={0.72} />
+              <meshStandardMaterial color={toneColor('door', w)} map={doorTexture} roughness={0.72} />
             </mesh>
             <mesh position={[side * -0.05, 0.25, 0.34]} userData={{ corridorTone: 'paper' }}>
               <boxGeometry args={[0.012, 0.3, 0.42]} />

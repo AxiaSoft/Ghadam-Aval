@@ -22,10 +22,11 @@ import {
   CUTSCENE_MIN_DURATION_SEC,
 } from '../dialogue/dialogueData';
 import { PresentationBoard } from './UniversityProps';
+import { PottedShrub } from './Vegetation';
+import { DESK_ROWS_Z, DESK_COLS_X, classroomExitRoute } from './classroomRoutes';
+import { ClassroomWalker, SlidingChair } from './ClassroomWalkers';
 
 // Classroom Desk Layout: 4 Rows x 3 Columns (facing -Z toward whiteboard at z = -5.4)
-const DESK_ROWS_Z = [-2.3, -0.55, 1.2, 2.95];
-const DESK_COLS_X = [-2.2, 0.0, 2.2];
 
 // Male character seated near the middle of the classroom (Row 1 index = 2nd row, Center-Right col)
 const MALE_DESK = { row: 1, col: 1 }; // [0.0, 0, -0.55] — dead center of classroom!
@@ -52,6 +53,8 @@ const CLASSROOM_INDOOR_CLAMP = {
 
 export const ClassroomScene: React.FC = () => {
   const floorTexture = useSurfaceTexture('wood', 3, 3);
+  const foliageTexture = useSurfaceTexture('foliage', 1, 1);
+  const wallTexture = useSurfaceTexture('plaster', 2, 2);
   const { scene } = useThree();
   const stage = useGameStore((s) => s.stage);
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
@@ -68,6 +71,26 @@ export const ClassroomScene: React.FC = () => {
   const [femaleEmotion, setFemaleEmotion] = useState<CharacterEmotion>('neutral');
   const [classDismissed, setClassDismissed] = useState(false);
   const [playerExiting, setPlayerExiting] = useState(false);
+  const [playerWaypoint, setPlayerWaypoint] = useState(1);
+  const [playerHasExited, setPlayerHasExited] = useState(false);
+  const [exitStudentCount, setExitStudentCount] = useState(6);
+  const exitedCount = useRef(0);
+  const exitExpected = useRef(0);
+  const exitFinished = useRef(false);
+  const playerRoute = useMemo(() => classroomExitRoute(PLAYER_EMPTY_DESK.row, PLAYER_EMPTY_DESK.col), []);
+  const onActorExit = useCallback(() => {
+    if (exitFinished.current) return;
+    exitedCount.current += 1;
+    if (exitedCount.current >= exitExpected.current) {
+      exitFinished.current = true;
+      setNarrativeCaption(null);
+      transitionTo('LOBBY_ENTRY', { withFade: true });
+    }
+  }, [setNarrativeCaption, transitionTo]);
+  const onPlayerReachWaypoint = useCallback(() => {
+    if (playerWaypoint >= playerRoute.length - 1) { setPlayerHasExited(true); onActorExit(); }
+    else setPlayerWaypoint(playerWaypoint + 1);
+  }, [playerWaypoint, playerRoute, onActorExit]);
 
   const playerSeatPos = useMemo<[number, number, number]>(
     () => [DESK_COLS_X[PLAYER_EMPTY_DESK.col], 0, DESK_ROWS_Z[PLAYER_EMPTY_DESK.row] + 0.36],
@@ -125,7 +148,8 @@ export const ClassroomScene: React.FC = () => {
     audioManager.playSfx('chair_move');
 
     const beat = CUTSCENE_MIN_DURATION_SEC;
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ paused: useGameStore.getState().isPaused });
+    const unsubPause = useGameStore.subscribe(state => tl.paused(state.isPaused));
 
     // Shot 1
     tl.call(() => {
@@ -213,26 +237,31 @@ export const ClassroomScene: React.FC = () => {
       audioManager.playSfx('chair_move');
       audioManager.playSfx('student_ambience');
       setClassDismissed(true);
-      setPlayerExiting(true);
+      exitedCount.current = 0;
+      exitFinished.current = false;
+      const count = useGameStore.getState().graphicsProfile === 'LOW' ? 4 : 6;
+      setExitStudentCount(count);
+      exitExpected.current = count + 2;
+      setPlayerWaypoint(1);
+      setPlayerHasExited(false);
       setMalePose('idle');
       setMaleEmotion('hopeful');
       setMaleGaze('look_backward');
-      setNarrativeCaption(CUTSCENE_CAPTIONS.classroomBeat6);
+      setNarrativeCaption(null);
       setCinematicShot({
-        position: [maleSeatPos[0] + 0.85, 1.55, maleSeatPos[2] + 2.05],
-        lookAt: [maleSeatPos[0] - 0.55, 1.18, maleSeatPos[2] + 0.25],
-        fov: 45,
+        position: [-0.4, 2.9, 5.1],
+        lookAt: [-0.4, 0.9, 0.6],
+        fov: 57,
         duration: 2.0,
       });
     }, [], beat * 5);
 
-    tl.call(() => {
-      setNarrativeCaption(null);
-      transitionTo('LOBBY_ENTRY', { withFade: true });
-    }, [], beat * 6);
+    // Let chairs slide clear before anyone begins to walk.
+    tl.call(() => setPlayerExiting(true), [], beat * 5 + 1.0);
 
     return () => {
       tl.kill();
+      unsubPause();
     };
   }, [stage, maleSeatPos, playerSeatPos, setCinematicShot, setNarrativeCaption, setObjectiveHint, transitionTo]);
 
@@ -311,7 +340,7 @@ export const ClassroomScene: React.FC = () => {
       {/* Front Wall with Whiteboard */}
       <mesh position={[0, 1.78, -5.65]} receiveShadow>
         <boxGeometry args={[9.4, 3.6, 0.18]} />
-        <meshStandardMaterial color="#ede5d8" roughness={0.85} />
+        <meshStandardMaterial color="#ede5d8" map={wallTexture} roughness={0.85} />
       </mesh>
       {/* Back Wall */}
       <mesh position={[0, 1.78, 5.65]}>
@@ -391,16 +420,7 @@ export const ClassroomScene: React.FC = () => {
       </group>
 
       {/* Potted Plant & Bookshelf Decorations */}
-      <group position={[4.1, 0, -4.6]}>
-        <mesh position={[0, 0.25, 0]}>
-          <cylinderGeometry args={[0.22, 0.18, 0.5, 12]} />
-          <meshStandardMaterial color="#c97d60" roughness={0.7} />
-        </mesh>
-        <mesh position={[0, 0.72, 0]}>
-          <sphereGeometry args={[0.38, 10, 10]} />
-          <meshStandardMaterial color="#4e8a57" roughness={0.78} />
-        </mesh>
-      </group>
+      <PottedShrub position={[4.1, 0, -4.6]} leafTexture={foliageTexture} lowDetail={graphicsProfile === 'LOW'} />
 
       {/* 12 Student Desks & Chairs */}
       {DESK_ROWS_Z.map((rz, rIdx) =>
@@ -408,10 +428,6 @@ export const ClassroomScene: React.FC = () => {
           const isPlayerDesk =
             rIdx === PLAYER_EMPTY_DESK.row && cIdx === PLAYER_EMPTY_DESK.col;
           const isMaleDesk = rIdx === MALE_DESK.row && cIdx === MALE_DESK.col;
-          const chairSlideZ =
-            classDismissed && (isMaleDesk || isPlayerDesk || (rIdx + cIdx) % 2 === 0)
-              ? 0.24
-              : 0;
 
           return (
             <group key={`${rIdx}-${cIdx}`} position={[cx, 0, rz]}>
@@ -420,7 +436,8 @@ export const ClassroomScene: React.FC = () => {
                 <boxGeometry args={[1.05, 0.05, 0.56]} />
                 <meshStandardMaterial
                   color={isPlayerDesk ? '#dfb98f' : '#d2ab80'}
-                  roughness={0.62}
+                  map={floorTexture}
+                  roughness={0.72}
                 />
               </mesh>
               {/* Metal desk legs */}
@@ -443,7 +460,7 @@ export const ClassroomScene: React.FC = () => {
               )}
 
               {/* Chair (slides back naturally when class ends!) */}
-              <group position={[0, 0, 0.36 + chairSlideZ]}>
+              <SlidingChair dismissed={classDismissed}>
                 <mesh position={[0, 0.44, 0]}>
                   <boxGeometry args={[0.46, 0.045, 0.44]} />
                   <meshStandardMaterial color="#8c6245" roughness={0.68} />
@@ -458,50 +475,24 @@ export const ClassroomScene: React.FC = () => {
                     <meshStandardMaterial color="#3c424b" roughness={0.55} />
                   </mesh>
                 ))}
-              </group>
+              </SlidingChair>
             </group>
           );
         })
       )}
 
-      {/* Simplified Desaturated Background Students */}
-      {OCCUPIED_STUDENT_DESKS.slice(0, graphicsProfile === 'LOW' ? 4 : 6).map((d, idx) => {
-        const sx = DESK_COLS_X[d.col];
-        const sz = DESK_ROWS_Z[d.row] + 0.36;
-        return (
-          <StylizedCharacter
-            key={idx}
-            kind={idx % 2 === 0 && (graphicsProfile !== 'LOW' || idx === 0) ? 'student_female' : 'student'}
-            position={[
-              classDismissed ? sx - 0.55 : sx,
-              0,
-              classDismissed ? sz + 0.3 : sz,
-            ]}
-            rotationY={classDismissed ? Math.PI * 0.85 : Math.PI}
-            pose={classDismissed ? 'walk' : 'sit'}
-            walkSpeed={classDismissed ? 0.55 : 0}
-            tintTop={['#7d7178', '#697b80', '#897f70', '#677867'][idx % 4]}
-            phaseOffset={idx * 0.27}
-          />
-        );
-      })}
-
-      {/* CHARACTER B — Male Character with 3D Eyeglasses & Richer Colors */}
-      <StylizedCharacter
-        kind="male"
-        position={
-          classDismissed
-            ? [maleSeatPos[0] - 0.52, 0, maleSeatPos[2] + 0.15]
-            : maleSeatPos
-        }
-        rotationY={classDismissed ? 2.4 : Math.PI}
-        pose={malePose}
-        emotion={maleEmotion}
-        gazeBehavior={maleGaze}
-        gazeTarget={playerHeadWorld}
-        showPen={!classDismissed}
-        phaseOffset={0.42}
-      />
+      {/* Each seated character follows a clear aisle towards the doorway. */}
+      {OCCUPIED_STUDENT_DESKS.slice(0, classDismissed ? exitStudentCount : graphicsProfile === 'LOW' ? 4 : 6).map((d, idx) => (
+        <ClassroomWalker key={idx} row={d.row} col={d.col} exiting={playerExiting}
+          delay={(3 - d.row) * 0.7 + d.col * 0.2} onExit={onActorExit}
+          kind={idx % 2 === 0 && (graphicsProfile !== 'LOW' || idx === 0) ? 'student_female' : 'student'}
+          rotationY={Math.PI} pose="sit" tintTop={['#7d7178', '#697b80', '#897f70', '#677867'][idx % 4]}
+          phaseOffset={idx * 0.27} />
+      ))}
+      <ClassroomWalker row={MALE_DESK.row} col={MALE_DESK.col} exiting={playerExiting}
+        delay={1.8} onExit={onActorExit} kind="male" rotationY={Math.PI} pose={malePose}
+        emotion={maleEmotion} gazeBehavior={playerExiting ? 'forward' : maleGaze}
+        gazeTarget={playerHeadWorld} showPen={!classDismissed} phaseOffset={0.42} />
 
       {/* Empty Chair Proximity Marker during CLASSROOM_GAMEPLAY */}
       <InteractionSystem
@@ -510,6 +501,7 @@ export const ClassroomScene: React.FC = () => {
       />
 
       {/* CHARACTER A — Female Player Character with 3D Eyeglasses */}
+      <group visible={!playerHasExited}>
       <PlayerController
         bounds={{ minX: -4.0, maxX: 4.0, minZ: -3.2, maxZ: 4.8 }}
         obstacles={obstacles}
@@ -518,8 +510,11 @@ export const ClassroomScene: React.FC = () => {
         overrideRotationY={isSeatedStage ? Math.PI : null}
         overridePose={isSeatedStage ? 'sit_attentive' : undefined}
         emotion={femaleEmotion}
-        autoWalkTarget={playerExiting ? new THREE.Vector3(-3.9, 0, 4.35) : null}
+        autoWalkTarget={playerExiting && playerWaypoint < playerRoute.length ? new THREE.Vector3(playerRoute[playerWaypoint].x, 0, playerRoute[playerWaypoint].z) : null}
+        onReachAutoWalkTarget={onPlayerReachWaypoint}
+        autoWalkAlignBeforeMove
       />
+      </group>
     </group>
   );
 };
