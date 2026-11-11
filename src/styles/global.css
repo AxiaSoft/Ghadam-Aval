@@ -1978,27 +1978,32 @@ button {
   border-top-color: rgba(25, 30, 36, .92);
 }
 
-/* Suggested story routes are visual hints, never preselected answers. */
+/* Suggested routes remain subtle and are never selected automatically. */
 .dialogue-choice-btn.is-recommended,
 .story-option-btn.highlight-subtle {
-  border: 1.5px solid #f6d18d;
-  background: rgba(109, 76, 37, .96);
-  box-shadow: 0 0 0 2px rgba(242, 200, 120, .16), 0 8px 22px rgba(0, 0, 0, .3);
+  border-color: rgba(242, 200, 120, .62);
+  background: rgba(242, 200, 120, .12);
+  box-shadow: inset 0 0 0 1px rgba(242, 200, 120, .12);
 }
 .dialogue-choice-btn.is-recommended:hover,
-.story-option-btn.highlight-subtle:hover { background: rgba(128, 88, 44, .98); }
+.story-option-btn.highlight-subtle:hover { background: rgba(242, 200, 120, .18); }
 .dialogue-choice-label { flex: 1; }
-.recommendation-badge {
-  display: inline-block;
-  flex-shrink: 0;
-  margin-inline-start: 8px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #f6d18d;
-  color: #342316;
-  font-size: .7rem;
-  font-weight: 800;
-  line-height: 1.7;
-  white-space: nowrap;
+
+/* Familiar ending text and a restrained palette distinguish the postgame menus. */
+.intro-postgame { --post-accent: #d7c199; --post-glow: rgba(185, 151, 104, .14); }
+.intro-postgame[data-ending='yes'] { --post-accent: #e9c992; --post-glow: rgba(208, 156, 91, .25); }
+.intro-postgame[data-ending='slow'] { --post-accent: #b7d0c4; --post-glow: rgba(117, 170, 152, .19); }
+.intro-postgame[data-ending='no'] { --post-accent: #c4c9d5; --post-glow: rgba(139, 153, 183, .17); }
+.intro-postgame[data-ending='relationship'] { --post-accent: #b7cfe0; --post-glow: rgba(118, 169, 200, .19); }
+.intro-postgame {
+  background: radial-gradient(ellipse at 50% 32%, var(--post-glow), transparent 55%),
+    linear-gradient(155deg, #202731, #11151d 75%);
 }
-.story-option-btn .recommendation-badge { float: left; }
+.intro-postgame .postgame-card { border-color: color-mix(in srgb, var(--post-accent) 38%, transparent); }
+.postgame-mark { width: 32px; height: 3px; border-radius: 999px; background: var(--post-accent); }
+.intro-postgame .postgame-eyebrow { color: var(--post-accent); line-height: 1.65; }
+.intro-postgame .postgame-note { font-size: 1rem; }
+.intro-postgame .postgame-start-btn {
+  background: var(--post-accent);
+  box-shadow: 0 8px 24px var(--post-glow);
+}
