@@ -1,5 +1,6 @@
 import React from 'react';
 import * as THREE from 'three';
+import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
 
 /**
  * قطعات کوچک و کمخرج برای دانشگاه. بهجای باغ و تپه و طاق رنگی،
@@ -62,6 +63,7 @@ function toneMeshProps(tone: CorridorTone, warmth = 1) {
 }
 
 export const CorridorShell: React.FC<WarmthProps> = ({ initialWarmth = 1 }) => {
+  const floorTexture = useSurfaceTexture('tiles', 2, 5);
   const w = initialWarmth;
   const doors = ['۲۰۱', '۲۰۲', '۲۰۳', '۲۰۴', '۲۰۵', '۲۰۶'];
 
@@ -70,7 +72,7 @@ export const CorridorShell: React.FC<WarmthProps> = ({ initialWarmth = 1 }) => {
       {/* کف کاشی و بندکشهای باریک */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow userData={{ corridorTone: 'floor' }}>
         <planeGeometry args={[7.2, 20]} />
-        <meshStandardMaterial color={toneColor('floor', w)} roughness={0.88} />
+        <meshStandardMaterial color={toneColor('floor', w)} map={floorTexture} roughness={0.88} />
       </mesh>
       {[-1.6, 0, 1.6].map((x) => (
         <mesh key={`grout-${x}`} position={[x, 0.006, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -318,15 +320,12 @@ export const PresentationBoard: React.FC<PositionedProps> = ({
         <boxGeometry args={[1.2, 0.045, 0.012]} />
         <meshStandardMaterial color="#2f3a48" roughness={0.9} />
       </mesh>
-      <mesh position={[-1.45, -0.95, 0.12]} userData={{ corridorTone: 'metal' }}>
-        <cylinderGeometry args={[0.22, 0.22, 0.06, 20]} />
-        <meshStandardMaterial color={toneColor('metal', w)} roughness={0.5} />
+      {/* Shallow marker tray attached to the board. */}
+      <mesh position={[0, -0.78, 0.09]}>
+        <boxGeometry args={[3.4, 0.07, 0.18]} />
+        <meshStandardMaterial color="#899294" metalness={0.45} roughness={0.55} />
       </mesh>
-      <mesh position={[1.45, -0.9, 0.12]} userData={{ corridorTone: 'paper' }}>
-        <cylinderGeometry args={[0.1, 0.08, 0.2, 14]} />
-        <meshStandardMaterial color="#e9d9bd" roughness={0.85} />
-      </mesh>
-      <mesh position={[1.2, -0.78, 0.18]} rotation={[0, 0, Math.PI / 2]} userData={{ corridorTone: 'metal' }}>
+      <mesh position={[1.1, -0.73, 0.1]} rotation={[0, 0, Math.PI / 2]}>
         <cylinderGeometry args={[0.012, 0.012, 0.26, 8]} />
         <meshStandardMaterial color="#2f3a48" roughness={0.5} />
       </mesh>
@@ -343,35 +342,23 @@ export const LobbyDetails: React.FC<PositionedProps> = ({
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
       <mesh userData={{ corridorTone: 'paper' }}>
-        <boxGeometry args={[0.7, 0.02, 0.5]} />
+        <boxGeometry args={[0.48, 0.02, 0.32]} />
         <meshStandardMaterial color={toneColor('paper', w)} roughness={0.92} />
       </mesh>
-      <mesh position={[0, 0.012, 0.16]}>
-        <boxGeometry args={[0.56, 0.006, 0.016]} />
+      <mesh position={[0, 0.012, 0.1]}>
+        <boxGeometry args={[0.4, 0.006, 0.016]} />
         <meshStandardMaterial color="#ffffff" roughness={0.9} />
       </mesh>
-      <mesh position={[0.55, 0.12, 0.05]} userData={{ corridorTone: 'paper' }}>
+      <mesh position={[0.23, 0.1, 0.12]} userData={{ corridorTone: 'paper' }}>
         <cylinderGeometry args={[0.1, 0.08, 0.22, 14]} />
         <meshStandardMaterial color="#e9d9bd" roughness={0.85} />
       </mesh>
-      <mesh position={[-0.55, 0.08, 0.08]} userData={{ corridorTone: 'paper' }}>
+      <mesh position={[-0.2, 0.01, 0.08]} userData={{ corridorTone: 'paper' }}>
         <boxGeometry args={[0.24, 0.04, 0.18]} />
         <meshStandardMaterial color={toneColor('paper', w)} roughness={0.95} />
       </mesh>
       <mesh position={[-0.2, 0.02, -0.2]} rotation={[0, 0, Math.PI / 2]} userData={{ corridorTone: 'metal' }}>
         <cylinderGeometry args={[0.014, 0.014, 0.26, 8]} />
-        <meshStandardMaterial color="#2f3a48" roughness={0.5} />
-      </mesh>
-      <mesh position={[0, 1.8, -1.2]} rotation={[Math.PI / 2, 0, 0]} userData={{ corridorTone: 'metal' }}>
-        <cylinderGeometry args={[0.3, 0.3, 0.06, 24]} />
-        <meshStandardMaterial color={toneColor('paper', w)} roughness={0.5} />
-      </mesh>
-      <mesh position={[0, 1.8, -1.16]} userData={{ corridorTone: 'metal' }}>
-        <boxGeometry args={[0.02, 0.22, 0.02]} />
-        <meshStandardMaterial color="#2f3a48" roughness={0.5} />
-      </mesh>
-      <mesh position={[0.12, 1.8, -1.16]} rotation={[0, 0, Math.PI / 2]} userData={{ corridorTone: 'metal' }}>
-        <boxGeometry args={[0.02, 0.16, 0.02]} />
         <meshStandardMaterial color="#2f3a48" roughness={0.5} />
       </mesh>
     </group>

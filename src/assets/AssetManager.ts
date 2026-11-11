@@ -13,7 +13,7 @@ export type AssetKey =
  * (زیرمسیر /Ghadam-Aval/) درست پیدا شوند.
  */
 const assetUrl = (file: string): string =>
-  `${import.meta.env.BASE_URL}models/${file}?v=4`;
+  `${import.meta.env.BASE_URL}models/${file}?v=5`;
 
 const ASSET_URLS: Record<AssetKey, string> = {
   female_character: assetUrl('female_character.glb'),
@@ -99,7 +99,6 @@ class AssetManagerImpl {
   }
 
   public preloadSecondaryAssets(): void {
-    this.loadAsset('mission_props').catch(() => {});
     this.loadAsset('student_npc').catch(() => {});
   }
 }

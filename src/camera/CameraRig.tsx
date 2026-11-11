@@ -56,7 +56,7 @@ function clampRayToRoom(
       scale = Math.min(scale, (clamp.maxY - lookY) / rayY);
     }
 
-    scale = THREE.MathUtils.clamp(scale, 0.34, 1.0);
+    scale = THREE.MathUtils.clamp(scale, 0, 1.0);
   }
 
   let cx = lookX + rayX * scale;
@@ -298,6 +298,12 @@ export const CameraRig: React.FC<CameraRigProps> = ({
     const posAlpha = 1 - Math.exp(-9.5 * dt);
     const lookAlpha = 1 - Math.exp(-12 * dt);
     currentPos.current.lerp(desiredPos.current, posAlpha);
+    // A scene transition can leave the previous camera outside the new room.
+    if (clamp) {
+      currentPos.current.x = THREE.MathUtils.clamp(currentPos.current.x, clamp.minX, clamp.maxX);
+      currentPos.current.z = THREE.MathUtils.clamp(currentPos.current.z, clamp.minZ, clamp.maxZ);
+      if (clamp.maxY !== undefined) currentPos.current.y = Math.min(currentPos.current.y, clamp.maxY);
+    }
     currentLook.current.lerp(desiredLook.current, lookAlpha);
 
     camera.position.copy(currentPos.current);

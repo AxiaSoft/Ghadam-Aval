@@ -61,7 +61,7 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
         : 'student_npc';
 
   const resolvedTintTop =
-    tintTop ?? (kind === 'female' ? '#8b8e93' : kind === 'male' ? '#3c4a57' : '#6b7078');
+    tintTop ?? (kind === 'female' ? '#ae7163' : kind === 'male' ? '#416d92' : '#6b7078');
 
   const rigNodes = useMemo<CharacterRigNodes>(() => {
     const cached = assetManager.getCached(assetKey);
@@ -71,7 +71,6 @@ export const StylizedCharacter: React.FC<StylizedCharacterProps> = ({
       receiveShadow: graphicsProfile === 'HIGH',
       tintSweater: resolvedTintTop,
       showPen,
-      hideGlasses: kind === 'male',
     });
   }, [assetKey, kind, castShadow, graphicsProfile, resolvedTintTop, showPen]);
 

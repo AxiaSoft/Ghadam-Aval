@@ -46,6 +46,26 @@ export interface CharacterRigNodes {
   skirt?: THREE.Object3D;
 }
 
+// Shared monochrome weave used as a roughness map; no image download is needed.
+let clothRoughness: THREE.CanvasTexture | undefined;
+function getClothRoughness(): THREE.CanvasTexture | undefined {
+  if (typeof document === 'undefined') return undefined;
+  if (clothRoughness) return clothRoughness;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return undefined;
+  ctx.fillStyle = '#dedede'; ctx.fillRect(0, 0, 128, 128);
+  ctx.fillStyle = '#c8c8c8';
+  for (let y = 0; y < 128; y += 4) ctx.fillRect(0, y, 128, 1);
+  ctx.fillStyle = '#e9e9e9';
+  for (let x = 0; x < 128; x += 4) ctx.fillRect(x, 0, 1, 128);
+  clothRoughness = new THREE.CanvasTexture(canvas);
+  clothRoughness.wrapS = clothRoughness.wrapT = THREE.RepeatWrapping;
+  clothRoughness.repeat.set(3, 3);
+  return clothRoughness;
+}
+
 export function instantiateCharacterRig(
   template: THREE.Object3D,
   options: {
@@ -58,18 +78,32 @@ export function instantiateCharacterRig(
 ): CharacterRigNodes {
   const root = template.clone(true);
 
+  // Recolour only the sleeve material. The chest also contains skin, buttons,
+  // collars and bag straps, which must not inherit the clothing colour.
+  const arm = root.getObjectByName('ArmL');
+  let sweaterMaterial: THREE.Material | undefined;
+  arm?.traverse((child) => {
+    const mesh = child as THREE.Mesh;
+    if (!sweaterMaterial && mesh.isMesh && !Array.isArray(mesh.material)) {
+      sweaterMaterial = mesh.material;
+    }
+  });
+  let tintedMaterial: THREE.Material | undefined;
   root.traverse((child) => {
-    if ((child as THREE.Mesh).isMesh) {
-      const mesh = child as THREE.Mesh;
-      const isLens = mesh.name.startsWith('GlassesLens');
-      mesh.castShadow = Boolean(options.castShadow) && !isLens;
-      mesh.receiveShadow = Boolean(options.receiveShadow) && !isLens;
-
-      if (options.tintSweater && (mesh.parent?.name === 'Chest' || mesh.parent?.name?.startsWith('Arm'))) {
-        const mat = (mesh.material as THREE.MeshStandardMaterial).clone();
+    const mesh = child as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    const isLens = mesh.name.startsWith('GlassesLens');
+    mesh.castShadow = Boolean(options.castShadow) && !isLens;
+    mesh.receiveShadow = Boolean(options.receiveShadow) && !isLens;
+    if (options.tintSweater && sweaterMaterial && mesh.material === sweaterMaterial) {
+      if (!tintedMaterial) {
+        const mat = (sweaterMaterial as THREE.MeshStandardMaterial).clone();
         mat.color.set(options.tintSweater);
-        mesh.material = mat;
+        mat.roughness = Math.max(mat.roughness, 0.8);
+        mat.roughnessMap = getClothRoughness() ?? null;
+        tintedMaterial = mat;
       }
+      mesh.material = tintedMaterial;
     }
   });
 
@@ -202,7 +236,7 @@ export function buildFallbackCharacterTemplate(kind: 'female' | 'male' | 'studen
   fallbackHair.rotation.x = -0.45;
   head.add(fallbackHair);
 
-  if (!isStudent && isFemale) {
+  if (!isStudent) {
     const glasses = new THREE.Group();
     glasses.name = 'Glasses3D';
     const frameMat = new THREE.MeshStandardMaterial({

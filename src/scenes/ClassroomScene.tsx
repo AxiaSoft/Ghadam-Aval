@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { PlayerController, ObstacleCircle } from '../characters/PlayerController';
 import { StylizedCharacter } from '../characters/StylizedCharacter';
 import { CameraRig } from '../camera/CameraRig';
+import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
 import { InteractionSystem } from '../interaction/InteractionSystem';
 import { useGameStore } from '../state/gameStore';
 import { resetPlayerTransform, transientInput } from '../state/inputStore';
@@ -50,6 +51,7 @@ const CLASSROOM_INDOOR_CLAMP = {
 };
 
 export const ClassroomScene: React.FC = () => {
+  const floorTexture = useSurfaceTexture('wood', 3, 3);
   const { scene } = useThree();
   const stage = useGameStore((s) => s.stage);
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
@@ -298,7 +300,7 @@ export const ClassroomScene: React.FC = () => {
       {/* Warm Wood Parquet Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[9.4, 11.4]} />
-        <meshStandardMaterial color="#c9a57c" roughness={0.72} />
+        <meshStandardMaterial color="#c9a57c" map={floorTexture} roughness={0.72} />
       </mesh>
 
       {/* Ceiling & Walls */}
@@ -353,31 +355,6 @@ export const ClassroomScene: React.FC = () => {
         <mesh>
           <boxGeometry args={[0.1, 2.35, 1.12]} />
           <meshStandardMaterial color="#704932" roughness={0.62} />
-        </mesh>
-      </group>
-
-      {/* Front Whiteboard & Marker Tray */}
-      <group position={[0, 1.88, -5.52]}>
-        <mesh>
-          <boxGeometry args={[4.8, 1.65, 0.06]} />
-          <meshStandardMaterial color="#9e8267" roughness={0.6} />
-        </mesh>
-        <mesh position={[0, 0, 0.036]}>
-          <planeGeometry args={[4.6, 1.48]} />
-          <meshStandardMaterial color="#f9fbfc" roughness={0.22} />
-        </mesh>
-        {/* Subtle stylized diagram bars on whiteboard */}
-        <mesh position={[-1.2, 0.25, 0.042]}>
-          <planeGeometry args={[1.4, 0.04]} />
-          <meshBasicMaterial color="#4c6b8a" />
-        </mesh>
-        <mesh position={[-1.0, 0.02, 0.042]}>
-          <planeGeometry args={[1.8, 0.03]} />
-          <meshBasicMaterial color="#7a8d9e" />
-        </mesh>
-        <mesh position={[1.1, 0.1, 0.042]}>
-          <ringGeometry args={[0.28, 0.31, 24]} />
-          <meshBasicMaterial color="#c46d5e" />
         </mesh>
       </group>
 

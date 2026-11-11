@@ -106,16 +106,6 @@ export const InteractionSystem: React.FC<InteractionSystemProps> = ({
                 side={THREE.DoubleSide}
               />
             </mesh>
-            {/* Floating diamond crystal indicator above target */}
-            <mesh position={[0, 1.32, 0]}>
-              <octahedronGeometry args={[isCurrent ? 0.095 : 0.065, 0]} />
-              <meshStandardMaterial
-                color={color}
-                emissive={color}
-                emissiveIntensity={isCurrent ? 0.9 : 0.35}
-                roughness={0.2}
-              />
-            </mesh>
           </group>
         );
       })}

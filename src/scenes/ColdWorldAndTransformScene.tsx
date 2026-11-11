@@ -198,7 +198,7 @@ export const ColdWorldAndTransformScene: React.FC = () => {
 
   return (
     <group>
-      <CameraRig />
+      <CameraRig indoorClamp={{ minX: -3.05, maxX: 3.05, minZ: -9.55, maxZ: 5.55, maxY: 3.15 }} />
 
       <hemisphereLight ref={hemiLightRef} args={['#8f9cb0', '#343944', 0.72]} />
       <directionalLight
