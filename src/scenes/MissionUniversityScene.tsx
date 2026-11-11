@@ -16,9 +16,13 @@ import {
   CUTSCENE_MIN_DURATION_MS,
 } from '../dialogue/dialogueData';
 import { CampusSign } from './UniversityProps';
+import { CampusTree } from './Vegetation';
 
 export const MissionUniversityScene: React.FC = () => {
   const paving = useSurfaceTexture('tiles', 3, 5);
+  const bark = useSurfaceTexture('bark', 1, 2);
+  const leaves = useSurfaceTexture('foliage', 1, 1);
+  const plaster = useSurfaceTexture('plaster', 2, 2);
   const { scene } = useThree();
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
   const answers = useGameStore((s) => s.answers);
@@ -103,8 +107,6 @@ export const MissionUniversityScene: React.FC = () => {
     []
   );
 
-  const showExtraFlowers =
-    answers.atmosphere === 'flowers_gardens' || answers.atmosphere === 'nature';
 
   return (
     <group>
@@ -161,11 +163,11 @@ export const MissionUniversityScene: React.FC = () => {
         {/* Warm collegiate sandstone & terracotta main facade */}
         <mesh position={[-5.2, 2.8, 0]} castShadow={graphicsProfile !== 'LOW'} receiveShadow>
           <boxGeometry args={[6.8, 5.6, 2.4]} />
-          <meshStandardMaterial color="#c97d60" roughness={0.78} />
+          <meshStandardMaterial color="#c97d60" map={plaster} roughness={0.88} />
         </mesh>
         <mesh position={[5.2, 2.8, 0]} castShadow={graphicsProfile !== 'LOW'} receiveShadow>
           <boxGeometry args={[6.8, 5.6, 2.4]} />
-          <meshStandardMaterial color="#c97d60" roughness={0.78} />
+          <meshStandardMaterial color="#c97d60" map={plaster} roughness={0.88} />
         </mesh>
         {/* Central entrance portico */}
         <mesh position={[0, 3.85, 0]} castShadow={graphicsProfile !== 'LOW'}>
@@ -301,25 +303,9 @@ export const MissionUniversityScene: React.FC = () => {
         [-6.2, 0, -3.4],
         [6.2, 0, -3.4],
       ].map(([tx, ty, tz], idx) => (
-        <group key={idx} position={[tx, ty, tz]}>
-          <mesh position={[0, 1.0, 0]} castShadow={graphicsProfile !== 'LOW'}>
-            <cylinderGeometry args={[0.14, 0.21, 2.0, 8]} />
-            <meshStandardMaterial color="#694b37" roughness={0.88} />
-          </mesh>
-          <mesh position={[0, 2.4, 0]} castShadow={graphicsProfile !== 'LOW'}>
-            <sphereGeometry args={[1.15, 14, 12]} />
-            <meshStandardMaterial
-              color={idx % 2 === 0 ? '#4e8f56' : '#63a162'}
-              roughness={0.8}
-            />
-          </mesh>
-          {showExtraFlowers && (
-            <mesh position={[0.45, 0.2, 0.55]}>
-              <sphereGeometry args={[0.32, 10, 8]} />
-              <meshStandardMaterial color="#f08ca2" roughness={0.7} />
-            </mesh>
-          )}
-        </group>
+        <CampusTree key={idx} position={[tx, ty, tz]} barkTexture={bark} leafTexture={leaves}
+          variation={idx} lowDetail={graphicsProfile === 'LOW'}
+          flowers={answers.atmosphere === 'flowers_gardens' || answers.atmosphere === 'nature'} />
       ))}
 
       {/* Simplified desaturated background students on campus */}

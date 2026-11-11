@@ -31,6 +31,7 @@ export interface PlayerControllerProps {
   overrideRotationY?: number | null;
   autoWalkTarget?: THREE.Vector3 | null;
   onReachAutoWalkTarget?: () => void;
+  autoWalkAlignBeforeMove?: boolean;
   gazeBehavior?: CharacterGazeBehavior;
   gazeTarget?: THREE.Vector3 | null;
   isSpeaking?: boolean;
@@ -48,6 +49,7 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   overrideRotationY = null,
   autoWalkTarget = null,
   onReachAutoWalkTarget,
+  autoWalkAlignBeforeMove = false,
   gazeBehavior = 'forward',
   gazeTarget = null,
   isSpeaking = false,
@@ -91,11 +93,24 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
         reachedAutoRef.current = false;
         const dirX = dx / dist;
         const dirZ = dz / dist;
+        const desiredHeading = Math.atan2(dirX, dirZ);
+        const headingDelta = Math.atan2(
+          Math.sin(desiredHeading - transientInput.playerHeading),
+          Math.cos(desiredHeading - transientInput.playerHeading)
+        );
+        if (autoWalkAlignBeforeMove && Math.abs(headingDelta) > 0.2) {
+          transientInput.playerHeading += headingDelta * Math.min(1, dt * 8);
+          walkSpeedRef.current = 0;
+          transientInput.playerSpeed = 0;
+          if (locomotionPose !== 'idle') setLocomotionPose('idle');
+          groupRef.current.position.copy(transientInput.playerPosition);
+          groupRef.current.rotation.y = transientInput.playerHeading;
+          return;
+        }
         const step = Math.min(dist, moveSpeed * 0.85 * dt);
         transientInput.playerPosition.x += dirX * step;
         transientInput.playerPosition.z += dirZ * step;
 
-        const desiredHeading = Math.atan2(dirX, dirZ);
         let diff = desiredHeading - transientInput.playerHeading;
         while (diff > Math.PI) diff -= Math.PI * 2;
         while (diff < -Math.PI) diff += Math.PI * 2;

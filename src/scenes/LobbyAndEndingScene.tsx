@@ -24,6 +24,7 @@ import {
   DIALOGUE_START_NODE,
 } from '../dialogue/dialogueData';
 import { LobbyDetails } from './UniversityProps';
+import { PottedShrub } from './Vegetation';
 import { advanceLobbyWalk, planLobbyDeparture } from './lobbyDeparture';
 
 // چیدمان منسجم و روشن لابی تا تمام شخصیت‌ها هم در حالت عمودی موبایل و هم افقی کاملاً داخل کادر باشند
@@ -71,6 +72,8 @@ const SEATED_TALKING_PAIRS: {
 
 export const LobbyAndEndingScene: React.FC = () => {
   const floorTexture = useSurfaceTexture('stone', 4, 4);
+  const foliageTexture = useSurfaceTexture('foliage', 1, 1);
+  const wallTexture = useSurfaceTexture('plaster', 3, 2);
   const { scene } = useThree();
   const stage = useGameStore((s) => s.stage);
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
@@ -519,7 +522,7 @@ export const LobbyAndEndingScene: React.FC = () => {
       {/* دیوار پشتی و بخش پذیرش (در عمق z = -7.6) */}
       <mesh position={[0, 2.4, -7.6]} receiveShadow>
         <boxGeometry args={[16.6, 4.8, 0.24]} />
-        <meshStandardMaterial color="#ede3d4" roughness={0.82} />
+        <meshStandardMaterial color="#ede3d4" map={wallTexture} roughness={0.82} />
       </mesh>
       <group position={[0, 0, -6.0]}>
         <mesh position={[0, 2.0, -1.35]}>
@@ -597,20 +600,8 @@ export const LobbyAndEndingScene: React.FC = () => {
         [-6.9, 0, 6.1],
         [6.9, 0, 6.1],
       ].map(([px, py, pz], idx) => (
-        <group key={idx} position={[px, py, pz]}>
-          <mesh position={[0, 0.32, 0]}>
-            <cylinderGeometry args={[0.28, 0.22, 0.64, 14]} />
-            <meshStandardMaterial color="#d4896a" roughness={0.7} />
-          </mesh>
-          <mesh position={[0, 0.95, 0]}>
-            <sphereGeometry args={[0.52, 12, 10]} />
-            <meshStandardMaterial color="#4a8a56" roughness={0.78} />
-          </mesh>
-          <mesh position={[0.18, 1.32, 0.1]}>
-            <sphereGeometry args={[0.36, 10, 8]} />
-            <meshStandardMaterial color="#5b9c64" roughness={0.78} />
-          </mesh>
-        </group>
+        <PottedShrub key={idx} position={[px, py, pz]} leafTexture={foliageTexture}
+          lowDetail={graphicsProfile === 'LOW'} variation={idx} />
       ))}
 
       {/* صندلی دختر و میز وسط */}

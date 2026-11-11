@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
+import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
+import { useGameStore } from '../state/gameStore';
+import { PottedShrub } from './Vegetation';
 
 /** Lightweight, local procedural paving texture; no network assets. */
 function usePavingTexture() {
@@ -55,11 +58,14 @@ function useNoticeTexture() {
 export const CampusArrival: React.FC<{ showCard: boolean }> = ({ showCard }) => {
   const paving = usePavingTexture();
   const notice = useNoticeTexture();
+  const leaves = useSurfaceTexture('foliage', 1, 1);
+  const plaster = useSurfaceTexture('plaster', 3, 2);
+  const lowDetail = useGameStore(s => s.graphicsProfile === 'LOW');
   return <group>
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[20, 20]} /><meshStandardMaterial map={paving} roughness={0.95} /></mesh>
     {/* A low library wall and a sheltered noticeboard give the courtyard a readable edge. */}
-    {[-4, 4].map(x => <mesh key={x} position={[x, 1.7, -6.8]}><boxGeometry args={[6, 3.4, .3]} /><meshStandardMaterial color="#d4cabc" roughness={0.9} /></mesh>)}
-    <mesh position={[0, 3.05, -6.8]}><boxGeometry args={[2, .7, .3]} /><meshStandardMaterial color="#d4cabc" roughness={.9} /></mesh>
+    {[-4, 4].map(x => <mesh key={x} position={[x, 1.7, -6.8]}><boxGeometry args={[6, 3.4, .3]} /><meshStandardMaterial color="#d4cabc" map={plaster} roughness={0.9} /></mesh>)}
+    <mesh position={[0, 3.05, -6.8]}><boxGeometry args={[2, .7, .3]} /><meshStandardMaterial color="#d4cabc" map={plaster} roughness={.9} /></mesh>
     {/* The exit is an actual doorway rather than a marker in a solid wall. */}
     {[-.95,.95].map(x => <mesh key={x} position={[x,1.35,-6.65]}><boxGeometry args={[.12,2.7,.2]} /><meshStandardMaterial color="#596a70" metalness={.45} roughness={.6}/></mesh>)}
     <mesh position={[0,2.65,-6.65]}><boxGeometry args={[2,.12,.2]} /><meshStandardMaterial color="#596a70" metalness={.45} roughness={.6}/></mesh>
@@ -99,6 +105,6 @@ export const CampusArrival: React.FC<{ showCard: boolean }> = ({ showCard }) => 
       <mesh position={[.22,.95,0]}><boxGeometry args={[.3,.05,.1]}/><meshStandardMaterial color="#303639" /></mesh>
       <mesh position={[.98,1.03,0]}><boxGeometry args={[.25,.04,.06]}/><meshStandardMaterial color="#303639" /></mesh>
     </group>
-    {[[-5,2],[5,-4],[5,4]].map(([x,z],i)=><group key={i} position={[x,0,z]}><mesh position={[0,.42,0]}><cylinderGeometry args={[.5,.4,.84,10]}/><meshStandardMaterial color="#827668" /></mesh><mesh position={[0,1.1,0]}><sphereGeometry args={[.65,10,8]}/><meshStandardMaterial color="#62765b" roughness={1}/></mesh></group>)}
+    {[[-5,2],[5,-4],[5,4]].map(([x,z],i) => <PottedShrub key={i} position={[x,0,z]} leafTexture={leaves} lowDetail={lowDetail} variation={i} />)}
   </group>;
 };
