@@ -7,7 +7,6 @@ import { audioManager } from './audio/AudioManager';
 import { SceneManager } from './scenes/SceneManager';
 import { AdaptiveQuality } from './scenes/AdaptiveQuality';
 import { LoadingScreen } from './ui/LoadingScreen';
-import { OrientationGuard } from './ui/OrientationGuard';
 import { HUDAndPauseMenu } from './ui/HUDAndPauseMenu';
 import { IntroAndEndingScreens } from './ui/IntroAndEndingScreens';
 import { QuestionnaireUI } from './ui/QuestionnaireUI';
@@ -106,7 +105,6 @@ export const App: React.FC = () => {
   return (
     <main className="game-shell" data-reduced-motion={reducedMotion ? 'true' : 'false'}>
       <LoadingScreen />
-      <OrientationGuard />
 
       <div className="webgl-stage" data-stage={stage}>
         <CanvasErrorBoundary>

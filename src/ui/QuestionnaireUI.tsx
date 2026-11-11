@@ -23,7 +23,7 @@ export const QuestionnaireUI: React.FC = () => {
     if (qIndex === 0) {
       return (
         <div className="story-prompt-layer" dir="ltr">
-          <div className="story-question-panel fade-step-in" dir="rtl">
+          <div className="story-question-panel welcome-panel fade-step-in" dir="rtl">
             <h2 className="story-question-title">سلام 🙃</h2>
             <p className="question-note">امیدوارم خوب باشی</p>
             <p className="question-note">این بازی فقط مخصوص شما ساخته شده و برای اینکه شروع کنیم چند سوال ازت میپرسم. 😉</p>
@@ -55,7 +55,7 @@ export const QuestionnaireUI: React.FC = () => {
             <div className="question-progress-fill" style={{ width: `${qIndex * 25}%` }} />
           </div>
           <label className="story-question-title" htmlFor="question-answer">{question}</label>
-          <textarea id="question-answer" className="question-text-input" value={answer} maxLength={2000}
+          <textarea id="question-answer" className="question-text-input" value={answer} maxLength={2000} placeholder="پاسخت رو اینجا بنویس"
             onChange={(event) => setTextAnswer(qIndex - 1, event.target.value)} required rows={4} />
           <div className="question-panel-footer">
             {qIndex > 1 && <button type="button" className="text-quiet-btn" onClick={regressQuestionnaire}>سوال قبلی</button>}
@@ -74,7 +74,7 @@ export const QuestionnaireUI: React.FC = () => {
 
     return (
       <div className="story-prompt-layer" dir="ltr">
-        <div className="story-question-panel fade-step-in" dir="rtl">
+        <div className="story-question-panel relationship-panel fade-step-in" dir="rtl">
           <div className="question-progress-row">
             <span className="question-chapter">قبل از شروع</span>
           </div>

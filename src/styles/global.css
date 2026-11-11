@@ -49,7 +49,7 @@ body,
   font-feature-settings: 'kern' 1;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
+  touch-action: manipulation;
 }
 
 button,
@@ -1860,3 +1860,92 @@ button {
 }
 .question-text-input:focus-visible { outline: 3px solid #d78c77; outline-offset: 2px; }
 .joyful-panel button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Mobile-first reading surfaces: allow scrolling, text selection and the phone keyboard. */
+.story-question-panel, .pause-modal, .notes-panel, .dialogue-layer, .ending-card, .final-card {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.question-text-input {
+  user-select: text;
+  -webkit-user-select: text;
+  touch-action: manipulation;
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 110px;
+}
+.question-text-input::placeholder { color: #766b6a; }
+.story-question-panel :focus-visible, .hud-icon-btn:focus-visible, .dialogue-choice-btn:focus-visible {
+  outline: 3px solid #e1a763;
+  outline-offset: 3px;
+}
+.joyful-panel .primary-cta-btn {
+  background: #614b51;
+  color: #fffaf6;
+  border-color: transparent;
+  box-shadow: 0 8px 22px rgba(97, 75, 81, .22);
+}
+.joyful-panel .question-progress-track { background: #e8d7ce; }
+.joyful-panel .question-progress-fill { background: #a86662; }
+
+@media (max-width: 760px), (max-height: 480px) {
+  .minimal-hud {
+    top: calc(10px + var(--safe-top));
+    left: calc(12px + var(--safe-left));
+    right: calc(12px + var(--safe-right));
+    gap: 6px;
+  }
+  .hud-left { max-width: calc(100% - 154px); align-items: flex-start; gap: 5px; }
+  .hud-right { flex-wrap: nowrap; gap: 5px; margin-left: auto; }
+  .hud-icon-btn { width: 44px; height: 44px; flex: 0 0 44px; }
+  .chapter-tag { gap: 5px; max-width: 100%; }
+  .chapter-place { display: none; }
+  .objective-pill { border-radius: 14px; max-width: 100%; font-size: .75rem; }
+  .ambient-detail-chip { min-height: 36px; }
+  .story-prompt-layer {
+    justify-content: center;
+    align-items: center;
+    padding: calc(64px + var(--safe-top)) calc(16px + var(--safe-right))
+      calc(16px + var(--safe-bottom)) calc(16px + var(--safe-left));
+  }
+  .story-question-panel {
+    width: min(100%, 480px);
+    max-width: 100%;
+    max-height: 100%;
+    padding: 24px 20px;
+    border-radius: 24px;
+  }
+  .welcome-panel, .relationship-panel {
+    background: rgba(24, 29, 38, .95);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, .28);
+  }
+  .welcome-panel .story-question-title { font-size: 1.65rem; margin-bottom: 16px; }
+  .welcome-panel .question-note { font-size: .95rem; line-height: 1.9; margin: 0 0 14px; }
+  .welcome-panel .primary-cta-btn { width: 100%; margin-top: 8px; }
+  .story-question-title { font-size: 1.15rem; line-height: 1.8; }
+  .story-option-btn, .dialogue-choice-btn, .decision-choice-btn { min-height: 48px; font-size: .9rem; }
+  .question-panel-footer { gap: 12px; flex-wrap: wrap; }
+  .question-panel-footer .primary-cta-btn { flex: 1; min-width: 135px; }
+  .question-panel-footer .text-quiet-btn { min-height: 44px; padding: 8px; }
+  .intro-content { padding: 22px; border-radius: 24px; }
+  .intro-actions { display: grid; grid-template-columns: 1fr; }
+  .intro-actions button { width: 100%; }
+  .pause-modal { width: 100%; max-height: calc(100dvh - 32px - var(--safe-top) - var(--safe-bottom)); }
+  .pause-modal input[type='range'] { touch-action: pan-x; min-height: 32px; }
+  .graphics-seg-btn, .resume-pill-btn, .restart-outline-btn { min-height: 44px; }
+  .dialogue-layer { max-height: calc(100dvh - 70px - var(--safe-top) - var(--safe-bottom)); overflow-y: auto; }
+  .dialogue-choices { flex-shrink: 0; }
+  .dialogue-choice-btn { width: 100%; }
+  .camera-zone-hint { display: none; }
+  .context-action-pill { max-width: min(48vw, 220px); }
+}
+
+@media (max-height: 480px) {
+  .story-prompt-layer { padding-top: calc(54px + var(--safe-top)); }
+  .story-question-panel { padding: 14px 18px; border-radius: 18px; }
+  .welcome-panel .story-question-title { font-size: 1.25rem; margin-bottom: 6px; }
+  .welcome-panel .question-note { margin-bottom: 6px; line-height: 1.6; }
+  .question-text-input { height: 68px; min-height: 68px; margin: 10px 0; }
+  .camera-zone-hint { display: none; }
+}
