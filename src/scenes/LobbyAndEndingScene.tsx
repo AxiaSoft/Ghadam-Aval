@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { PlayerController, ObstacleCircle } from '../characters/PlayerController';
 import { StylizedCharacter } from '../characters/StylizedCharacter';
 import { CameraRig } from '../camera/CameraRig';
+import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
 import { InteractionSystem } from '../interaction/InteractionSystem';
 import { useGameStore } from '../state/gameStore';
 import { resetPlayerTransform, transientInput } from '../state/inputStore';
@@ -66,6 +67,7 @@ const SEATED_TALKING_PAIRS: {
 ];
 
 export const LobbyAndEndingScene: React.FC = () => {
+  const floorTexture = useSurfaceTexture('stone', 4, 4);
   const { scene } = useThree();
   const stage = useGameStore((s) => s.stage);
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
@@ -512,12 +514,12 @@ export const LobbyAndEndingScene: React.FC = () => {
       <pointLight position={[0, 3.8, 0.5]} intensity={0.62} color="#ffe8c2" />
 
       {/* برگه، دستمال، لیوان و ساعت روی میز کنار پنجره */}
-      <LobbyDetails position={[0, 0.86, 2.1]} />
+      <LobbyDetails position={[-1.46, 0.4, 0.86]} />
 
       {/* کفپوش وسیع و گرم لابی (۱۶.۶ در ۱۵.۶ متر) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[16.6, 15.6]} />
-        <meshStandardMaterial color="#e8dfd2" roughness={0.52} metalness={0.05} />
+        <meshStandardMaterial color="#e8dfd2" map={floorTexture} roughness={0.7} metalness={0.05} />
       </mesh>
       <mesh position={[0, 0.008, 0.3]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[6.4, 9.6]} />
@@ -673,22 +675,6 @@ export const LobbyAndEndingScene: React.FC = () => {
             <meshStandardMaterial color="#faf6f0" roughness={0.35} />
           </mesh>
         )}
-      </group>
-
-      {/* جزئیات کوچک روی میز: دفتر باز، خودکار، لیوان کاغذی */}
-      <group position={[-1.46, 0.44, 0.86]}>
-        <mesh rotation={[0, 0.24, 0]}>
-          <boxGeometry args={[0.34, 0.018, 0.24]} />
-          <meshStandardMaterial color="#f7f1e6" roughness={0.85} />
-        </mesh>
-        <mesh position={[0.1, 0.014, -0.02]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.008, 0.008, 0.22, 8]} />
-          <meshStandardMaterial color="#3f4a55" roughness={0.5} />
-        </mesh>
-        <mesh position={[-0.18, 0.05, 0.06]}>
-          <cylinderGeometry args={[0.045, 0.036, 0.09, 12]} />
-          <meshStandardMaterial color="#efe2cf" roughness={0.55} />
-        </mesh>
       </group>
 
       {/* ساعت روی دیوار پشتی؛ عقربهها حدود ده را نشان میدهند */}

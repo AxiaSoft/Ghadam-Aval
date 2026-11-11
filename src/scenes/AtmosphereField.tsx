@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { useGameStore } from '../state/gameStore';
 
 /**
- * لایهٔ سبک اتمسفر: گرد ریز توی نور مهتابی، ذرههای بخار بالای لیوان،
+ * لایهٔ سبک اتمسفر: گرد ریز توی نور مهتابی
  * و یک پرتو کمجان پروژکتور توی کلاس. هیچ گلبرگ شناور یا باغ خیالی اضافه نمیکند.
  */
 export const AtmosphereField: React.FC = () => {
@@ -15,9 +15,9 @@ export const AtmosphereField: React.FC = () => {
   const count =
     graphicsProfile === 'LOW' ? 70 : graphicsProfile === 'MEDIUM' ? 130 : 190;
   const inClassroom = stage.startsWith('CLASSROOM');
+  const outdoors = stage.startsWith('MISSION');
 
   const dustRef = useRef<THREE.Points>(null);
-  const steamRef = useRef<THREE.Points>(null);
   const beamRef = useRef<THREE.Mesh>(null);
 
   const coldColor = useMemo(() => new THREE.Color('#aebfd0'), []);
@@ -33,17 +33,6 @@ export const AtmosphereField: React.FC = () => {
     return arr;
   }, [count]);
 
-  const steamPositions = useMemo(() => {
-    const n = Math.round(count * 0.18);
-    const arr = new Float32Array(n * 3);
-    for (let i = 0; i < n; i += 1) {
-      arr[i * 3 + 0] = (Math.random() - 0.5) * 0.5;
-      arr[i * 3 + 1] = 0.9 + Math.random() * 0.7;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
-    }
-    return arr;
-  }, [count]);
-
   useFrame((state) => {
     const t = state.clock.elapsedTime;
 
@@ -55,13 +44,6 @@ export const AtmosphereField: React.FC = () => {
       material.opacity = 0.12 + worldWarmth * 0.16;
     }
 
-    if (steamRef.current) {
-      steamRef.current.position.y = 0.9 + Math.sin(t * 0.7) * 0.06;
-      steamRef.current.rotation.y = t * 0.05;
-      const material = steamRef.current.material as THREE.PointsMaterial;
-      material.opacity = 0.05 + worldWarmth * 0.09;
-    }
-
     if (beamRef.current) {
       const material = beamRef.current.material as THREE.MeshBasicMaterial;
       material.opacity = inClassroom ? 0.055 + worldWarmth * 0.025 : 0;
@@ -70,7 +52,7 @@ export const AtmosphereField: React.FC = () => {
 
   return (
     <group>
-      <points ref={dustRef}>
+      <points ref={dustRef} visible={!outdoors}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[dustPositions, 3]} />
         </bufferGeometry>
@@ -79,20 +61,6 @@ export const AtmosphereField: React.FC = () => {
           color="#c2d0de"
           transparent
           opacity={0.2}
-          depthWrite={false}
-          sizeAttenuation
-        />
-      </points>
-
-      <points ref={steamRef} position={[1.2, 0, 0.5]}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[steamPositions, 3]} />
-        </bufferGeometry>
-        <pointsMaterial
-          size={0.06}
-          color="#fff6e6"
-          transparent
-          opacity={0.08}
           depthWrite={false}
           sizeAttenuation
         />

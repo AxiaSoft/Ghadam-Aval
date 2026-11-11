@@ -33,7 +33,7 @@ if (typeof globalThis.FileReader === 'undefined') {
   };
 }
 
-const OUT_DIR = path.resolve('/home/user/public/models');
+const OUT_DIR = path.resolve('public/models');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 function stdMat(color, roughness = 0.58, metalness = 0.04, extra = {}) {
@@ -744,15 +744,14 @@ function buildMainCharacter(gender = 'female') {
 
   // 3D EYEGLASSES ATTACHED TO HEAD
   const glasses3D = build3DGlasses({
-    style: isFemale ? 'round' : 'rect',
+    style: 'round',
     frameColor: isFemale ? '#d48c6a' : '#202630',
     metalAccent: isFemale ? '#f5cfa8' : '#b8c4d4',
     eyeSpacing,
     eyeY: eyeY - 0.001,
     glassesZ: faceFrontZ + 0.021,
   });
-  // عینک فقط برای یکی از دو شخصیت اصلی ساخته میشود.
-  if (isFemale) head.add(glasses3D);
+  head.add(glasses3D);
 
   // SEAMLESS ARMS WITH JOINT SPHERES & SCULPTED HANDS
   const shoulderX = isFemale ? 0.156 : 0.184;

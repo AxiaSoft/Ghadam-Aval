@@ -5,6 +5,7 @@ import { useGameStore } from './state/gameStore';
 import { assetManager } from './assets/AssetManager';
 import { audioManager } from './audio/AudioManager';
 import { SceneManager } from './scenes/SceneManager';
+import { AdaptiveQuality } from './scenes/AdaptiveQuality';
 import { LoadingScreen } from './ui/LoadingScreen';
 import { OrientationGuard } from './ui/OrientationGuard';
 import { HUDAndPauseMenu } from './ui/HUDAndPauseMenu';
@@ -121,6 +122,7 @@ export const App: React.FC = () => {
                 toneMappingExposure: 1.05,
               }}
             >
+              <AdaptiveQuality />
               <SceneManager />
             </Canvas>
           )}

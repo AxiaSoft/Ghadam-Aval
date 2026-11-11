@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { PlayerController, ObstacleCircle } from '../characters/PlayerController';
 import { StylizedCharacter } from '../characters/StylizedCharacter';
 import { CameraRig } from '../camera/CameraRig';
+import { useSurfaceTexture } from '../graphics/useSurfaceTexture';
 import { InteractionSystem } from '../interaction/InteractionSystem';
 import { useGameStore } from '../state/gameStore';
 import { resetPlayerTransform } from '../state/inputStore';
@@ -17,6 +18,7 @@ import {
 import { CampusSign } from './UniversityProps';
 
 export const MissionUniversityScene: React.FC = () => {
+  const paving = useSurfaceTexture('tiles', 3, 5);
   const { scene } = useThree();
   const graphicsProfile = useGameStore((s) => s.graphicsProfile);
   const answers = useGameStore((s) => s.answers);
@@ -129,11 +131,11 @@ export const MissionUniversityScene: React.FC = () => {
       {/* Main Paved Sidewalk & Forecourt */}
       <mesh position={[0, 0.015, 1.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[3.8, 15]} />
-        <meshStandardMaterial color="#e6dfd3" roughness={0.78} />
+        <meshStandardMaterial color="#e6dfd3" map={paving} roughness={0.88} />
       </mesh>
       <mesh position={[0, 0.018, -3.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[11.5, 4.2]} />
-        <meshStandardMaterial color="#ebe4d8" roughness={0.76} />
+        <meshStandardMaterial color="#ebe4d8" map={paving} roughness={0.88} />
       </mesh>
 
       {/* Sidewalk curbs */}
